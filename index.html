@@ -1,0 +1,25 @@
+<script src="https://d3js.org/d3.v7.js" charset="utf-8"></script>
+<script src="test.js"></script>
+
+<div align="center">
+  <h1>Change Color of Existing Elements</h1>
+</div>
+
+<div align="center">
+  <svg width="400" height="400">
+    <circle class="red" cx="100" cy="100" r="30"></circle>
+    <circle class="red" cx="300" cy="100" r="30"></circle>
+    <circle class="red" cx="300" cy="300" r="30"></circle>
+    <circle class="red" cx="100" cy="300" r="30"></circle>
+    <circle id="blue" cx="200" cy="200" r="30" fill="blue"></circle>
+  </svg>
+</div>
+
+<div align="center">
+  <button type="button" onclick="changeColor();">
+    Change Colors
+  </button>
+  <button type="button" onclick="changeRadius();">
+    Change Radius
+  </button>
+</div>
