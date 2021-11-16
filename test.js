@@ -8,3 +8,9 @@ function changeColor() {
       .attr("r", 10);
   }
   
+  function logData() {
+    var data = d3.json("owid-co2-data.json");
+    console.log(data);
+  }
+  
+  
