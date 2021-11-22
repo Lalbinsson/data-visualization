@@ -1,13 +1,13 @@
-const width = 650
-const height = 400
+var width = 650
+var height = 400
 
-const svg = d3.select('body').append('svg').attr('width', width).attr('height', height).attr('class', 'map')
+var svg = d3.select('body').append('svg').attr('width', width).attr('height', height).attr('class', 'map')
 
-const projection = d3.geoMercator().scale(100).translate([width / 2 , height / 1.5])
+var projection = d3.geoMercator().scale(100).translate([width / 2 , height / 1.5])
 
-const path = d3.geoPath(projection)
+var path = d3.geoPath(projection)
 
-const promises = [
+var promises = [
   d3.json("https://unpkg.com/world-atlas@1/world/110m.json")
 ]
 
@@ -42,3 +42,32 @@ function ready([world]){
   
 }
 
+var currentYear = 2021
+
+function changeColor() {
+    d3.select("#blue")
+      .attr("fill", "yellow");
+  }
+  
+  function changeRadius() {
+    d3.selectAll(".red")
+      .attr("r", 10);
+  }
+  
+  function logData() {
+    var data = d3.json("owid-co2-data.json");
+    console.log(data);
+  }
+
+  function filterYear(year) {
+    var dat = d3.csv("owid-co2-data.csv").then(function(csv) {
+      csv = csv.filter(function(row) {
+          return row['year'] == year
+      });
+      console.log(csv)
+      currentYear = year
+      return csv
+      });
+  }
+  
+  
