@@ -1,9 +1,9 @@
-const width = 900
-const height = 900
+const width = 650
+const height = 400
 
 const svg = d3.select('body').append('svg').attr('width', width).attr('height', height).attr('class', 'map')
 
-const projection = d3.geoMercator().scale(130).translate([width / 2 , height / 2])
+const projection = d3.geoMercator().scale(100).translate([width / 2 , height / 1.5])
 const path = d3.geoPath(projection)
 
 
