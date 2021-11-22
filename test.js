@@ -1,7 +1,7 @@
 var width = 650
 var height = 400
 
-var svg = d3.select('body').append('svg').attr('width', width).attr('height', height).attr('class', 'map')
+var svg = d3.select('#map').append('svg').attr('width', width).attr('height', height).attr('class', 'map')
 
 var projection = d3.geoMercator().scale(100).translate([width / 2 , height / 1.5])
 

@@ -17,27 +17,62 @@
       background: #efefef
     }
   </style>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 
 <body>
 
-  <header>
+  <header align="center">
     <h1>How does co2 emissions correlate with GDP?</h1>
-    <p>some text about out project blabla...</p>
   </header>
 
+
+
   <div>
-    <text>
-      World Map
-    </text>
+    <div class="row">
+      <div id="map" class="col-6">
+        <h3 class="col-6">
+          World Map
+        </h3>
+      </div>
+
+      <div class="col-3">
+        <h3>Other Chart</h3>
+        <svg width="400" height="400">
+          <circle class="red" cx="100" cy="100" r="30"></circle>
+          <circle class="red" cx="300" cy="100" r="30"></circle>
+          <circle class="red" cx="300" cy="300" r="30"></circle>
+          <circle class="red" cx="100" cy="300" r="30"></circle>
+          <circle id="blue" cx="200" cy="200" r="30" fill="blue"></circle>
+        </svg>
+        <div>
+          <button type="button" onclick="changeColor();">
+            Change Colors
+          </button>
+          <button type="button" onclick="changeRadius();">
+            Change Radius
+          </button>
+          <button type="button" onclick="logData();">
+            Log Data
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+
   </div>
-  <div id="map"></div>
+
+
+
+
+
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://d3js.org/topojson.v2.min.js"></script>
   <script src="test.js"></script>
   <script src="https://d3js.org/d3.v7.js" charset="utf-8"></script>
-  <script src="test.js"></script>
-
 
   <table>
 
@@ -132,29 +167,13 @@
       </script>
     </td> -->
 
-    <td>
-      <h1>Other Chart</h1>
-      <svg width="400" height="400">
-        <circle class="red" cx="100" cy="100" r="30"></circle>
-        <circle class="red" cx="300" cy="100" r="30"></circle>
-        <circle class="red" cx="300" cy="300" r="30"></circle>
-        <circle class="red" cx="100" cy="300" r="30"></circle>
-        <circle id="blue" cx="200" cy="200" r="30" fill="blue"></circle>
-      </svg>
-      <div>
-        <button type="button" onclick="changeColor();">
-          Change Colors
-        </button>
-        <button type="button" onclick="changeRadius();">
-          Change Radius
-        </button>
-        <button type="button" onclick="logData();">
-          Log Data
-        </button>
-      </div>
-    </td>
+
   </table>
   </div>
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
 </body>
 
 </html>
