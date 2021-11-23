@@ -22,13 +22,50 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 
-<body>
 
   <header align="center">
     <h1>How does co2 emissions correlate with GDP?</h1>
   </header>
 
+  <body>
 
+<nav class="navbar navbar-light bg-light">
+  <div class="btn-group" style="auto-flex">
+    <div>
+        <label id="select-year">Choose Year: </label>
+          <select onChange="updateYear();" name="Dataset" id="year-selector" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle">
+          <!-- läsa in alla år från datasetet som options -->
+            <option value=1950>1950</option>
+            <option value=1960>1960</option>
+          </select>
+    </div>
+    <div>
+        <label id="select-year">Choose Emission Type: </label>
+          <select onChange="updateEmission();" name="Dataset" id="emission-selector" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle">
+          <!-- läsa in alla co2 types från datasetet som options, kanske också bättre som checkboxes -->
+            <option value=coal_co2>coal_co2</option>
+            <option value=cement_co2>cement_co2</option>
+            <option value=flaring_co2>flaring_co2</option>
+            <option value=gas_co2>gas_co2</option>
+            <option value=oil_co2>oil_co2</option>
+            <option value=other_industry_co2>other_industry_co2</option>
+          </select>
+    </div>
+  </div>
+</nav>
+
+<div>
+<!-- outputs to make sure the updated value is updated globally -->
+    <p> Current Year: </p>  <p id="cYear"></p>
+    <p> Current Emission Type: </p> <p id="cEmission"></p>
+<!--    <p> Filtered CVS: <p> <p id="cCVS"></p> -->
+
+<!-- buttons to log the data in the console, is done automatically on updated values 
+    <button onClick="filterEmission();"> Filter Emission </button>
+    <button onClick="filterYear();"> Filter Year </button>
+    <button onClick="updateDataFromFilters();"> Show Filtered Data </button>
+    -->
+</div>
 
   <div>
     <div class="row">
@@ -37,46 +74,19 @@
           World Map
         </h3>
       </div>
-
-      <div class="col-3">
-        <h3>Other Chart</h3>
-        <svg width="400" height="400">
-          <circle class="red" cx="100" cy="100" r="30"></circle>
-          <circle class="red" cx="300" cy="100" r="30"></circle>
-          <circle class="red" cx="300" cy="300" r="30"></circle>
-          <circle class="red" cx="100" cy="300" r="30"></circle>
-          <circle id="blue" cx="200" cy="200" r="30" fill="blue"></circle>
-        </svg>
-        <div>
-          <button type="button" onclick="changeColor();">
-            Change Colors
-          </button>
-          <button type="button" onclick="changeRadius();">
-            Change Radius
-          </button>
-          <button type="button" onclick="logData();">
-            Log Data
-          </button>
-        </div>
-      </div>
     </div>
-
-
-
   </div>
-
-
-
-
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://d3js.org/topojson.v2.min.js"></script>
   <script src="test.js"></script>
+  <script src="style.css"></script>
+  <script src="filters.js"></script>
   <script src="https://d3js.org/d3.v7.js" charset="utf-8"></script>
 
+<!--
   <table>
-
-    <!-- <td>
+     <td>
       <h2>Time</h2>
       <div class="row align-items-center">
         <div class="col-sm-2">
@@ -165,8 +175,8 @@
             .join('-')
         );
       </script>
-    </td> -->
-
+    </td>
+-->
 
   </table>
   </div>
