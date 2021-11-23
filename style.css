@@ -1,1 +1,30 @@
 
+.wrapper {
+  position: relative;
+}
+
+.earth {
+  fill: #afdbdb;
+  stroke: none;
+}
+
+.graticule {
+  stroke: rgb(216, 231, 231);
+  fill: none;
+}
+
+* {
+  font-family: "Helvetica Neue";
+}
+
+p {
+  font-size: 0.85em;
+}
+
+svg {
+  background: #efefef
+}
+
+.path{
+  stroke-width: 5;
+}
