@@ -1,6 +1,9 @@
 <script src="https://d3js.org/d3.v7.js" charset="utf-8"></script>
 <script src="https://unpkg.com/d3-simple-slider"></script>
 <script src="test.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="test.css">
 
 <header>
   <h1 align="center">How does co2 emissions correlate with GDP?</h1>
@@ -9,112 +12,311 @@
 </header>
 
 <body>
-<table align="center">
-<td>
-<h1>Map Chart</h1>
-<img src="worldmap.jpg">
-  <h2>Time</h2>
-  <div class="row align-items-center">
-    <div class="col-sm-2"><p id="value-time"></p></div>
-    <div class="col-sm"><div id="slider-time"></div></div>
-  </div>
+  <table align="center">
+    <td valign="top">
+    <h1>Map Chart</h1>
+    <img src="worldmap.jpg">
+      <h2>Time</h2>
+      <div class="row align-items-center">
+        <div class="col-sm-2"><p id="value-time"></p></div>
+        <div class="col-sm"><div id="slider-time"></div></div>
+      </div>
 
-  <h2>Range</h2>
-  <div class="row align-items-center">
-    <div class="col-sm-2"><p id="value-range"></p></div>
-    <div class="col-sm"><div id="slider-range"></div></div>
-  </div>
-  <script>
+      <h2>Range</h2>
+      <div class="row align-items-center">
+        <div class="col-sm-2"><p id="value-range"></p></div>
+        <div class="col-sm"><div id="slider-range"></div></div>
+      </div>
+      
+      <script>
+        // Time
+        var dataTime = d3.range(0, 10).map(function(d) {
+          return new Date(1940 + d, 50, 3);
+        });
 
+        let sliderTime = d3
+          .sliderBottom()
+          .min(d3.min(dataTime))
+          .max(d3.max(dataTime))
+          .step(1000 * 60 * 60 * 24 * 365)
+          .width(300)
+          .tickFormat(d3.timeFormat('%Y'))
+          .tickValues(dataTime)
+          .default(new Date(1998, 10, 3))
+          .on('onchange', val => {
+            d3.select('p#value-time').text(d3.timeFormat('%Y')(val));
+            var y = d3.timeFormat('%Y')(val)
+            filterYear(y)
+          });
+
+        var gTime = d3
+          .select('div#slider-time')
+          .append('svg')
+          .attr('width', 500)
+          .attr('height', 100)
+          .append('g')
+          .attr('transform', 'translate(30,30)');
+
+        gTime.call(sliderTime);
+
+        d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
+
+
+      var data = [0, 0.005, 0.01, 0.015, 0.02, 0.025];
+
+      // Range
+        var sliderRange = d3
+          .sliderBottom()
+          .min(d3.min(data))
+          .max(d3.max(data))
+          .width(300)
+          .tickFormat(d3.format('.2%'))
+          .ticks(5)
+          .default([0.015, 0.02])
+          .fill('#2196f3')
+          .on('onchange', val => {
+            d3.select('p#value-range').text(val.map(d3.format('.2%')).join('-'));
+          });
+
+        var gRange = d3
+          .select('div#slider-range')
+          .append('svg')
+          .attr('width', 500)
+          .attr('height', 100)
+          .append('g')
+          .attr('transform', 'translate(30,30)');
+
+        gRange.call(sliderRange);
+
+        d3.select('p#value-range').text(
+          sliderRange
+            .value()
+            .map(d3.format('.2%'))
+            .join('-')
+        );
+      </script>
+    </td>
+    <td valign="top">
+      <h1>Other Chart</h1>
+      <div id="Area"></div>
+      <select id="selectButton" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle">      </select>
     
-  // Time
-  var dataTime = d3.range(0, 10).map(function(d) {
-    return new Date(1940 + d, 50, 3);
-  });
+      <form>
+        <div class="multiselect">
+          <div class="selectBox" onclick="showCheckboxes()">
+            <select>
+              <option>Select an option</option>
+            </select>
+            <div class="overSelect"></div>
+          </div>
+          <div id="checkboxes">
+            <!---<label>
+              <span>Underlyings</span>
+              <select class="multiselect" multiple></select>
+          </label>--->
+            <label for="one">
+              <input type="checkbox" id="one" />First checkbox</label>
+            <label for="two">
+              <input type="checkbox" id="two" />Second checkbox</label>
+            <label for="three">
+              <input type="checkbox" id="three" />Third checkbox</label>
+          </div>
+        </div>
+      </form>
+    <script>
 
-  var sliderTime = d3
-    .sliderBottom()
-    .min(d3.min(dataTime))
-    .max(d3.max(dataTime))
-    .step(1000 * 60 * 60 * 24 * 365)
-    .width(300)
-    .tickFormat(d3.timeFormat('%Y'))
-    .tickValues(dataTime)
-    .default(new Date(1998, 10, 3))
-    .on('onchange', val => {
-      d3.select('p#value-time').text(d3.timeFormat('%Y')(val));
-      var y = d3.timeFormat('%Y')(val)
-      filterYear(y)
-    });
+    var csvdata = d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_connectedscatter.csv")
 
-  var gTime = d3
-    .select('div#slider-time')
-    .append('svg')
-    .attr('width', 500)
-    .attr('height', 100)
-    .append('g')
-    .attr('transform', 'translate(30,30)');
-
-  gTime.call(sliderTime);
-
-  d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
+    var expanded = false;
+    // List of groups (here I have one group per column)
+    var allGroup = ["valueA", "valueB", "valueC"]
+    
 
 
-var data = [0, 0.005, 0.01, 0.015, 0.02, 0.025];
+    function showCheckboxes() {
+      var checkboxes = document.getElementById("checkboxes");
+      /*allGroup.map(function (x) {
+        return $('.multiselect', d.el).append("<option>" + x + "</option>");
+    }, allGroup);*/
 
-// Range
-  var sliderRange = d3
-    .sliderBottom()
-    .min(d3.min(data))
-    .max(d3.max(data))
-    .width(300)
-    .tickFormat(d3.format('.2%'))
-    .ticks(5)
-    .default([0.015, 0.02])
-    .fill('#2196f3')
-    .on('onchange', val => {
-      d3.select('p#value-range').text(val.map(d3.format('.2%')).join('-'));
-    });
+    /*$('.multiselect', d.el).multiselect({
+        allSelectedText: 'All',
+        maxHeight: 200,
+        includeSelectAllOption: true
+    });*/
+      //checkboxes.data(allGroup).enter().append('option').text(function (d) { return d; }) // text showed in the menu
+       // .attr("label", function (d) { return d; }) // corresponding value returned by the button
+      
+      if (!expanded) {
+        checkboxes.style.display = "block";
+        expanded = true;
+      } else {
+        checkboxes.style.display = "none";
+        expanded = false;
+      }
+      }
+      
+    
+    
+    // set the dimensions and margins of the graph
+    var margin = {top: 10, right: 40, bottom: 30, left: 30},
+        width = 450 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+      
+    // append the svg object to the body of the page
+    var sVg = d3.select("#Area")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      // translate this svg element to leave some margin.
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      
+    // read data
+    d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_connectedscatter.csv").then( function(data) {
 
-  var gRange = d3
-    .select('div#slider-range')
-    .append('svg')
-    .attr('width', 500)
-    .attr('height', 100)
-    .append('g')
-    .attr('transform', 'translate(30,30)');
+      //const sumstat = d3.group(data, d => d.name); // nest function allows to group the calculation per level of a factor
 
-  gRange.call(sliderRange);
+      // List of groups (here I have one group per column)
+      const allGroup = ["valueA", "valueB", "valueC"]
+      
+      // add the options to the button
+      d3.select("#selectButton")
+        .selectAll("option")
+        //.selectAll("option") //'myOptions')
+        .data(allGroup)
+        .enter()
+        .append('option')
+        .text(function (d) { return d; }) // text showed in the menu
+        .attr("value", function (d) { return d; }) // corresponding value returned by the button
+      
 
-  d3.select('p#value-range').text(
-    sliderRange
-      .value()
-      .map(d3.format('.2%'))
-      .join('-')
-  );
-  </script>
-</td>
-<td>
-<h1>Other Chart</h1>
-  <svg width="400" height="400">
-    <circle class="red" cx="100" cy="100" r="30"></circle>
-    <circle class="red" cx="300" cy="100" r="30"></circle>
-    <circle class="red" cx="300" cy="300" r="30"></circle>
-    <circle class="red" cx="100" cy="300" r="30"></circle>
-    <circle id="blue" cx="200" cy="200" r="30" fill="blue"></circle>
-  </svg>
-  <div>
-  <button type="button" onclick="changeColor();">
-    Change Colors
-  </button>
-  <button type="button" onclick="changeRadius();">
-    Change Radius
-  </button>
-  <button type="button" onclick="logData();">
-    Log Data
-  </button>
-</div>
-</td>
-</table>
+      // A color scale: one color for each group
+      const myColor = d3.scaleOrdinal()
+        .domain(allGroup)
+        .range(d3.schemeSet2);
+
+      // Add X axis --> it is a date format
+      const x = d3.scaleLinear()
+        .domain([0,10])
+        .range([ 0, width ]);
+      sVg.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x));
+
+      // Add Y axis
+      const y = d3.scaleLinear()
+        .domain( [0, 20]) //d3.max(data, function(d) { return d.selectedGroup; })
+        .range([ height, 0 ]);
+      sVg.append("g")
+        .call(d3.axisLeft(y));
+
+      // Initialize line with group a
+      // Line that should be showed as default
+      const line = sVg
+        .append('g')
+        .append("path")
+          .datum(data)
+          .attr("d", d3.line()
+            .x(function(d) { return x(+d.time) })
+            .y(function(d) { return y(+d.valueA) })
+          )
+          .attr("stroke", function(d){ return myColor("valueA") })
+          .style("stroke-width", 2)
+          .style("fill", "none")
+
+      // A function that update the chart
+      function update(selectedGroup) {
+
+        // Create new data with the selection?
+        const dataFilter = data.map(function(d){return {time: d.time, value:d[selectedGroup]} })
+
+        const sumstat = d3.group(dataFilter, d => d.name); // nest function allows to group the calculation per level of a factor
+
+        //svg.selectAll("path.line").remove();
+        
+        /*for (let i=0; i < selectedGroup.length; i++) {
+          sVg
+          .append('g')
+          .append("path")
+            .datum(dataFilter)
+            .attr("d", d3.line()
+              .x(function(d) { return x(+d.time) })
+              .y(function(d) { return y(+d.value) })
+            )
+            .attr("stroke", function(d){ return myColor(selectedGroup) })
+            .style("stroke-width", 2)
+            .style("fill", "none")  
+
+        }*/
+
+        /*sVg.selectAll(".line")
+            .data(sumstat)
+            .datum(dataFilter)
+            //.duration(1000)
+            .join("path")
+            .attr("fill", "none")
+
+            .attr("d", function(d) {
+              return d3.line()
+              .x(function(d) { return x(+d.time); })
+              .y(function(d) { return y(+d.value); })
+              
+            
+            }
+            
+            )
+            .attr("stroke", function(d){ return myColor(selectedGroup) })*/
+        
+
+        // Give these new data to update line
+        line
+            .datum(dataFilter)
+            .transition()
+            .duration(1000)
+            .attr("d", d3.line()
+              .x(function(d) { return x(+d.time) })
+              .y(function(d) { return y(+d.value) })
+            )
+            .attr("stroke", function(d){ return myColor(selectedGroup) })
+      }
+
+      // When the button is changed, run the updateChart function
+      d3.select("#selectButton").on("change", function(event,d) {
+          // recover the option that has been chosen
+          const selectedOption = d3.select(this).property("value")
+          console.log(selectedOption)
+          // run the updateChart function with this selected option
+
+          update(selectedOption)
+      })
+
+      })
+ // Y label
+ sVg.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('x', margin.left - 10)
+        .attr('y', margin.top - 10)
+        //.attr('transform', 'translate(60,' + height + ')rotate(-90)')
+        .style('font-family', 'Helvetica')
+        .style('font-size', 12)
+        .text('CO2');
+
+  // X label
+  sVg.append('text')
+        .attr('x', 350)
+        .attr('y', margin.bottom + 320)
+        //.attr('text-anchor', 'middle')
+        .style('font-family', 'Helvetica')
+        .style('font-size', 12)
+        .text('Year');
+
+        // Scale the range of the data
+	
+
+    </script>
+
+    </td>
+  </table>
 </div>
 </body>
