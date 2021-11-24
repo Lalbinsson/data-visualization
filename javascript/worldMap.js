@@ -113,8 +113,8 @@ async function drawpWorldMap (){
 
     const [centerX, centerY] = pathGenerator.centroid(datum)
 
-    const x = centerX + dimensions.margin.left
-    const y = centerY + dimensions.margin.top
+    const x = centerX + 10
+    const y = centerY + 10
 
     tooltip.style("transform", `translate(`
       + `calc( -50% + ${x}px),`
