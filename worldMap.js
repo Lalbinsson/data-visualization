@@ -10,77 +10,63 @@ async function drawpWorldMap (){
   const metric = "share_global_co2"
   const year = "2005"
 
-  let dimensions = {
-    width: window.innerWidth * 0.6,
-    margin: {
-      top:10,
-      right: 10,
-      bottom: 10,
-      left: 10
-    },
-  }
-
-  dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right
-
-  const sphere = ({type: "Sphere"})
-
-  const projection2 = d3.geoEqualEarth()
-  .fitWidth(dimensions.boundedWidth, sphere)
+  width = 600
+  height= 400
+  const projection2 = d3.geoMercator().scale(90).translate([width/2.1, height/1.5])
 
   const pathGenerator = d3.geoPath(projection2)
 
-  const [[x0,y0], [x1,y1]] = pathGenerator.bounds(sphere)
-
-  dimensions.boundedHeight = y1
-  dimensions.height = dimensions.boundedHeight + dimensions.margin.top + dimensions.margin.bottom
 
   const wrapper = d3.select("#wrapper")
     .append("svg")
-    .attr("width", dimensions.width)
-    .attr("height", dimensions.height)
+    .style("background", "#afdbdb")
+    .attr("width", width)
+    .attr("height", height)
 
   const bounds = wrapper.append("g")
     .style("transform", `translate(${
-      dimensions.margin.left
+      10
     }px, ${
-      dimensions.margin.top
+      10
     }px)`)
-
-  const earth = bounds.append("path")
-  .attr("class", "earth")
-  .attr("d", pathGenerator(sphere))
-
-  const graticuleJson = d3.geoGraticule10()
-  const graticule = bounds.append("path")
-  .attr("class", "graticule")
-  .attr("d", pathGenerator(graticuleJson))
 
   Promise.all(promises).then(ready)
 
   
   const tooltip = d3.select("#tooltip")
 
+  function filterYear(year) {
+    var dat = d3.csv("owid-co2-data.csv").then(function(csv) {
+      csv = csv.filter(function(row) {
+          return row['year'] == year
+      });
+      console.log(csv)
+      currentYear = year
+      return csv
+      });
+  }
+
   function ready([worldMap, co2_dataset]){
     let metricDataByCountry = {}
+    let worldMapFiltered = {}
 
     co2_dataset.forEach(d => {
       if (d["iso_code"] == "OWID_WRL" || d["year"] != year) return
       metricDataByCountry[d["iso_code"]] = + d ["share_global_co2"]
     })
 
-    console.log(metricDataByCountry)
-
     const metricValues = Object.values(metricDataByCountry)
     const metricValueExtent = d3.extent(metricValues)
 
-    console.log(metricValueExtent[1])
+    console.log(metricValueExtent)
 
-    const colorScale = d3.scaleLinear()
-    .domain([0, metricValueExtent[1]])
-    .range(["#BEE3C2", "darkgreen"])
+    const colorScale = d3.scaleLog()
+    .domain([0, metricValueExtent[0] + 0.01, metricValueExtent[1]])
+    .range(["white", "white", "darkgreen"])
 
-    const countries = bounds.selectAll(".country").data(worldMap.features)
-    .enter().append("path")
+    const countries = bounds.selectAll(".country").data(worldMap.features.filter(function(d){
+      return d.properties.NAME != "Antarctica"
+    })).enter().append("path")
     .attr("class", "country")
     .attr("d", pathGenerator)
     .style("opacity", 0.9)
@@ -92,12 +78,15 @@ async function drawpWorldMap (){
     if(typeof metricValue == "undefined") return "#e2e6e9"
     // Scale down the countries that have too high share of global co2 emission. I.e. USA and China
     // Scale up other countries
+    /*
     if (metricValue >= 10) {
       return colorScale(metricValue * 0.8)
     }
     if (metricValue < 10) {
       return colorScale(metricValue * 1.5)
     }
+    */
+    return colorScale(metricValue)
     })
     .on('mouseover',function(d){
       d3.select(this)
@@ -125,7 +114,6 @@ async function drawpWorldMap (){
     const [centerX, centerY] = pathGenerator.centroid(datum)
 
     const x = centerX + dimensions.margin.left
-
     const y = centerY + dimensions.margin.top
 
     tooltip.style("transform", `translate(`

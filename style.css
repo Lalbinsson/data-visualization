@@ -1,16 +1,12 @@
 
 .wrapper {
+  fill: #afdbdb;
   position: relative;
 }
 
 .earth {
   fill: #afdbdb;
   stroke: none;
-}
-
-.graticule {
-  stroke: rgb(216, 231, 231);
-  fill: none;
 }
 
 * {
