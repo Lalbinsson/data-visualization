@@ -1,4 +1,5 @@
 import { FilterHandler } from './filterHandler.js'; 
+import { lineChart } from './lineChart.js';
 import { drawpWorldMap } from './worldMap.js';
 
 var emissionTypes = ["coal_co2", "gas_co2", "oil_co2", "cement_co2", "flaring_co2", "other_industry_co2"]
@@ -58,3 +59,4 @@ var currentYear = 2021
   */
 
 drawpWorldMap()
+lineChart()
