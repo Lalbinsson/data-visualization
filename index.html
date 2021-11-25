@@ -7,13 +7,24 @@
   <!-- CSS only -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="stylesheets/worldMap.css">
+  <link rel="stylesheet" href="stylesheets/worldMap.css">
 </head>
 
 <body>
 
-  <header align="center">
-    <h1>How does co2 emissions correlate with GDP?</h1>
+  <header>
+    <h1>
+      CO2-Emissions
+    </h1>
+    <p>
+      RQ1: How are the distributions of CO2-emissions inter- and intra- countries, and does geographical location have any correlation to CO2
+    </p>
+    <p>
+      RQ2: How different types of CO2-emissions are correlated to global emissions and GDP of countries?
+    </p>
+    <p>
+      RQ3: Are there any geographic correlations between where natural disasters occur and where high CO2 is emitted?
+    </p>
   </header>
 
   <div>
@@ -23,119 +34,23 @@
           World Map
         </h3>
       </div>
-<div id="slider"></div>
+      <div id="slider"></div>
     </div>
 
     <div id="tooltip" class="tooltip">
       <div class="tooltip-country" id="country"></div>
       <div class="tooltip-value">
-          <span id="value"></span> Global share of CO2-emission
+        <span id="value"></span> Global share of CO2-emission
       </div>
+    </div>
+
   </div>
 
-</div>
-
-<script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
   <script src="https://d3js.org/topojson.v2.min.js"></script>
   <script src="javascript/worldMap.js"></script>
   <script src="https://unpkg.com/d3-simple-slider"></script>
 
-  <table>
-
-    <!-- <td>
-      <h2>Time</h2>
-      <div class="row align-items-center">
-        <div class="col-sm-2">
-          <p id="value-time"></p>
-        </div>
-        <div class="col-sm">
-          <div id="slider-time"></div>
-        </div>
-      </div>
-
-      <h2>Range</h2>
-      <div class="row align-items-center">
-        <div class="col-sm-2">
-          <p id="value-range"></p>
-        </div>
-        <div class="col-sm">
-          <div id="slider-range"></div>
-        </div>
-      </div>
-      <script>
-
-
-        // Time
-        var dataTime = d3.range(0, 10).map(function (d) {
-          return new Date(1940 + d, 50, 3);
-        });
-
-        var sliderTime = d3
-          .sliderBottom()
-          .min(d3.min(dataTime))
-          .max(d3.max(dataTime))
-          .step(1000 * 60 * 60 * 24 * 365)
-          .width(300)
-          .tickFormat(d3.timeFormat('%Y'))
-          .tickValues(dataTime)
-          .default(new Date(1998, 10, 3))
-          .on('onchange', val => {
-            d3.select('p#value-time').text(d3.timeFormat('%Y')(val));
-            var y = d3.timeFormat('%Y')(val)
-            filterYear(y)
-          });
-
-        var gTime = d3
-          .select('div#slider-time')
-          .append('svg')
-          .attr('width', 500)
-          .attr('height', 100)
-          .append('g')
-          .attr('transform', 'translate(30,30)');
-
-        gTime.call(sliderTime);
-
-        d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
-
-
-        var data = [0, 0.005, 0.01, 0.015, 0.02, 0.025];
-
-        // Range
-        var sliderRange = d3
-          .sliderBottom()
-          .min(d3.min(data))
-          .max(d3.max(data))
-          .width(300)
-          .tickFormat(d3.format('.2%'))
-          .ticks(5)
-          .default([0.015, 0.02])
-          .fill('#2196f3')
-          .on('onchange', val => {
-            d3.select('p#value-range').text(val.map(d3.format('.2%')).join('-'));
-          });
-
-        var gRange = d3
-          .select('div#slider-range')
-          .append('svg')
-          .attr('width', 500)
-          .attr('height', 100)
-          .append('g')
-          .attr('transform', 'translate(30,30)');
-
-        gRange.call(sliderRange);
-
-        d3.select('p#value-range').text(
-          sliderRange
-            .value()
-            .map(d3.format('.2%'))
-            .join('-')
-        );
-      </script>
-    </td> -->
-
-
-  </table>
-  </div>
   <!-- JavaScript Bundle with Popper -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"

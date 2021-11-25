@@ -1,7 +1,6 @@
 async function drawpWorldMap (){
   var promises = [
     d3.json("world-geojson.json"),
-    
     d3.csv("owid-co2-data.csv")
   ]
 
@@ -71,7 +70,7 @@ async function drawpWorldMap (){
     .on('mouseover',function(d){
       d3.select(this)
         .style("opacity", 1.0)
-        .style("stroke","white")
+        .style("stroke","purple")
         .style("stroke-width",2.5);
     })
     .on('mouseout', function(d){
@@ -100,14 +99,12 @@ async function drawpWorldMap (){
       + `calc( -50% + ${x}px),`
       + `calc( 50% + ${y}px)`
       + `)`)
-
   }
 
   function onMouseLeave() {
     tooltip.style("opacity", 0)
   }
 
-  
   var title = d3.select("#wm-title").append("text").attr("id", "yearTitle").text(year)
 
   var slider = d3
@@ -135,7 +132,6 @@ async function drawpWorldMap (){
           })
         console.log(year)
       })
-  
   
     d3.select('#slider')
       .append('svg')
