@@ -1,7 +1,7 @@
-async function drawpWorldMap (){
+export async function drawpWorldMap (){
   var promises = [
-    d3.json("world-geojson.json"),
-    d3.csv("owid-co2-data.csv")
+    d3.json("../world-geojson.json"),
+    d3.csv("../owid-co2-data.csv")
   ]
 
   const countryNameAccessor = d => d.properties['NAME']
@@ -9,8 +9,9 @@ async function drawpWorldMap (){
   const metric = "share_global_co2"
   var year = "2020"
 
-  width = 650
-  height= 400
+  const width = 650
+  const height= 400
+
   const projection2 = d3.geoMercator().scale(100).translate([width/2.1, height/1.5])
 
   const pathGenerator = d3.geoPath(projection2)
@@ -30,7 +31,6 @@ async function drawpWorldMap (){
       10
     }px)`)
 
-
   Promise.all(promises).then(ready)
 
   const tooltip = d3.select("#tooltip")
@@ -43,6 +43,8 @@ async function drawpWorldMap (){
   }
 
   function ready([worldMap, co2_dataset]){
+
+    console.log(worldMap)
     let metricDataByCountry = {}
 
     filter(co2_dataset, metricDataByCountry)
@@ -142,6 +144,3 @@ async function drawpWorldMap (){
       .call(slider);
   }
 }
-
-
-drawpWorldMap()
