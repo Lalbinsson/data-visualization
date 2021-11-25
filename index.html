@@ -115,11 +115,11 @@
               <select class="multiselect" multiple></select>
           </label>--->
             <label for="one">
-              <input type="checkbox" id="one" />First checkbox</label>
+              <input class="testCheckbox" type="checkbox" id="one" value="1" onclick="onClickHandler()"/>First checkbox</label>
             <label for="two">
-              <input type="checkbox" id="two" />Second checkbox</label>
+              <input class="testCheckbox" type="checkbox" id="two" value="2" onclick="onClickHandler()"/>Second checkbox</label>
             <label for="three">
-              <input type="checkbox" id="three" />Third checkbox</label>
+              <input class="testCheckbox" type="checkbox" id="three" value="3" onclick="onClickHandler()"/>Third checkbox</label>
           </div>
         </div>
       </form>
@@ -131,6 +131,14 @@
     // List of groups (here I have one group per column)
     var allGroup = ["valueA", "valueB", "valueC"]
     
+      function onClickHandler() {
+          const checks =  document.querySelectorAll('.testCheckbox:checked');
+          for(var i=0; checks[i]; ++i){
+            if(checks[i].checked){
+              console.log(checks[i].value);
+            }
+          }
+        }
 
 
     function showCheckboxes() {
