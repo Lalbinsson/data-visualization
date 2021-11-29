@@ -61,21 +61,30 @@ export async function drawpWorldMap (){
     })).enter().append("path")
     .attr("class", "country")
     .attr("d", pathGenerator)
-    .style("opacity", 0.9)
+    .style("opacity", 1)
     .style("stroke", "white")
-    .style("stroke-width", 0.3)
+    .style("stroke-width", 0.7)
     .attr("fill", d => {
     const metricValue = metricDataByCountry[countryIdAccessor(d)]
     if(typeof metricValue == "undefined") return "#e2e6e9"
     return colorScale(metricValue)
     })
+    
     .on('mouseover',function(d){
+      d3.selectAll(".country")
+      .transition()
+      .duration(200)
+      .style("opacity", 0.35)
       d3.select(this)
+      .transition()
+      .duration(200)
         .style("opacity", 1.0)
-        .style("stroke","purple")
-        .style("stroke-width",2.5);
     })
     .on('mouseout', function(d){
+      d3.selectAll(".country")
+      .transition()
+      .duration(200)
+      .style("opacity", 1)
       d3.select(this)
         .style("opacity", 0.9)
         .style("stroke","white")
@@ -93,13 +102,13 @@ export async function drawpWorldMap (){
     tooltip.select("#value").text(`${d3.format(",.2f")(metricValue || 0)}%`)
 
     const [centerX, centerY] = pathGenerator.centroid(datum)
-
+    
     const x = centerX + 10
     const y = centerY + 10
 
     tooltip.style("transform", `translate(`
       + `calc( -50% + ${x}px),`
-      + `calc( 50% + ${y}px)`
+      + `calc( 500% + ${y}px)`
       + `)`)
   }
 
