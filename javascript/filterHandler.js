@@ -42,24 +42,26 @@
 
 
 class FilterHandler {
-  filterHandler(currentFilteredData, currentEmissions, currentCountries, currentYears){
+  filterHandler(currentFilteredData, currentEmissions, currentCountries, currentYear){
     currentFilteredData = this.currentFilteredData
     currentEmissions = this.currentEmissions
     currentCountries = this.currentCountries
-    currentYears = this.currentYears
+    currentYear = this.currentYear
   }
 
-  constructor(currentFilteredData, currentEmissions, currentCountries, currentYears){
-    this.filterHandler(currentFilteredData, currentEmissions, currentCountries, currentYears);
-      console.log(currentFilteredData, currentEmissions, currentCountries, currentYears);
+  constructor(currentFilteredData, currentEmissions, currentCountries, currentYear){
+    this.filterHandler(currentFilteredData, currentEmissions, currentCountries, currentYear);
+      console.log(currentFilteredData, currentEmissions, currentCountries, currentYear);
   }
 
+
+  // funkar inte som den ska än.
   filterDataSetOnCurrentFilters(){
     this.filterYear()
     //denna funkar inte nu, får promise
       /*  var dat = d3.csv("owid-co2-data.csv").then(function(csv) {
           csv = csv.filter(function(row) {
-              return row['year'] == this.currentYears //&& row[this.currentEmissions] != ""
+              return row['year'] == this.currentYear //&& row[this.currentEmissions] != ""
           });
           console.log(csv)
           return csv
@@ -69,33 +71,55 @@ class FilterHandler {
 
   updateEmissions(newEmissions){
     this.currentEmissions = newEmissions
+    this.updateCharts()
   }
 
   getEmissions(){
     return this.currentEmissions
   }
 
-  updateYears(newYear){ //fixa så denna kan ta en range
-      this.currentYears = newYear
+  updateCountries(newCountries){
+    this.currentCountries = newCountries
+    this.updateCharts()
   }
 
-  getYears(){
-    return this.currentYears
+  getCountries(){
+    return this.currentCountries
   }
 
+  updateYear(newYear){
+      this.currentYear = newYear
+      this.updateCharts()
+  }
+
+  getYear(){
+    return this.currentYear
+  }
+
+  //update the charts that use global attributes, this only updates the printed values in the html right now.
   updateCharts(){
-    document.getElementById("cEmission").innerHTML = this.currentEmissions
-    document.getElementById("cYear").innerHTML = this.currentYears
-    //update the charts that use global attributes
+    if (!(this.currentEmissions == undefined)) {
+      document.getElementById("cEmissions").innerHTML = this.currentEmissions
+    } else {
+      console.log("undef?")
+    }
+    if (!(this.currentYear == undefined)) {
+    document.getElementById("cYear").innerHTML = this.currentYear
+    }
+    if (!(this.currentCountries == undefined)) {
+    document.getElementById("cCountries").innerHTML = this.currentCountries
+    }
   }
 
+
+  //den här funkar inte som den ska än.
   filterYear() {
-    var dat = d3.csv("owid-co2-data.csv").then(function(csv, currentYears) {
-      console.log(currentYears) //denna blir undefined, kanske pga nested func?
+    var dat = d3.csv("owid-co2-data.csv").then(function(csv, currentYear) {
+     // console.log(currentYear) //denna blir undefined, kanske pga nested func?
       csv = csv.filter(function(row) {
-          return row['year'] == currentYears //går att filtrera på hårdkodat värde
+          return row['year'] == currentYear //går att filtrera på hårdkodat värde
       });
-      console.log(csv)
+    //  console.log(csv)
       return csv
       });
     return dat

@@ -2,46 +2,118 @@ import { FilterHandler } from './filterHandler.js';
 import { lineChart } from './lineChart.js';
 import { drawpWorldMap } from './worldMap.js';
 
-var emissionTypes = ["coal_co2", "gas_co2", "oil_co2", "cement_co2", "flaring_co2", "other_industry_co2"]
-var years = ["1950", "1960", "1970"]
+//TODO: read these from the data set
+var allEmissions = ["coal_co2", "gas_co2", "oil_co2", "cement_co2", "flaring_co2", "other_industry_co2"]
+var allYears = ["1950", "1960", "1970"]
+var allCountries = ["Sweden", "Finland", "Denmark", "China"]
 
 // initializing the FilterHandler-class with defaultValues
-const defaultCountries = []
-const defaultYears = ["2000", "1999"]
-var defaultEmissions = "gas_co2"
+var selectedCountries = []
+var selectedYear = ""
+var selectedEmissions = []
 var defaultFilteredData = []
-var filterHandler = new FilterHandler(defaultFilteredData, defaultEmissions, defaultCountries, defaultYears);
-
-// adding the options to the button
-d3.select("#emission-selector")
-  .selectAll()
-  .data(emissionTypes)
-  .enter()
-  .append('option')
-  .text(function (d) { return d; }) // text showed in the menu
-  .attr("value", function (d) { return d; }) 
-
-  d3.select("#emission-selector").on("change", function() {
-    var selectedEmissions = d3.select(this).property("value"); //kolla på att läsa in fler värden från checkboxen.
-    filterHandler.updateEmissions(selectedEmissions)
-    console.log(filterHandler.getEmissions())
-    filterHandler.filterDataSetOnCurrentFilters() //should be called on all global updates to update all filters()
-})
+var filterHandler = new FilterHandler(defaultFilteredData, selectedEmissions, selectedCountries, selectedYear);
 
 d3.select("#year-selector")
   .selectAll()
-  .data(years)
+  .data(allYears)
   .enter()
-  .append('option')
+  .append('li')
   .text(function (d) { return d; }) // text showed in the menu
   .attr("value", function (d) { return d; }) 
 
   d3.select("#year-selector").on("change", function() {
-    var selectedYear = d3.select(this).property("value"); //kolla på att läsa in fler värden från checkboxen.
-    filterHandler.updateYears(selectedYear)
-    console.log(filterHandler.getYears())
-    filterHandler.filterDataSetOnCurrentFilters() //should be called on all global updates to update all filters()
+    var newYear = d3.select(this).property("value");
+    filterHandler.updateYear(newYear)
+    console.log(filterHandler.getYear())
 })
+
+d3.select("#countries-dropdown")
+  .selectAll()
+  .data(allCountries)
+  .enter()
+.append("li")
+.text(function (d) { return d; }) // text showed in the menu
+.append("input")
+.attr("type", "checkbox")
+.attr("id", function(d) { return d; })
+.style("float","left")   //move box left of label
+.on('change', function() {
+  console.log("clicked on ", this.id)
+  if(this.checked) {
+    if (!selectedCountries.includes(this.id)){
+      selectedCountries.push(this.id)
+    }
+  } else {
+    if (selectedCountries.includes(this.id)) {
+      const index = selectedCountries.indexOf(this.id);
+      if (index > -1) {
+        selectedCountries.splice(index, 1);
+      }
+    }
+  }
+  //update countries in filterHandler
+  //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
+  filterHandler.updateCountries(selectedCountries)
+  console.log(filterHandler.getCountries);
+})
+
+d3.select("#emissions-dropdown")
+  .selectAll()
+  .data(allEmissions)
+  .enter()
+.append("li")
+.text(function (d) { return d; }) // text showed in the menu
+.append("input")
+.attr("type", "checkbox")
+.attr("class", "checkedEmissions")
+.attr("id", function(d) { return d; })
+.style("float","left")   //move box left of label
+.on('change', function() {
+  if(this.checked) {
+    if (!selectedEmissions.includes(this.id)){
+      selectedEmissions.push(this.id)
+    }
+  } else {
+    if (selectedEmissions.includes(this.id)) {
+      const index = selectedEmissions.indexOf(this.id);
+      if (index > -1) {
+        selectedEmissions.splice(index, 1);
+      }
+    }
+  }
+
+  filterHandler.updateEmissions(selectedEmissions)
+  console.log(filterHandler.getEmissions());
+})
+
+
+//gör dropdown-listorna hidden/visible på click, fixa så att de inte tar upp hela ytan när de är hidden.
+var checkListCountries = document.getElementById('countries-selector')
+var countryList = document.getElementsByClassName('countries')[0]
+checkListCountries.onclick = function (evt) {
+    if (countryList.style.visibility == "visible")
+        countryList.style.visibility = "hidden";
+    else
+        countryList.style.visibility = "visible";
+}
+
+checkListCountries.onblur = function(evt) {
+    countryList.style.visibility = "hidden";
+}
+
+var checkListEmissions = document.getElementById('emissions-selector')
+var emissionList = document.getElementsByClassName('emissions')[0]
+checkListEmissions.onclick = function (evt) {
+    if (emissionList.style.visibility == "visible")
+        emissionList.style.visibility = "hidden";
+    else
+        emissionList.style.visibility = "visible";
+}
+
+checkListEmissions.onblur = function(evt) {
+    emissionList.style.visibility = "hidden";
+}
 
 /*
 var currentYear = 2021
