@@ -1,4 +1,3 @@
-
 .wrapper {
   position: relative;
 }
@@ -9,7 +8,7 @@
 }
 
 * {
-  font-family: "Helvetica Neue";
+  font-family: 'Helvetica Neue';
 }
 
 p {
@@ -17,7 +16,8 @@ p {
 }
 
 svg {
-  background: #efefef
+  background: #efefef;
+  max-width: 100%;
 }
 
 .tooltip {

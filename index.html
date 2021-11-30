@@ -79,40 +79,47 @@
     <p id="cCountries"></p>
   </div>
 
-  <div class="row">
-    <div id="wrapper" class="col-7">
-      <h3 id="wm-title" class="col-6">
-        World Map
-      </h3>
-      <div id="tooltip" class="tooltip">
-        <div class="tooltip-country" id="country"></div>
-        <div class="tooltip-value">
-          <span id="value"></span> Global share of CO2-emission
+  <div style="padding: 10px;">
+    <div class="row">
+      <div id="wrapper" class="col-sm-6">
+        <h3 id="wm-title">
+          World Map
+        </h3>
+        <div id="tooltip" class="tooltip">
+          <div class="tooltip-country" id="country"></div>
+          <div class="tooltip-value">
+            <span id="value"></span> Global share of CO2-emission
+          </div>
         </div>
       </div>
-    </div>
-    <div id="slider"></div>
 
-    <div id="Area" class="col-3">
-      <h1>Other Chart</h1>
-      <select id="selectButton" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle"> </select>
+      <div id="Area" class="col-6">
+        <h1>Other Chart</h1>
+        <select id="selectButton" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle"
+          style="width: 100px;"> </select>
 
-      <form>
-        <div id="checkboxes">
-          <!-- Borde kanske döpa om den här så vi inte råkar ändra fel grej sen-->
-          <label for="one">
-            <input class="testCheckbox" type="checkbox" id="one" value="1" onclick="onClickHandler()" />First
-            checkbox</label>
-          <label for="two">
-            <input class="testCheckbox" type="checkbox" id="two" value="2" onclick="onClickHandler()" />Second
-            checkbox</label>
-          <label for="three">
-            <input class="testCheckbox" type="checkbox" id="three" value="3" onclick="onClickHandler()" />Third
-            checkbox</label>
-        </div>
+        <form>
+          <div id="checkboxes">
+            <!-- Borde kanske döpa om den här så vi inte råkar ändra fel grej sen-->
+            <label for="one">
+              <input class="testCheckbox" type="checkbox" id="one" value="1" onclick="onClickHandler()" />First
+              checkbox</label>
+            <label for="two">
+              <input class="testCheckbox" type="checkbox" id="two" value="2" onclick="onClickHandler()" />Second
+              checkbox</label>
+            <label for="three">
+              <input class="testCheckbox" type="checkbox" id="three" value="3" onclick="onClickHandler()" />Third
+              checkbox</label>
+          </div>
+      </div>
+      </form>
     </div>
-    </form>
+
+    <div class="row">
+      <div id="slider"></div>
+    </div>
   </div>
+
 
 
 
