@@ -134,7 +134,6 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
       .sliderHorizontal()
       .tickFormat(d3.format('.0f'))
       .displayValue(year)
-      .fill(['green'])
       .default(['2021'])
       .ticks(12)
       .tickValues([
@@ -170,9 +169,9 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
     d3.select('#slider')
       .append('svg')
       .attr('width', 600)
-      .attr('height', 80)
+      .attr('height', 100)
       .append('g')
-      .attr('transform', 'translate(30,30)')
+      .attr('transform', 'translate(30,40)')
       .call(slider)
 
     var svg = d3.select('svg')

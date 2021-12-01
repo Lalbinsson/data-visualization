@@ -16,6 +16,10 @@
   vertical-align: middle;
 }
 
+#emissions-selector {
+  height: 50px;
+}
+
 #choose_country {
   width: 400px;
 }
