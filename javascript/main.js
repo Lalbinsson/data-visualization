@@ -1,6 +1,7 @@
 import { FilterHandler } from './filterHandler.js'
 import { lineChart } from './lineChart.js'
 import { drawpWorldMap } from './worldMap.js'
+import { drawScatterPlot } from './scatterPlot.js'
 
 //TODO: read these from the data set
 var allEmissions = [
@@ -19,15 +20,19 @@ const countryIdAccessor = d => d.properties['ADM0_A3_IS']
 
 var promises = [
   d3.json('../world-geojson.json'),
-  d3.csv('../owid-co2-data.csv')
+  d3.csv('../owid-co2-data.csv'),
+  //d3.csv('../disasterlocations.csv'),
+  d3.json('../naturalDisastersByYear.json')
 ]
 
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
 var selectedCountries = []
-var selectedYear = '2020'
-var selectedEmissions = ['share_global_co2']
+//var selectedYear = '2020'
+//var selectedEmissions = ['share_global_co2']
+var selectedYear = 2000
+var selectedEmissions = ['oil_co2']
 var defaultFilteredData = []
 var filterHandler = new FilterHandler(
   defaultFilteredData,
@@ -35,6 +40,10 @@ var filterHandler = new FilterHandler(
   selectedCountries,
   selectedYear
 )
+
+//just to have an initial value to avoid undefined
+filterHandler.updateYear(selectedYear)
+filterHandler.updateEmissions(selectedEmissions)
 
 d3.select('#year-selector')
   .selectAll()
@@ -194,3 +203,4 @@ function addSelectedCountry (country) {
 
 drawpWorldMap(addSelectedCountry, promises, filterHandler)
 lineChart()
+drawScatterPlot(promises, filterHandler)

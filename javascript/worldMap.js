@@ -3,12 +3,20 @@ export async function drawpWorldMap (
   promises,
   filterHandler
 ) {
+  //Global variables
   var countries_quant20 = []
   var countries_quant40 = []
   var countries_quant60 = []
   var countries_quant80 = []
   var countries_quant100 = []
   let metricDataByCountry = {}
+  var quantile_20
+  var quantile_40
+  var quantile_60
+  var quantile_80
+  var quantile_100
+  var metricValues
+  var sorted_metricValues = []
 
   const countryNameAccessor = d => d.properties['NAME']
   const countryIdAccessor = d => d.properties['ADM0_A3_IS']
@@ -58,24 +66,15 @@ export async function drawpWorldMap (
     return result
   }
 
-  function ready ([worldMap, co2_dataset]) {
-    filter(co2_dataset, metricDataByCountry)
-
-    var sorted_metricValues = []
-    for (var x in metricDataByCountry) {
-      sorted_metricValues.push([metricDataByCountry[x], x])
-    }
-
-    var metricValues = Object.values(metricDataByCountry)
-    var metricValueExtent = d3.extent(metricValues)
-    metricValues.sort((a, b) => a - b)
-
-    var quantile_20 = d3.quantile(metricValues, 0.2)
-    var quantile_40 = d3.quantile(metricValues, 0.4)
-    var quantile_60 = d3.quantile(metricValues, 0.6)
-    var quantile_80 = d3.quantile(metricValues, 0.8)
-    var quantile_100 = d3.quantile(metricValues, 1)
-
+  function updateQuantiles (
+    sorted_metricValues,
+    quantile_20,
+    quantile_40,
+    quantile_60,
+    quantile_80,
+    quantile_100
+  ) {
+    var result = []
     countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
     countries_quant40 = findQuantiles(
       sorted_metricValues,
@@ -95,6 +94,37 @@ export async function drawpWorldMap (
     countries_quant100 = findQuantiles(
       sorted_metricValues,
       quantile_80 + 0.01,
+      quantile_100
+    )
+  }
+
+  function updateQuantileValues (metricValues) {
+    quantile_20 = d3.quantile(metricValues, 0.2)
+    quantile_40 = d3.quantile(metricValues, 0.4)
+    quantile_60 = d3.quantile(metricValues, 0.6)
+    quantile_80 = d3.quantile(metricValues, 0.8)
+    quantile_100 = d3.quantile(metricValues, 1)
+  }
+
+  function ready ([worldMap, co2_dataset]) {
+    filter(co2_dataset, metricDataByCountry)
+
+    for (var x in metricDataByCountry) {
+      sorted_metricValues.push([metricDataByCountry[x], x])
+    }
+
+    metricValues = Object.values(metricDataByCountry)
+    var metricValueExtent = d3.extent(metricValues)
+    metricValues.sort((a, b) => a - b)
+
+    updateQuantileValues(metricValues)
+
+    updateQuantiles(
+      sorted_metricValues,
+      quantile_20,
+      quantile_40,
+      quantile_60,
+      quantile_80,
       quantile_100
     )
 
@@ -186,7 +216,7 @@ export async function drawpWorldMap (
       .sliderHorizontal()
       .tickFormat(d3.format('.0f'))
       .displayValue(year)
-      .default(['2021'])
+      .default([year])
       .ticks(12)
       .tickValues([
         1900,
@@ -210,7 +240,23 @@ export async function drawpWorldMap (
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
         d3.select('#yearTitle').text(year)
+        metricDataByCountry = {}
         filter(co2_dataset, metricDataByCountry)
+        sorted_metricValues = []
+        for (var x in metricDataByCountry) {
+          sorted_metricValues.push([metricDataByCountry[x], x])
+        }
+        metricValues = Object.values(metricDataByCountry)
+        metricValues.sort((a, b) => a - b)
+        updateQuantileValues(metricValues)
+        updateQuantiles(
+          sorted_metricValues,
+          quantile_20,
+          quantile_40,
+          quantile_60,
+          quantile_80,
+          quantile_100
+        )
         bounds.selectAll('.country').attr('fill', d => {
           const metricValue = metricDataByCountry[countryIdAccessor(d)]
           if (typeof metricValue == 'undefined') return '#e2e6e9'
