@@ -192,5 +192,5 @@ function addSelectedCountry (country) {
   filterHandler.updateCountries(selectedCountries)
 }
 
-drawpWorldMap(addSelectedCountry, promises)
+drawpWorldMap(addSelectedCountry, promises, filterHandler)
 lineChart()
