@@ -1,24 +1,42 @@
-export async function drawpWorldMap (addSelectedCountry, promises) {
-  var selectedCountries
+export async function drawpWorldMap (
+  addSelectedCountry,
+  promises,
+  filterHandler
+) {
+  //Global variables
+  var countries_quant20 = []
+  var countries_quant40 = []
+  var countries_quant60 = []
+  var countries_quant80 = []
+  var countries_quant100 = []
+  let metricDataByCountry = {}
+  var quantile_20
+  var quantile_40
+  var quantile_60
+  var quantile_80
+  var quantile_100
+  var metricValues
+  var sorted_metricValues = []
 
   const countryNameAccessor = d => d.properties['NAME']
   const countryIdAccessor = d => d.properties['ADM0_A3_IS']
-  const metric = 'share_global_co2'
-  var year = '2020'
+  var emissionType = filterHandler.getEmissions()
+  var year = filterHandler.getYear()
 
-  const width = 650
+  const width = 900
   const height = 500
 
   const projection2 = d3
     .geoMercator()
-    .scale(100)
-    .translate([width / 2.1, height / 1.7])
+    .scale(120)
+    .translate([width / 2.1, height / 1.5])
 
   const pathGenerator = d3.geoPath(projection2)
 
   const wrapper = d3
     .select('#wrapper')
     .append('svg')
+    .attr('id', 'worldMap')
     .style('background', '#afdbdb')
     .attr('width', width)
     .attr('height', height)
@@ -34,22 +52,90 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
   function filter (co2_dataset, metricDataByCountry) {
     co2_dataset.forEach(d => {
       if (d['iso_code'] == 'OWID_WRL' || d['year'] != year) return
-      metricDataByCountry[d['iso_code']] = +d['share_global_co2']
+      metricDataByCountry[d['iso_code']] = +d[emissionType]
     })
   }
 
-  function ready ([worldMap, co2_dataset]) {
-    let metricDataByCountry = {}
+  function findQuantiles (sorted_metricValues, quantile_x, quantile_y) {
+    var result = []
+    sorted_metricValues.forEach(x => {
+      if (x[0] >= quantile_x && x[0] <= quantile_y) {
+        result.push(x[1])
+      }
+    })
+    return result
+  }
 
+  function updateQuantiles (
+    sorted_metricValues,
+    quantile_20,
+    quantile_40,
+    quantile_60,
+    quantile_80,
+    quantile_100
+  ) {
+    var result = []
+    countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
+    countries_quant40 = findQuantiles(
+      sorted_metricValues,
+      quantile_20 + 0.01,
+      quantile_40
+    )
+    countries_quant60 = findQuantiles(
+      sorted_metricValues,
+      quantile_40 + 0.01,
+      quantile_60
+    )
+    countries_quant80 = findQuantiles(
+      sorted_metricValues,
+      quantile_60 + 0.01,
+      quantile_80
+    )
+    countries_quant100 = findQuantiles(
+      sorted_metricValues,
+      quantile_80 + 0.01,
+      quantile_100
+    )
+  }
+
+  function updateQuantileValues (metricValues) {
+    quantile_20 = d3.quantile(metricValues, 0.2)
+    quantile_40 = d3.quantile(metricValues, 0.4)
+    quantile_60 = d3.quantile(metricValues, 0.6)
+    quantile_80 = d3.quantile(metricValues, 0.8)
+    quantile_100 = d3.quantile(metricValues, 1)
+  }
+
+  function ready ([worldMap, co2_dataset]) {
     filter(co2_dataset, metricDataByCountry)
 
-    const metricValues = Object.values(metricDataByCountry)
-    const metricValueExtent = d3.extent(metricValues)
+    for (var x in metricDataByCountry) {
+      sorted_metricValues.push([metricDataByCountry[x], x])
+    }
 
-    const colorScale = d3
+    metricValues = Object.values(metricDataByCountry)
+    var metricValueExtent = d3.extent(metricValues)
+    metricValues.sort((a, b) => a - b)
+
+    updateQuantileValues(metricValues)
+
+    updateQuantiles(
+      sorted_metricValues,
+      quantile_20,
+      quantile_40,
+      quantile_60,
+      quantile_80,
+      quantile_100
+    )
+
+    var colorScale = d3
       .scaleLog()
       .domain([0, metricValueExtent[0] + 0.01, metricValueExtent[1]])
-      .range(['white', 'white', 'darkgreen'])
+      .range(['white', 'white', '#035e18'])
+    const colorScaleLegend = d3
+      .scaleQuantile()
+      .domain(metricValues)
+      .range(['white', '#bbcfb8', '#89ad86', '#588a56', '#035e18'])
 
     const countries = bounds
       .selectAll('.country')
@@ -70,7 +156,6 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
         if (typeof metricValue == 'undefined') return '#e2e6e9'
         return colorScale(metricValue)
       })
-
       .on('mouseover', function (d) {
         d3.selectAll('.country')
           .transition()
@@ -91,14 +176,11 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
           .style('stroke', 'white')
           .style('stroke-width', 0.3)
       })
-      .on(
-        'click',
-        (selectedCountries = function (d) {
-          var country = countryIdAccessor(d)
-          console.log(country)
-          addSelectedCountry(country)
-        })
-      )
+      .on('click', function (d) {
+        var country = countryIdAccessor(d)
+        console.log(country)
+        addSelectedCountry(country)
+      })
       .on('mouseenter', onMouseEnter)
       .on('mouseleave', onMouseLeave)
 
@@ -134,7 +216,7 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
       .sliderHorizontal()
       .tickFormat(d3.format('.0f'))
       .displayValue(year)
-      .default(['2021'])
+      .default([year])
       .ticks(12)
       .tickValues([
         1900,
@@ -155,14 +237,49 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
       .width(530)
       .displayValue(false)
       .on('onchange', val => {
-        year = val
+        filterHandler.updateYear(val)
+        year = filterHandler.getYear()
         d3.select('#yearTitle').text(year)
+        metricDataByCountry = {}
         filter(co2_dataset, metricDataByCountry)
+        sorted_metricValues = []
+        for (var x in metricDataByCountry) {
+          sorted_metricValues.push([metricDataByCountry[x], x])
+        }
+        metricValues = Object.values(metricDataByCountry)
+        metricValues.sort((a, b) => a - b)
+        updateQuantileValues(metricValues)
+        updateQuantiles(
+          sorted_metricValues,
+          quantile_20,
+          quantile_40,
+          quantile_60,
+          quantile_80,
+          quantile_100
+        )
         bounds.selectAll('.country').attr('fill', d => {
           const metricValue = metricDataByCountry[countryIdAccessor(d)]
           if (typeof metricValue == 'undefined') return '#e2e6e9'
           return colorScale(metricValue)
         })
+
+        filter(co2_dataset, metricDataByCountry)
+        metricValues = Object.values(metricDataByCountry)
+        metricValueExtent = d3.extent(metricValues)
+
+        legendLog = d3
+          .legendColor()
+          .shapeWidth(40)
+          .shapePadding(10)
+          .title('Quantiles')
+          .cells(10)
+          .labels(['0%', '25%', '50%', '75%', '100%'])
+          .orient('horizontal')
+          .scale(colorScaleLegend)
+
+        d3.select('#worldMap')
+          .select('.legendLog')
+          .call(legendLog)
         console.log(year)
       })
 
@@ -174,36 +291,197 @@ export async function drawpWorldMap (addSelectedCountry, promises) {
       .attr('transform', 'translate(30,40)')
       .call(slider)
 
-    var svg = d3.select('svg')
-
+    var svg = d3.select('#worldMap')
     svg
       .append('g')
       .attr('class', 'legendLog')
-      .attr('transform', 'translate(20,440)')
-      .on('mouseover', function (d) {})
+      .attr('id', 'ID_legendlog')
+      .attr('transform', 'translate(30,430)')
+      .on('mouseover', function (d) {
+        d3.selectAll('rect')._groups[0][0].setAttribute('id', 'rect-0')
+        d3.selectAll('rect')._groups[0][1].setAttribute('id', 'rect-1')
+        d3.selectAll('rect')._groups[0][2].setAttribute('id', 'rect-2')
+        d3.selectAll('rect')._groups[0][3].setAttribute('id', 'rect-3')
+        d3.selectAll('rect')._groups[0][4].setAttribute('id', 'rect-4')
+
+        svg
+          .select('#rect-0')
+          .on('mouseover', function (d) {
+            bounds
+              .selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 0.1)
+
+            bounds
+              .selectAll('.country')
+              .filter(function (d) {
+                return countries_quant20.includes(d.properties.ADM0_A3_IS)
+              })
+              .transition()
+              .duration(200)
+              .style('opacity', 1.0)
+          })
+          .on('mouseout', function (d) {
+            countries.data(
+              worldMap.features.filter(function (d) {
+                return d.properties.NAME != 'Antarctica'
+              })
+            )
+            d3.selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 1)
+            d3.select(this)
+              .style('opacity', 0.9)
+              .style('stroke', 'white')
+              .style('stroke-width', 0.3)
+          })
+        svg
+          .select('#rect-1')
+          .on('mouseover', function (d) {
+            bounds
+              .selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 0.1)
+
+            bounds
+              .selectAll('.country')
+              .filter(function (d) {
+                return countries_quant40.includes(d.properties.ADM0_A3_IS)
+              })
+              .transition()
+              .duration(200)
+              .style('opacity', 1.0)
+          })
+          .on('mouseout', function (d) {
+            countries.data(
+              worldMap.features.filter(function (d) {
+                return d.properties.NAME != 'Antarctica'
+              })
+            )
+            d3.selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 1)
+            d3.select(this)
+              .style('opacity', 0.9)
+              .style('stroke', 'white')
+              .style('stroke-width', 0.3)
+          })
+
+        svg
+          .select('#rect-2')
+          .on('mouseover', function (d) {
+            bounds
+              .selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 0.1)
+
+            bounds
+              .selectAll('.country')
+              .filter(function (d) {
+                return countries_quant60.includes(d.properties.ADM0_A3_IS)
+              })
+              .transition()
+              .duration(200)
+              .style('opacity', 1.0)
+          })
+          .on('mouseout', function (d) {
+            countries.data(
+              worldMap.features.filter(function (d) {
+                return d.properties.NAME != 'Antarctica'
+              })
+            )
+            d3.selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 1)
+            d3.select(this)
+              .style('opacity', 0.9)
+              .style('stroke', 'white')
+              .style('stroke-width', 0.3)
+          })
+        svg
+          .select('#rect-3')
+          .on('mouseover', function (d) {
+            bounds
+              .selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 0.1)
+
+            bounds
+              .selectAll('.country')
+              .filter(function (d) {
+                return countries_quant80.includes(d.properties.ADM0_A3_IS)
+              })
+              .transition()
+              .duration(200)
+              .style('opacity', 1.0)
+          })
+          .on('mouseout', function (d) {
+            countries.data(
+              worldMap.features.filter(function (d) {
+                return d.properties.NAME != 'Antarctica'
+              })
+            )
+            d3.selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 1)
+            d3.select(this)
+              .style('opacity', 0.9)
+              .style('stroke', 'white')
+              .style('stroke-width', 0.3)
+          })
+        svg
+          .select('#rect-4')
+          .on('mouseover', function (d) {
+            bounds
+              .selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 0.1)
+
+            bounds
+              .selectAll('.country')
+              .filter(function (d) {
+                return countries_quant100.includes(d.properties.ADM0_A3_IS)
+              })
+              .transition()
+              .duration(200)
+              .style('opacity', 1.0)
+          })
+          .on('mouseout', function (d) {
+            countries.data(
+              worldMap.features.filter(function (d) {
+                return d.properties.NAME != 'Antarctica'
+              })
+            )
+            d3.selectAll('.country')
+              .transition()
+              .duration(200)
+              .style('opacity', 1)
+            d3.select(this)
+              .style('opacity', 0.9)
+              .style('stroke', 'white')
+              .style('stroke-width', 0.3)
+          })
+      })
 
     var legendLog = d3
       .legendColor()
       .shapeWidth(40)
       .shapePadding(10)
       .title('Quantiles')
-      .cells(10)
-      .labels([
-        '0-10',
-        '10-20',
-        '20-30',
-        '30-40',
-        '40-50',
-        '50-60',
-        '60-70',
-        '70-80',
-        '80-90',
-        '90-100'
-      ])
+      .cells(5)
+      .labels(['', '', '', '', ''])
       .orient('horizontal')
-      .scale(colorScale)
+      .scale(colorScaleLegend)
 
     svg.select('.legendLog').call(legendLog)
   }
-  return selectedCountries
 }
