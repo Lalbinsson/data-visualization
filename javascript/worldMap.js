@@ -1,14 +1,19 @@
-export async function drawpWorldMap (addSelectedCountry, promises, test) {
+export async function drawpWorldMap (
+  addSelectedCountry,
+  promises,
+  filterHandler
+) {
   var countries_quant20 = []
   var countries_quant40 = []
   var countries_quant60 = []
   var countries_quant80 = []
   var countries_quant100 = []
+  let metricDataByCountry = {}
 
   const countryNameAccessor = d => d.properties['NAME']
   const countryIdAccessor = d => d.properties['ADM0_A3_IS']
-  const metric = 'share_global_co2'
-  var year = '2020'
+  var emissionType = filterHandler.getEmissions()
+  var year = filterHandler.getYear()
 
   const width = 900
   const height = 500
@@ -39,7 +44,7 @@ export async function drawpWorldMap (addSelectedCountry, promises, test) {
   function filter (co2_dataset, metricDataByCountry) {
     co2_dataset.forEach(d => {
       if (d['iso_code'] == 'OWID_WRL' || d['year'] != year) return
-      metricDataByCountry[d['iso_code']] = +d['share_global_co2']
+      metricDataByCountry[d['iso_code']] = +d[emissionType]
     })
   }
 
@@ -54,7 +59,6 @@ export async function drawpWorldMap (addSelectedCountry, promises, test) {
   }
 
   function ready ([worldMap, co2_dataset]) {
-    let metricDataByCountry = {}
     filter(co2_dataset, metricDataByCountry)
 
     var sorted_metricValues = []
@@ -203,7 +207,8 @@ export async function drawpWorldMap (addSelectedCountry, promises, test) {
       .width(530)
       .displayValue(false)
       .on('onchange', val => {
-        year = val
+        filterHandler.updateYear(val)
+        year = filterHandler.getYear()
         d3.select('#yearTitle').text(year)
         filter(co2_dataset, metricDataByCountry)
         bounds.selectAll('.country').attr('fill', d => {

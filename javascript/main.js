@@ -26,8 +26,8 @@ var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
 var selectedCountries = []
-var selectedYear = ''
-var selectedEmissions = []
+var selectedYear = '2020'
+var selectedEmissions = ['share_global_co2']
 var defaultFilteredData = []
 var filterHandler = new FilterHandler(
   defaultFilteredData,
