@@ -28,11 +28,9 @@ var promises = [
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedCountries = []
-//var selectedYear = '2020'
-//var selectedEmissions = ['share_global_co2']
-var selectedYear = 2000
 var selectedEmissions = ['oil_co2']
+var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname"]
+var selectedYear = 2020 //"2000" //"1990"
 var defaultFilteredData = []
 var filterHandler = new FilterHandler(
   defaultFilteredData,
@@ -57,10 +55,11 @@ d3.select('#year-selector')
     return d
   })
 
-d3.select('#year-selector').on('change', function () {
-  var newYear = d3.select(this).property('value')
-  filterHandler.updateYear(newYear)
-  console.log(filterHandler.getYear())
+  d3.select("#year-selector").on("change", function() {
+    var newYear = d3.select(this).property("value");
+    filterHandler.updateYear(newYear)
+    lineChart(filterHandler)
+    console.log(filterHandler.getYear())
 })
 
 promises.then(function ([worldMap]) {
@@ -145,8 +144,10 @@ function updateDropdown () {
   }
 
   filterHandler.updateEmissions(selectedEmissions)
-  console.log(filterHandler.getEmissions())
+  lineChart(filterHandler)
+  console.log(filterHandler.getEmissions());
 }
+
 
 //gör dropdown-listorna hidden/visible på click, fixa så att de inte tar upp hela ytan när de är hidden.
 var checkListCountries = document.getElementById('countries-selector')
@@ -202,5 +203,7 @@ function addSelectedCountry (country) {
 }
 
 drawpWorldMap(addSelectedCountry, promises, filterHandler)
-lineChart()
 drawScatterPlot(promises, filterHandler)
+drawpWorldMap()
+lineChart(filterHandler) //, selectedCountries, selectedEmissions, selectedYear)
+console.log(selectedEmissions)

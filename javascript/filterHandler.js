@@ -38,14 +38,10 @@
     filterEmission()
    // getEmission()
   } */
+  import { lineChart } from './lineChart.js';
 
 class FilterHandler {
-  filterHandler (
-    currentFilteredData,
-    currentEmissions,
-    currentCountries,
-    currentYear
-  ) {
+  filterHandler(currentFilteredData, currentEmissions, currentCountries, currentYear){
     this.currentFilteredData = currentFilteredData
     this.currentEmissions = currentEmissions
     this.currentCountries = currentCountries
@@ -126,6 +122,8 @@ class FilterHandler {
     if (!(this.currentCountries == undefined)) {
       document.getElementById('cCountries').innerHTML = this.currentCountries
     }
+    //console.log(this.filterHandler.getCountries())
+    //lineChart(this.filterHandler, this.filterHandler.getCountries(), this.filterHandler.getEmissions(), this.filterHandler.getYear())
   }
 
   //den här funkar inte som den ska än.
@@ -142,4 +140,5 @@ class FilterHandler {
   }
 }
 
-export { FilterHandler }
+//export { FilterHandler }
+export { FilterHandler };

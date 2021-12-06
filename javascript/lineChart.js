@@ -1,195 +1,233 @@
-export async function lineChart () {
+export async function lineChart (filterHandler) { //, countries, emissionTypes, max_year) {
+  console.log(filterHandler.getCountries())
+  console.log(filterHandler.getEmissions())
+  console.log(filterHandler.getYear())
 
-    var expanded = false;
-    // List of groups (here I have one group per column)
-    var allGroup = ["valueA", "valueB", "valueC"]
+// Set the dimensions of the canvas / graph
+var margin = {top: 30, right: 80, bottom: 50, left: 50},
+width = 600 - margin.left - margin.right,
+height = 300 - margin.top - margin.bottom;
+
+// Parse the date / time
+var parseDate = d3.timeParse("%Y");
+
+// Set the ranges
+var x = d3.scaleTime().range([0, width]);  
+var y = d3.scaleLinear().range([height, 0]);
+
+// Define the line
+var priceline = d3.line()	
+.x(function(d) { return x(d.year); })
+.y(function(d) { return y(d.total_co2); });
+
+// remove old svgs
+d3.select("#lineplot").remove();
+
+// Adds the svg canvas
+var svg = d3.select("body")
+.append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("id", "lineplot")
+    .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("owid-co2-data.csv").then(function(data) {
+
+var countries = filterHandler.getCountries()
+var max_year = parseInt(filterHandler.getYear())
+console.log(typeof max_year)
+data.forEach(function(d) {
+
+  if (parseInt(d.year) <= max_year) {
+  //if (countries.includes(d.country)) { continue }
+  d.year = parseDate(d.year);
+  //console.log(typeof parseInt(d.year))
+  d.total_co2 = 0
+  var emissionTypes = filterHandler.getEmissions()
+  if (emissionTypes.length === 0) {
+    d.total_co2 = +d['co2']
+  }
+  else {
+    for (let i=0; i<emissionTypes.length; i++) {
+      var emissionType = emissionTypes[i]
+      d.total_co2 += +d[emissionType]
+
+  }
+  }
+}
+})
+
+// Remove data for countries we're not interested in
+let filtered_data_countries = data.filter( function(item) {
+  return countries.indexOf(item.country) !== -1;
+}) 
+
+// Remove data for years outside chosen intervals
+let filtered_data = filtered_data_countries.filter(function(item) {
+  return item.year < max_year
+})
+
+// Scale the range of the data
+x.domain(d3.extent(filtered_data, function(d) { return d.year; }));
+y.domain([0, d3.max(filtered_data, function(d) { return d.total_co2; })]);
+
+// Group the entries by symbol
+var dataNest = Array.from(
+  d3.group(filtered_data, d => d.country), ([key, value]) => ({key, value})
+);
+
+// set the colour scale
+var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+/*var legend = svg.selectAll('g')
+.data(filtered_data)
+.enter()
+.append('g')
+.attr('class', 'legend')*/
+
+// Loop through each symbol / key
+dataNest.forEach(function(d,i) { 
+
+  console.log(d)
+    svg.append("path")
+        .attr("class", "line")
+        .style("stroke", function() { // Add the colours dynamically
+            return d.color = color(d.key); })
+        .style("fill-opacity", 0)
+        .attr("d", priceline(d.value));
+
+    // Add the Legend
+    svg.append("text")
+    .attr("transform", "translate(" + (width+4) + "," + (y(d.value.at(-1).total_co2) + 3) + ")")
+        .style("fill", "black")
+        .style("font-size", "10px")
+        .text(d.key);
+
     
-    function onClickHandler() {
-        const checks =  document.querySelectorAll('.testCheckbox:checked');
-        for(var i=0; checks[i]; ++i){
-          if(checks[i].checked){
-            console.log(checks[i].value);
+
+});
+
+// Add the X Axis
+svg.append("g")
+  .attr("class", "axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+
+// Add the Y Axis
+svg.append("g")
+  .attr("class", "axis")
+  .call(d3.axisLeft(y));
+
+// Y label
+svg.append('text')
+  .attr('text-anchor', 'middle')
+  .attr('transform', 'translate(' + (-30)+',' + (height/2) + ')rotate(-90)')
+  .style('font-family', 'Helvetica')
+  .style('font-size', 12)
+  .text('CO2');
+
+// X label
+svg.append('text')
+  .attr('x', width/2)
+  .attr('y', height+30)
+  //.attr('text-anchor', 'middle')
+  .style('font-family', 'Helvetica')
+  .style('font-size', 12)
+  .text('Year');
+
+
+
+// Add mouseover
+
+var mouseG = svg.append("g").attr("class", "mouse-over-effects")
+
+mouseG.append("path")
+  .attr("class", "mouse-line")
+  .style("stroke", "black")
+  .style("stroke-width", "1px")
+  .style("opacity", "0");
+
+var lines = document.getElementsByClassName('line')
+
+var mousePerLine = mouseG.selectAll('.mouse-per-line')
+  .data(dataNest)
+  .enter()
+  .append("g")
+  .attr("class", "mouse-per-line");
+
+mousePerLine.append("circle")
+  .attr("r", 6)
+  .style("stroke", function(d) { return color(d.key)})
+  .style("fill", "none")
+  .style("stroke-width", "1px")
+  .style("opacity", "0");
+
+mousePerLine.append("text")
+  .attr("transform", "translate(10,3)")
+  .style('font-size', '10')
+
+mouseG.append('svg:rect')
+  .attr('width', width)
+  .attr('height', height)
+  .attr('fill', 'none')
+  .attr('pointer-events', 'all')
+  .on('mouseout', function(){
+    d3.select(".mouse-line")
+      .style('opacity', '0');
+    d3.selectAll(".mouse-per-line circle")
+      .style('opacity', '0');
+    d3.selectAll(".mouse-per-line text")
+      .style('opacity', '0');
+  })
+  .on('mouseover', function() {
+    d3.select(".mouse-line")
+      .style("opacity", "1");
+    d3.selectAll(".mouse-per-line circle")
+      .style("opacity", "1");
+    d3.selectAll(".mouse-per-line text")
+      .style("opacity", "1");
+  })
+  .on('mousemove', function() {
+    var mouse = d3.mouse(this);
+    d3.select(".mouse-line")
+      .attr("d", function() {
+        var d = "M" + mouse[0] + "," + height;
+        d += " " + mouse[0] + "," + 0;
+        return d;
+      });
+
+    d3.selectAll(".mouse-per-line")
+      .attr("transform", function(d, i) {
+        var xDate = x.invert(mouse[0])
+        var bisect = d3.bisector(function(d) { return d.year; }).right;
+        var idx = bisect(d.value, xDate);
+
+        var beginning = 0;
+        var end = lines[i].getTotalLength();
+        var target = null;
+
+        while (true) {
+          var target = Math.floor((beginning + end) / 2);
+          var pos = lines[i].getPointAtLength(target);
+
+          if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+            break
           }
+          if (pos.x > mouse[0])       end = target;
+          else if (pos.x < mouse[0])  beginning = target;
+          else                        break;
         }
-      }
+        //console.log(d)
+        d3.select(this).select("text")
+          .text(d.key + "\n " + y.invert(pos.y).toFixed(2) + " ton/yr");
 
+        return "translate(" + mouse[0] + "," + pos.y + ")";
 
-    function showCheckboxes() {
-      var checkboxes = document.getElementById("checkboxes");
-      /*allGroup.map(function (x) {
-        return $('.multiselect', d.el).append("<option>" + x + "</option>");
-    }, allGroup);*/
-
-    /*$('.multiselect', d.el).multiselect({
-        allSelectedText: 'All',
-        maxHeight: 200,
-        includeSelectAllOption: true
-    });*/
-      //checkboxes.data(allGroup).enter().append('option').text(function (d) { return d; }) // text showed in the menu
-       // .attr("label", function (d) { return d; }) // corresponding value returned by the button
-      
-      if (!expanded) {
-        checkboxes.style.display = "block";
-        expanded = true;
-      } else {
-        checkboxes.style.display = "none";
-        expanded = false;
-      }
-      }
-      
-    
-    
-    // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 40, bottom: 30, left: 30},
-        width = 450 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
-      
-    // append the svg object to the body of the page
-    var sVg = d3.select("#Area")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      // translate this svg element to leave some margin.
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      
-    // read data
-    d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_connectedscatter.csv").then( function(data) {
-
-      //const sumstat = d3.group(data, d => d.name); // nest function allows to group the calculation per level of a factor
-
-      // List of groups (here I have one group per column)
-      const allGroup = ["valueA", "valueB", "valueC"]
-      
-      // add the options to the button
-      d3.select("#selectButton")
-        .selectAll("option")
-        //.selectAll("option") //'myOptions')
-        .data(allGroup)
-        .enter()
-        .append('option')
-        .text(function (d) { return d; }) // text showed in the menu
-        .attr("value", function (d) { return d; }) // corresponding value returned by the button
-      
-
-      // A color scale: one color for each group
-      const myColor = d3.scaleOrdinal()
-        .domain(allGroup)
-        .range(d3.schemeSet2);
-
-      // Add X axis --> it is a date format
-      const x = d3.scaleLinear()
-        .domain([0,10])
-        .range([ 0, width ]);
-      sVg.append("g")
-        .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(x));
-
-      // Add Y axis
-      const y = d3.scaleLinear()
-        .domain( [0, 20]) //d3.max(data, function(d) { return d.selectedGroup; })
-        .range([ height, 0 ]);
-      sVg.append("g")
-        .call(d3.axisLeft(y));
-
-      // Initialize line with group a
-      // Line that should be showed as default
-      const line = sVg
-        .append('g')
-        .append("path")
-          .datum(data)
-          .attr("d", d3.line()
-            .x(function(d) { return x(+d.time) })
-            .y(function(d) { return y(+d.valueA) })
-          )
-          .attr("stroke", function(d){ return myColor("valueA") })
-          .style("stroke-width", 2)
-          .style("fill", "none")
-
-      // A function that update the chart
-      function update(selectedGroup) {
-
-        // Create new data with the selection?
-        const dataFilter = data.map(function(d){return {time: d.time, value:d[selectedGroup]} })
-
-        const sumstat = d3.group(dataFilter, d => d.name); // nest function allows to group the calculation per level of a factor
-
-        //svg.selectAll("path.line").remove();
-        
-        /*for (let i=0; i < selectedGroup.length; i++) {
-          sVg
-          .append('g')
-          .append("path")
-            .datum(dataFilter)
-            .attr("d", d3.line()
-              .x(function(d) { return x(+d.time) })
-              .y(function(d) { return y(+d.value) })
-            )
-            .attr("stroke", function(d){ return myColor(selectedGroup) })
-            .style("stroke-width", 2)
-            .style("fill", "none")  
-        }*/
-
-        /*sVg.selectAll(".line")
-            .data(sumstat)
-            .datum(dataFilter)
-            //.duration(1000)
-            .join("path")
-            .attr("fill", "none")
-            .attr("d", function(d) {
-              return d3.line()
-              .x(function(d) { return x(+d.time); })
-              .y(function(d) { return y(+d.value); })
-              
-            
-            }
-            
-            )
-            .attr("stroke", function(d){ return myColor(selectedGroup) })*/
-        
-
-        // Give these new data to update line
-        line
-            .datum(dataFilter)
-            .transition()
-            .duration(1000)
-            .attr("d", d3.line()
-              .x(function(d) { return x(+d.time) })
-              .y(function(d) { return y(+d.value) })
-            )
-            .attr("stroke", function(d){ return myColor(selectedGroup) })
-      }
-
-      // When the button is changed, run the updateChart function
-      d3.select("#selectButton").on("change", function(event,d) {
-          // recover the option that has been chosen
-          const selectedOption = d3.select(this).property("value")
-          console.log(selectedOption)
-          // run the updateChart function with this selected option
-
-          update(selectedOption)
-      })
 
       })
- // Y label
- sVg.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('x', margin.left - 10)
-        .attr('y', margin.top - 10)
-        //.attr('transform', 'translate(60,' + height + ')rotate(-90)')
-        .style('font-family', 'Helvetica')
-        .style('font-size', 12)
-        .text('CO2');
-
-  // X label
-  sVg.append('text')
-        .attr('x', 350)
-        .attr('y', margin.bottom + 320)
-        //.attr('text-anchor', 'middle')
-        .style('font-family', 'Helvetica')
-        .style('font-size', 12)
-        .text('Year');
-
-        // Scale the range of the data
-
+  })
+});
 }
