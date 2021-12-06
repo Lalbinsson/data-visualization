@@ -8,11 +8,14 @@ var allYears = ["1950", "1960", "1970"]
 var allCountries = ["Sweden", "Finland", "Denmark", "China"]
 
 // initializing the FilterHandler-class with defaultValues
-var selectedCountries = []
-var selectedYear = ""
+var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname"]
+var selectedYear = 2020 //"2000" //"1990"
 var selectedEmissions = []
 var defaultFilteredData = []
 var filterHandler = new FilterHandler(defaultFilteredData, selectedEmissions, selectedCountries, selectedYear);
+
+filterHandler.updateYear(selectedYear)
+filterHandler.updateEmissions(selectedEmissions)
 
 d3.select("#year-selector")
   .selectAll()
@@ -25,6 +28,7 @@ d3.select("#year-selector")
   d3.select("#year-selector").on("change", function() {
     var newYear = d3.select(this).property("value");
     filterHandler.updateYear(newYear)
+    lineChart(filterHandler)
     console.log(filterHandler.getYear())
 })
 
@@ -55,6 +59,7 @@ d3.select("#countries-dropdown")
   //update countries in filterHandler
   //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
   filterHandler.updateCountries(selectedCountries)
+  lineChart(filterHandler)
   console.log(filterHandler.getCountries);
 })
 
@@ -84,6 +89,7 @@ d3.select("#emissions-dropdown")
   }
 
   filterHandler.updateEmissions(selectedEmissions)
+  lineChart(filterHandler)
   console.log(filterHandler.getEmissions());
 })
 
@@ -131,4 +137,5 @@ var currentYear = 2021
   */
 
 drawpWorldMap()
-lineChart()
+lineChart(filterHandler) //, selectedCountries, selectedEmissions, selectedYear)
+console.log(selectedEmissions)
