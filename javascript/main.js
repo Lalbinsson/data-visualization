@@ -9,7 +9,7 @@ var allCountries = ["Sweden", "Finland", "Denmark", "China"]
 
 // initializing the FilterHandler-class with defaultValues
 var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname"]
-var selectedYear = 2020 //"2000" //"1990"
+var selectedYear = "2020" //"2000" //"1990"
 var selectedEmissions = []
 var defaultFilteredData = []
 var filterHandler = new FilterHandler(defaultFilteredData, selectedEmissions, selectedCountries, selectedYear);

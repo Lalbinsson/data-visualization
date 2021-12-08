@@ -1,8 +1,31 @@
 export async function lineChart (filterHandler) { //, countries, emissionTypes, max_year) {
   console.log(filterHandler.getCountries())
   console.log(filterHandler.getEmissions())
-  console.log(filterHandler.getYear())
+  console.log("year:", filterHandler.getYear())
 
+
+
+let checkForLargestEmitter = function (datanest) {
+  let maxEmissions = 0
+  let largestEmitter = 0
+  let country = ""
+  let country_i = -1
+  for (var i=0; i<datanest.length; i++) {
+    if (datanest[i]["country"] !== country) {
+      console.log('old index:', country_i)
+      country_i = country_i + 1
+      console.log('updated index:', country_i)
+    }
+    country = datanest[i]["country"]
+    //console.log('largest data:', datanest[i]["co2"])
+    if (datanest[i]["co2"] > maxEmissions) {
+      maxEmissions = datanest[i]["co2"]
+      largestEmitter = country_i //datanest[i]["country"]
+      console.log('output:', largestEmitter)
+    }
+  }
+  return largestEmitter
+}
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 80, bottom: 50, left: 50},
 width = 600 - margin.left - margin.right,
@@ -12,7 +35,7 @@ height = 300 - margin.top - margin.bottom;
 var parseDate = d3.timeParse("%Y");
 
 // Set the ranges
-var x = d3.scaleTime().range([0, width]);  
+var x = d3.scaleLinear().range([0, width]);  
 var y = d3.scaleLinear().range([height, 0]);
 
 // Define the line
@@ -38,12 +61,15 @@ d3.csv("owid-co2-data.csv").then(function(data) {
 
 var countries = filterHandler.getCountries()
 var max_year = parseInt(filterHandler.getYear())
-console.log(typeof max_year)
+console.log("the year is:" + max_year + " and year is type: "+typeof max_year)
 data.forEach(function(d) {
 
-  if (parseInt(d.year) <= max_year) {
+  //if (parseInt(d.year) <= max_year) {
+    //console.log("year in int: ", parseInt(d.year))
+    //console.log("year in date: ", parseDate(d.year))
   //if (countries.includes(d.country)) { continue }
-  d.year = parseDate(d.year);
+  //console.log(parseInt(parseDate(d.year)))
+  d.year = (parseInt(d.year));
   //console.log(typeof parseInt(d.year))
   d.total_co2 = 0
   var emissionTypes = filterHandler.getEmissions()
@@ -57,7 +83,7 @@ data.forEach(function(d) {
 
   }
   }
-}
+//}
 })
 
 // Remove data for countries we're not interested in
@@ -70,6 +96,7 @@ let filtered_data = filtered_data_countries.filter(function(item) {
   return item.year < max_year
 })
 
+console.log("date extent:", d3.extent(filtered_data, function(d) { return d.year; }))
 // Scale the range of the data
 x.domain(d3.extent(filtered_data, function(d) { return d.year; }));
 y.domain([0, d3.max(filtered_data, function(d) { return d.total_co2; })]);
@@ -114,7 +141,7 @@ dataNest.forEach(function(d,i) {
 svg.append("g")
   .attr("class", "axis")
   .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x));
+  .call(d3.axisBottom(x).tickFormat(d3.format("d")));
 
 // Add the Y Axis
 svg.append("g")
@@ -139,10 +166,56 @@ svg.append('text')
   .text('Year');
 
 
+// Create dictionary for used data that can be used to floating legend
+let dataDict = new Object();
+dataNest.forEach(function(d,i) { 
+  dataDict[d.key] = {}
+  d.value.forEach(function(row, index) {
+    dataDict[d.key][row.year.toString()] = row.total_co2
+  })
+})
+
+console.log('finished dict:', dataDict)
 
 // Add mouseover
 
 var mouseG = svg.append("g").attr("class", "mouse-over-effects")
+
+var legend = mouseG.selectAll("text-box")
+.data(dataNest).enter().append('g').attr("class", "text-box")
+
+
+legend.append("rect")
+  .attr("width", 100)
+  .attr("height", 100)
+  .style("opacity", "0");
+
+legend.append("text")
+.attr("transform", "translate(10,3)")
+.style('font-size', '10')
+.style('fill', 'black')
+//.text('hejhej')
+
+/*
+mouseG.append("rect")
+.attr("class", "text-box")
+.attr("width", 100)
+.attr("height", 100)
+.style("opacity", "0");
+
+
+var textbox = mouseG.select("text-box")
+.enter()
+.append('g')
+.attr("class", "textlegend")
+
+textbox.append("text")
+.attr("transform", "translate(10,3)")
+.style('font-size', '10')
+.text('HEJHEJHEJ')
+.style('fill', 'black')
+
+console.log('textbox', textbox)*/
 
 mouseG.append("path")
   .attr("class", "mouse-line")
@@ -150,8 +223,11 @@ mouseG.append("path")
   .style("stroke-width", "1px")
   .style("opacity", "0");
 
+console.log('mouseG', mouseG)
+
 var lines = document.getElementsByClassName('line')
 
+let largestEmittingCountry = checkForLargestEmitter(filtered_data) 
 var mousePerLine = mouseG.selectAll('.mouse-per-line')
   .data(dataNest)
   .enter()
@@ -169,6 +245,7 @@ mousePerLine.append("text")
   .attr("transform", "translate(10,3)")
   .style('font-size', '10')
 
+  console.log('mouse per line:', mousePerLine)
 mouseG.append('svg:rect')
   .attr('width', width)
   .attr('height', height)
@@ -181,6 +258,8 @@ mouseG.append('svg:rect')
       .style('opacity', '0');
     d3.selectAll(".mouse-per-line text")
       .style('opacity', '0');
+    d3.selectAll(".text-box")
+      .style("opacity", "0");
   })
   .on('mouseover', function() {
     d3.select(".mouse-line")
@@ -189,6 +268,9 @@ mouseG.append('svg:rect')
       .style("opacity", "1");
     d3.selectAll(".mouse-per-line text")
       .style("opacity", "1");
+    d3.selectAll(".text-box")
+      .style("opacity", "0.75")
+      .style("fill", "white");
   })
   .on('mousemove', function() {
     var mouse = d3.mouse(this);
@@ -198,7 +280,54 @@ mouseG.append('svg:rect')
         d += " " + mouse[0] + "," + 0;
         return d;
       });
+    
+    //d3.select("")
+    d3.selectAll(".text-box")
+      .attr("transform", function() {
 
+        console.log('textbox:', this)
+        //console.log("d year;", d.value["year"])
+        var xDate = x.invert(mouse[0])
+        //var bisect = d3.bisector(function(d) { return d.year; }).right;
+        //var idx = bisect(d.value, xDate);
+
+        var beginning = 0;
+        var end = lines[largestEmittingCountry].getTotalLength();
+        var target = null;
+
+        while (true) {
+          var target = Math.floor((beginning + end) / 2);
+          var pos = lines[largestEmittingCountry].getPointAtLength(target);
+
+          if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+            break
+          }
+          if (pos.x > mouse[0])       end = target;
+          else if (pos.x < mouse[0])  beginning = target;
+          else                        break;
+        }
+        //pos.y = 94;
+        let printOutString = "";
+        for (var i=0; i<countries.length; i++) {
+          printOutString += ", " + countries[i] + ": " + dataDict[countries[i]][Math.round(xDate).toString()] + " ton/yr"
+        }
+
+        //d3.select(this).append("text").attr("text", printOutString).attr("opacity", "1")
+        /*d3.select(this).select("text")
+          .text(printOutString)
+          .style("fill", "black")
+          .attr("opacity", "1");*/
+
+        d3.select(this).select("rect")
+          .attr("opacity", "0.5");
+
+        console.log('this text:', d3.select(this).select("text"))
+
+        return "translate(" + mouse[0] + "," + pos.y + ")";
+
+      })
+    console.log(d3.select(".text-box").select("rect"))
+      let listOfYPos = []
     d3.selectAll(".mouse-per-line")
       .attr("transform", function(d, i) {
         var xDate = x.invert(mouse[0])
@@ -220,11 +349,53 @@ mouseG.append('svg:rect')
           else if (pos.x < mouse[0])  beginning = target;
           else                        break;
         }
-        //console.log(d)
         d3.select(this).select("text")
           .text(d.key + "\n " + y.invert(pos.y).toFixed(2) + " ton/yr");
+          /*.text(function() {
+            let outputString = ""
+            for (var i = 0; i<countries.length; i++) {
+              console.log("outside co2 func", d)
+              outputString += countries[i] + ": " + getCO2val(d)
+              console.log(outputString)
+            }
+          })*/
+        //let overlap = true
+        //if (listOfYPos.length === 0) {
+         // overlap = false
+        //}
 
+
+        /*let checkOverlap = function(yPos, otherYpos) {
+          for (var i=0; i<otherYpos.length; i++) {
+            
+            if (Math.abs(yPos - otherYpos[i]) < 20) {
+              //console.log(Math.abs(yPos - otherYpos[i]))
+              return true
+            }
+          }
+          return false
+        }
+        var newYPos = pos.y
+        let maxIterations = 100
+        let j = 0
+        while (overlap && j < maxIterations) {
+          j += 1
+          for (var i = 0; i < listOfYPos.length; i++) {
+            if ((Math.abs(listOfYPos[i] - newYPos) < 0.5) && listOfYPos[i]<newYPos) {
+              newYPos += 15
+              //console.log("moved label up")
+            }
+            else if ((Math.abs(listOfYPos[i] - newYPos) < 0.5) && listOfYPos[i]>newYPos) {
+              newYPos -= 15
+              //console.log("moved label down")
+            } 
+          }
+          overlap = checkOverlap(newYPos, listOfYPos)
+        }
+        
+        listOfYPos.push(newYPos)*/
         return "translate(" + mouse[0] + "," + pos.y + ")";
+        //return "translate(" + mouse[0] + "," + newYPos + ")";
 
 
       })
