@@ -39,96 +39,113 @@
    // getEmission()
   } */
 
-//import { lineChart } from "./lineChart";
-import { lineChart } from './lineChart.js';
-
-
 class FilterHandler {
-  filterHandler(currentFilteredData, currentEmissions, currentCountries, currentYear){
+  filterHandler (
+    currentFilteredData,
+    currentEmissions,
+    currentCountries,
+    currentYear
+  ) {
     this.currentFilteredData = currentFilteredData
     this.currentEmissions = currentEmissions
     this.currentCountries = currentCountries
     this.currentYear = currentYear
   }
 
-  constructor(currentFilteredData, currentEmissions, currentCountries, currentYear){
-    this.filterHandler(currentFilteredData, currentEmissions, currentCountries, currentYear);
-      console.log(currentFilteredData, currentEmissions, currentCountries, currentYear);
+  constructor (
+    currentFilteredData,
+    currentEmissions,
+    currentCountries,
+    currentYear
+  ) {
+    this.filterHandler(
+      currentFilteredData,
+      currentEmissions,
+      currentCountries,
+      currentYear
+    )
+    console.log(
+      currentFilteredData,
+      currentEmissions,
+      currentCountries,
+      currentYear
+    )
   }
 
-
   // funkar inte som den ska än.
-  filterDataSetOnCurrentFilters(){
+  filterDataSetOnCurrentFilters () {
     this.filterYear()
     //denna funkar inte nu, får promise
-      /*  var dat = d3.csv("owid-co2-data.csv").then(function(csv) {
+    /*  var dat = d3.csv("owid-co2-data.csv").then(function(csv) {
           csv = csv.filter(function(row) {
               return row['year'] == this.currentYear //&& row[this.currentEmissions] != ""
           });
           console.log(csv)
           return csv
           }); */
-      this.updateCharts()
+    this.updateCharts()
   }
 
-  updateEmissions(newEmissions){
+  updateEmissions (newEmissions) {
     this.currentEmissions = newEmissions
     this.updateCharts()
   }
 
-  getEmissions(){
+  getEmissions () {
     return this.currentEmissions
   }
 
-  updateCountries(newCountries){
+  updateCountries (newCountries) {
     this.currentCountries = newCountries
     this.updateCharts()
   }
 
-  getCountries(){
+  getCountries () {
     return this.currentCountries
   }
 
-  updateYear(newYear){
-      this.currentYear = newYear
-      this.updateCharts()
+  updateYear (newYear) {
+    this.currentYear = newYear
+    this.updateCharts()
   }
 
-  getYear(){
+  getYear () {
     return this.currentYear
   }
 
   //update the charts that use global attributes, this only updates the printed values in the html right now.
-  updateCharts(){
+  updateCharts () {
     if (!(this.currentEmissions == undefined)) {
-      document.getElementById("cEmissions").innerHTML = this.currentEmissions
+      document.getElementById('cEmissions').innerHTML = this.currentEmissions
     } else {
-      console.log("undef?")
+      console.log('undef?')
     }
     if (!(this.currentYear == undefined)) {
-    document.getElementById("cYear").innerHTML = this.currentYear
+      document.getElementById('cYear').innerHTML = this.currentYear
     }
     if (!(this.currentCountries == undefined)) {
-    document.getElementById("cCountries").innerHTML = this.currentCountries
+      document.getElementById('cCountries').innerHTML = this.currentCountries
     }
     //console.log(this.filterHandler.getCountries())
     //lineChart(this.filterHandler, this.filterHandler.getCountries(), this.filterHandler.getEmissions(), this.filterHandler.getYear())
   }
 
-
   //den här funkar inte som den ska än.
-  filterYear() {
-    var dat = d3.csv("owid-co2-data.csv").then(function(csv, currentYear) {
-     // console.log(currentYear) //denna blir undefined, kanske pga nested func?
-      csv = csv.filter(function(row) {
-          return row['year'] == currentYear //går att filtrera på hårdkodat värde
-      });
-    //  console.log(csv)
+  filterYear () {
+    var dat = d3.csv('owid-co2-data.csv').then(function (csv, currentYear) {
+      // console.log(currentYear) //denna blir undefined, kanske pga nested func?
+      csv = csv.filter(function (row) {
+        return row['year'] == currentYear //går att filtrera på hårdkodat värde
+      })
+      //  console.log(csv)
       return csv
-      });
+    })
     return dat
   }
-
 }
 
+<<<<<<< HEAD
 export { FilterHandler };
+=======
+export { FilterHandler }
+>>>>>>> main

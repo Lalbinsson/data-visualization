@@ -1,14 +1,16 @@
-
-  <script src="https://d3js.org/d3.v7.js" charset="utf-8"></script>
-  <script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
-  <script src="https://d3js.org/topojson.v2.min.js"></script>
-  <script src="https://unpkg.com/d3-simple-slider"></script>
-  <script type="module" src="javascript/filterHandler.js"></script>
-  <script type="module" src="javascript/lineChart.js"></script>
-  <script type="module" src="javascript/main.js"></script>
-  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/d3.v7.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3.v5.js" charset="utf-8"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
+<script type="module" src="javascript/filterHandler.js"></script>
+<script type="module" src="javascript/lineChart.js"></script>
+<script type="module" src="javascript/main.js"></script>
+<script type="module" src="javascript/scatterPlot.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <!doctype html>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"
+  integrity="sha512-5mCB0Kvv97yTzqo0174qxPjMisck/WlK51+mw/RV7UfYbtHI8LuLR82BzZuxHUKSfbh75u9cZHgUcqrZDaBJuA=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <html>
 
 <head>
@@ -18,96 +20,104 @@
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
   <link rel="stylesheet" href="stylesheets/worldMap.css">
   <link rel="stylesheet" href="stylesheets/lineChart.css">
+  <link rel="stylesheet" href="stylesheets/html.css">
 </head>
 
-  <header>
-    <h1>
-      CO2-Emissions
-    </h1>
-    <p>
-      RQ1: How are the distributions of CO2-emissions inter- and intra- countries, and does geographical location have any correlation to CO2
-    </p>
-    <p>
-      RQ2: How different types of CO2-emissions are correlated to global emissions and GDP of countries?
-    </p>
-    <p>
-      RQ3: Are there any geographic correlations between where natural disasters occur and where high CO2 is emitted?
-    </p>
-  </header>
-
-  <body>
-
-  <nav class="navbar navbar-light bg-light">
-    <div class="btn-group">
-      <div>
-            <select name="Dataset" id="year-selector" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle">
-            <!-- läsa in alla år från datasetet som options -->
-              <option value=1950>1950</option>
-              <option value=1960>1960</option>
-            </select>
-      </div>
-        <div>
-      <span id="emissions-selector" type="button" class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Choose Emission Types: </span>
-        <ul id="emissions-dropdown" class="emissions form-control btn btn-secondary btn-lg" style="visibility:hidden;list-style-type:none">
-        </ul>
-   </div>
-    <div>
-      <span id="countries-selector" type="button" class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Choose Countries: </span>
-        <ul id="countries-dropdown" class="countries form-control btn btn-secondary btn-lg" style="visibility:hidden;list-style-type:none">
-        </ul>
-   </div>
-
-      </div>
-    </div>
-  </nav>
-
-<div>
-<!-- outputs to make sure the updated value is updated globally -->
-    <p> Current Year: </p>  <p id="cYear"></p>
-    <p> Current Emissions</p> <p id="cEmissions"></p>
-     <p> Current Countries: </p> <p id="cCountries"></p>
-</div>
+<header>
+  <div class="row"></div>
+  <h1>
+    CO2-Emissions
+  </h1>
 
   <div>
-    <div class="row">
-      <div id="wrapper" class="col-7">
-        <h3 id="wm-title" class="col-6">
-          World Map
-        </h3>
-      </div>
-      <div id="slider"></div>
-    </div>
+    <!-- outputs to make sure the updated value is updated globally -->
+    <p> Current Year: </p>
+    <p id="cYear"></p>
+    <p> Current Emissions</p>
+    <p id="cEmissions"></p>
+    <p> Current Countries: </p>
+    <p id="cCountries"></p>
+  </div>
 
-    <div id="tooltip" class="tooltip">
-      <div class="tooltip-country" id="country"></div>
-      <div class="tooltip-value">
-        <span id="value"></span> Global share of CO2-emission
-      </div>
-    </div>
 
-    <h1>Other Chart</h1>
-    <div id="Area"></div>
-    <select id="selectButton" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle">      </select>
-  
-    <form>
-        <div id="checkboxes">   <!-- Borde kanske döpa om den här så vi inte råkar ändra fel grej sen-->
-          <label for="one">
-            <input class="testCheckbox" type="checkbox" id="one" value="1" onclick="onClickHandler()"/>First checkbox</label>
-          <label for="two">
-            <input class="testCheckbox" type="checkbox" id="two" value="2" onclick="onClickHandler()"/>Second checkbox</label>
-          <label for="three">
-            <input class="testCheckbox" type="checkbox" id="three" value="3" onclick="onClickHandler()"/>Third checkbox</label>
+</header>
+<nav class="navbar navbar-dark bg-dark" style="height: 70px;">
+  <div id="global_settings" class="btn-group">
+    <div>
+      <select name="Dataset" id="year-selector" type="button"
+        class="form-control btn btn-secondary btn-lg dropdown-toggle">
+        <!-- läsa in alla år från datasetet som options -->
+        <option value=1950>1950</option>
+        <option value=1960>1960</option>
+      </select>
+    </div>
+    <div id="choose_emission" style="height: 50px;">
+      <span id="emissions-selector" type="button"
+        class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Choose Emission Types:
+      </span>
+      <ul id="emissions-dropdown" class="emissions form-control btn btn-secondary btn-lg"
+        style="visibility:hidden;list-style-type:none">
+      </ul>
+    </div>
+    <div id="choose_country" style="height: 50px;">
+      <span id="countries-selector" type="button"
+        class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Choose Countries:
+      </span>
+      <ul id="countries-dropdown" class="countries form-control btn btn-secondary btn-lg">
+      </ul>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<div class="row">
+  <div id="slider"></div>
+</div>
+
+<div style="padding: 10px;">
+  <div class="row">
+    <div id="wrapper" class="col-sm-6">
+      <h3 id="wm-title">
+        World Map
+      </h3>
+      <div id="tooltip" class="tooltip">
+        <div class="tooltip-country" id="country"></div>
+        <div class="tooltip-value">
+          <span id="value"></span> Global share of CO2-emission
         </div>
       </div>
-    </form>
-  
-  
-  
+    </div>
 
-  <!-- JavaScript Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-    crossorigin="anonymous"></script>
+    <div id="Area" class="col-6">
+      <h1>Other Chart</h1>
+      <select id="selectButton" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle"
+        style="width: 100px;"> </select>
+
+      <form>
+        <div id="checkboxes">
+          <!-- Borde kanske döpa om den här så vi inte råkar ändra fel grej sen-->
+          <label for="one">
+            <input class="testCheckbox" type="checkbox" id="one" value="1" onclick="onClickHandler()" />First
+            checkbox</label>
+          <label for="two">
+            <input class="testCheckbox" type="checkbox" id="two" value="2" onclick="onClickHandler()" />Second
+            checkbox</label>
+          <label for="three">
+            <input class="testCheckbox" type="checkbox" id="three" value="3" onclick="onClickHandler()" />Third
+            checkbox</label>
+        </div>
+    </div>
+    </form>
+  </div>
+
+  <div class="col-6">
+    <div id="scatterPlot">
+    </div>
+  </div>
+</div>
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 
 </html>

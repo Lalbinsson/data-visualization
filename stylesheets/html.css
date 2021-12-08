@@ -1,0 +1,48 @@
+#countries-dropdown {
+  visibility: hidden;
+  list-style-type: none;
+  height: 300px;
+  width: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+#dropdown_elements {
+  width: 80px;
+  display: inline-block;
+  position: relative;
+  margin: 3px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+#emissions-selector {
+  height: 50px;
+}
+
+#choose_country {
+  width: 400px;
+}
+
+#emissions-dropdown {
+  visibility: hidden;
+  list-style-type: none;
+  height: wrap;
+  width: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+#choose_emission {
+  width: 400px;
+}
+
+input {
+  width: 14px;
+  height: 19px;
+  margin-top: 3px;
+}
+
+.global_settings > * {
+  margin-left: 30px 0;
+}
