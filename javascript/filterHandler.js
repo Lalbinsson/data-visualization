@@ -144,8 +144,4 @@ class FilterHandler {
   }
 }
 
-<<<<<<< HEAD
-export { FilterHandler };
-=======
 export { FilterHandler }
->>>>>>> main

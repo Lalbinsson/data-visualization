@@ -308,9 +308,9 @@ mouseG.append('svg:rect')
         }
         //pos.y = 94;
         let printOutString = "";
-        for (var i=0; i<countries.length; i++) {
+        /*for (var i=0; i<countries.length; i++) {
           printOutString += ", " + countries[i] + ": " + dataDict[countries[i]][Math.round(xDate).toString()] + " ton/yr"
-        }
+        }*/
 
         //d3.select(this).append("text").attr("text", printOutString).attr("opacity", "1")
         /*d3.select(this).select("text")

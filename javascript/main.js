@@ -147,7 +147,7 @@ function updateDropdown () {
   filterHandler.updateEmissions(selectedEmissions)
   lineChart(filterHandler)
   console.log(filterHandler.getEmissions());
-})
+}
 
 
 //gör dropdown-listorna hidden/visible på click, fixa så att de inte tar upp hela ytan när de är hidden.
