@@ -51,69 +51,69 @@
   </div>
 </nav>
 
+<div class="container-fluid">
+  <div class="row">
+    <div id="slider"></div>
+    <small id="wm-title" class="col">
+      World Map
+    </small>
+    <div class="col">
+      <!-- outputs to make sure the updated value is updated globally -->
+      <small> Current Year: </small>
+      <br>
+      <small id="cYear"></small>
+      <br>
+      <small> Current Emissions</small>
+      <br>
+      <small id="cEmissions"></small>
+      <br>
+      <small> Current Countries: </small>
+      <br>
+      <small id="cCountries"></small>
+    </div>
 
-<div class="row">
-  <div id="slider"></div>
-  <small id="wm-title" class="col">
-    World Map
-  </small>
-  <div class="col">
-    <!-- outputs to make sure the updated value is updated globally -->
-    <small> Current Year: </small>
-    <br>
-    <small id="cYear"></small>
-    <br>
-    <small> Current Emissions</small>
-    <br>
-    <small id="cEmissions"></small>
-    <br>
-    <small> Current Countries: </small>
-    <br>
-    <small id="cCountries"></small>
   </div>
 
-</div>
+  <div style="padding: 10px;">
+    <div class="row">
+      <div id="wrapper" class="col-sm-7">
+        <div id="tooltip" class="tooltip">
+          <div class="tooltip-country" id="country"></div>
+          <div class="tooltip-value">
+            <span id="value"></span>
+          </div>
+        </div>
+        <div id="options">
+          <div>
+            <input type="radio" id="" name="x">
+            <label for="">Huey</label>
+          </div>
+          <div>
+            <input type="radio" id="" name="x">
+            <label for="">Huey</label>
+          </div>
+          <div>
+            <input type="radio" id="" name="x">
+            <label for="">Huey</label>
+          </div>
+        </div>
 
-<div style="padding: 10px;">
-  <div class="row">
-    <div id="wrapper" class="col-sm-7">
-      <div id="tooltip" class="tooltip">
-        <div class="tooltip-country" id="country"></div>
-        <div class="tooltip-value">
-          <span id="value"></span>
+      </div>
+
+      <div id="linechart" class="col-sm-5"></div>
+      <div class="col-6">
+        <div id="scatterPlot">
         </div>
       </div>
     </div>
 
-    <div id="Area" class="col-sm-5">
-      <select id="selectButton" type="button" class="form-control btn btn-secondary btn-lg dropdown-toggle"
-        style="width: 100px;"> </select>
-
-      <form>
-        <div id="checkboxes">
-          <!-- Borde kanske döpa om den här så vi inte råkar ändra fel grej sen-->
-          <label for="one">
-            <input class="testCheckbox" type="checkbox" id="one" value="1" onclick="onClickHandler()" />First
-            checkbox</label>
-          <label for="two">
-            <input class="testCheckbox" type="checkbox" id="two" value="2" onclick="onClickHandler()" />Second
-            checkbox</label>
-          <label for="three">
-            <input class="testCheckbox" type="checkbox" id="three" value="3" onclick="onClickHandler()" />Third
-            checkbox</label>
-        </div>
-    </div>
-    </form>
   </div>
 
-  <div class="col-6">
-    <div id="scatterPlot">
-    </div>
-  </div>
-</div>
-<!-- JavaScript Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-</body>
+
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  </body>
 
 </html>

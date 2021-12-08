@@ -49,6 +49,7 @@ export async function drawpWorldMap (
   promises.then(ready)
 
   const tooltip = d3.select('#tooltip')
+  const options = d3.select('#options')
 
   function filterCO2 (co2_dataset, metricDataByCountry) {
     co2_dataset.forEach(d => {
@@ -149,6 +150,8 @@ export async function drawpWorldMap (
     //mapNaturalDisasters(disasterlocations, disaster_coordinates)
 
     console.log(disaster_coordinates)
+
+    options.style('transform', `translate(300,360)`)
 
     for (var x in metricDataByCountry) {
       sorted_metricValues.push([metricDataByCountry[x], x])
@@ -552,11 +555,28 @@ export async function drawpWorldMap (
       .shapeWidth(40)
       .shapePadding(10)
       .title('Quantiles')
-      .cells(5)
+      .cells(6)
       .labels(['0-20', '20-40', '40-60', '60-80', '80-100'])
       .orient('horizontal')
       .scale(colorScaleLegend)
 
     svg.select('.legendLog').call(legendLog)
+
+    /*
+    svg
+      .append('g')
+      .attr('class', 'options')
+      .attr('id', 'ID_options')
+      .attr('transform', 'translate(30,230)')
+
+    var options = d3
+      .legendColor()
+      .shapeWidth(40)
+      .shapePadding(10)
+      .cells(3)
+      .orient('vertical')
+
+    svg.select('.options').call(options)
+    */
   }
 }

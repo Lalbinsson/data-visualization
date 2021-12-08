@@ -52,7 +52,7 @@ export async function lineChart (filterHandler, promises) {
 
   // Adds the svg canvas
   var svg = d3
-    .select('body')
+    .select('#linechart')
     .append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
