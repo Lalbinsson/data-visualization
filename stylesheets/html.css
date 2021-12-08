@@ -25,6 +25,7 @@
 }
 
 #emissions-dropdown {
+  margin-left: 10px;
   visibility: hidden;
   list-style-type: none;
   height: wrap;
@@ -43,6 +44,8 @@ input {
   margin-top: 3px;
 }
 
-.global_settings > * {
-  margin-left: 30px 0;
+#slider {
+  width: 700px;
+  display: inline-block;
+  background-color: white;
 }

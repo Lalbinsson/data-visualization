@@ -21,8 +21,9 @@ const countryIdAccessor = d => d.properties['ADM0_A3_IS']
 var promises = [
   d3.json('../world-geojson.json'),
   d3.csv('../owid-co2-data.csv'),
-  //d3.csv('../disasterlocations.csv'),
-  d3.json('../naturalDisastersByYear.json')
+  //d3.csv('../disasterlocations.csv')
+  d3.json('../naturalDisastersByYear.json'),
+  d3.json('../naturalDisasters_coordinates.json')
 ]
 
 var promises = Promise.all(promises)
@@ -43,7 +44,6 @@ var filterHandler = new FilterHandler(
 
 //just to have an initial value to avoid undefined
 filterHandler.updateYear(selectedYear)
-filterHandler.updateEmissions(selectedEmissions)
 
 d3.select('#year-selector')
   .selectAll()
@@ -69,6 +69,7 @@ promises.then(function ([worldMap]) {
       allCountries.push(countryIdAccessor(worldMap.features[i]))
   }
   allCountries.sort()
+  addSelectedEmission(selectedEmissions)
 
   d3.select('#countries-dropdown')
     .selectAll()
@@ -118,6 +119,9 @@ d3.select('#emissions-dropdown')
   .append('button')
   .attr('class', 'btn btn-success')
   .attr('id', 'dropdown_elements')
+  .on('click', function (d) {
+    addSelectedEmission(d)
+  })
   .text(function (d) {
     return d
   }) // text showed in the menu
@@ -188,6 +192,19 @@ var currentYear = 2021
   }
   */
 
+function addSelectedEmission (emission) {
+  var index = selectedEmissions.indexOf(emission)
+  var element = document.getElementById(emission)
+  if (index !== -1) {
+    selectedEmissions.splice(index, 1)
+    element.checked = false
+  } else {
+    selectedEmissions.push(emission)
+    element.checked = true
+  }
+  filterHandler.updateEmissions(selectedEmissions)
+}
+
 function addSelectedCountry (country) {
   var index = selectedCountries.indexOf(country)
   var element = document.getElementById(country)
@@ -201,6 +218,6 @@ function addSelectedCountry (country) {
   filterHandler.updateCountries(selectedCountries)
 }
 
-drawpWorldMap(addSelectedCountry, promises, filterHandler)
+drawpWorldMap(addSelectedCountry, addSelectedEmission, promises, filterHandler)
 lineChart()
-drawScatterPlot(promises, filterHandler)
+//drawScatterPlot(promises, filterHandler)
