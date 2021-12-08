@@ -1,5 +1,6 @@
 export async function drawpWorldMap (
   addSelectedCountry,
+  addSelectedEmission,
   promises,
   filterHandler
 ) {
@@ -23,7 +24,7 @@ export async function drawpWorldMap (
   var emissionType = filterHandler.getEmissions()
   var year = filterHandler.getYear()
 
-  const width = 900
+  const width = window.innerWidth * 0.6
   const height = 500
 
   const projection2 = d3
@@ -43,16 +44,34 @@ export async function drawpWorldMap (
 
   const bounds = wrapper
     .append('g')
-    .style('transform', `translate(${10}px, ${10}px)`)
+    .style('transform', `translate(${0}px, ${0}px)`)
 
   promises.then(ready)
 
   const tooltip = d3.select('#tooltip')
 
-  function filter (co2_dataset, metricDataByCountry) {
+  function filterCO2 (co2_dataset, metricDataByCountry) {
     co2_dataset.forEach(d => {
+      var result = 0
       if (d['iso_code'] == 'OWID_WRL' || d['year'] != year) return
-      metricDataByCountry[d['iso_code']] = +d[emissionType]
+      emissionType.forEach(element => {
+        if (!isNaN(parseInt(d[element]))) {
+          result = result + parseInt(d[element])
+          metricDataByCountry[d['iso_code']] = +result
+        }
+      })
+    })
+  }
+
+  function updateYearForCircles (
+    naturalDisaster_coordinates,
+    disaster_coordinates
+  ) {
+    var id = 0
+
+    naturalDisaster_coordinates.forEach(d => {
+      if (d.year >= year) return
+      disaster_coordinates.push([d.lon, d.lat])
     })
   }
 
@@ -106,8 +125,30 @@ export async function drawpWorldMap (
     quantile_100 = d3.quantile(metricValues, 1)
   }
 
-  function ready ([worldMap, co2_dataset]) {
-    filter(co2_dataset, metricDataByCountry)
+  var disaster_coordinates = []
+
+  function mapNaturalDisasters (disasterlocations, disaster_coordinates) {
+    disasterlocations.forEach(n => {
+      disaster_coordinates.push({
+        country: n.country,
+        year: n.year,
+        lat: n.latitude,
+        lon: n.longitude
+      })
+    })
+
+    var jsonData = JSON.stringify(disaster_coordinates)
+    console.log(jsonData)
+  }
+
+  function ready ([worldMap, co2_dataset, x, naturalDisaster_coordinates]) {
+    filterCO2(co2_dataset, metricDataByCountry)
+    updateYearForCircles(naturalDisaster_coordinates, disaster_coordinates)
+
+    //console.log(disasterlocations)
+    //mapNaturalDisasters(disasterlocations, disaster_coordinates)
+
+    console.log(disaster_coordinates)
 
     for (var x in metricDataByCountry) {
       sorted_metricValues.push([metricDataByCountry[x], x])
@@ -189,7 +230,7 @@ export async function drawpWorldMap (
 
       const metricValue = metricDataByCountry[countryIdAccessor(datum)]
       tooltip.select('#country').text(countryNameAccessor(datum))
-      tooltip.select('#value').text(`${d3.format(',.2f')(metricValue || 0)}%`)
+      tooltip.select('#value').text(`${d3.format(',.2f')(metricValue || 0)}`)
 
       const [centerX, centerY] = pathGenerator.centroid(datum)
 
@@ -232,16 +273,34 @@ export async function drawpWorldMap (
         2020
       ])
       .min(1902)
-      .max(2021)
+      .max(2020)
       .step(1)
       .width(530)
       .displayValue(false)
       .on('onchange', val => {
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
+
+        d3.selectAll('circle').remove()
+        disaster_coordinates = []
+        updateYearForCircles(naturalDisaster_coordinates, disaster_coordinates)
+        svg
+          .selectAll('circle')
+          .data(disaster_coordinates)
+          .enter()
+          .append('circle')
+          .attr('cx', function (d) {
+            return projection2(d)[0]
+          })
+          .attr('cy', function (d) {
+            return projection2(d)[1]
+          })
+          .attr('r', '0.5px')
+          .attr('fill', 'red')
+
         d3.select('#yearTitle').text(year)
         metricDataByCountry = {}
-        filter(co2_dataset, metricDataByCountry)
+        filterCO2(co2_dataset, metricDataByCountry)
         sorted_metricValues = []
         for (var x in metricDataByCountry) {
           sorted_metricValues.push([metricDataByCountry[x], x])
@@ -259,11 +318,11 @@ export async function drawpWorldMap (
         )
         bounds.selectAll('.country').attr('fill', d => {
           const metricValue = metricDataByCountry[countryIdAccessor(d)]
-          if (typeof metricValue == 'undefined') return '#e2e6e9'
+          if (typeof metricValue == 'undefined') return '#6D6D6D'
           return colorScale(metricValue)
         })
 
-        filter(co2_dataset, metricDataByCountry)
+        filterCO2(co2_dataset, metricDataByCountry)
         metricValues = Object.values(metricDataByCountry)
         metricValueExtent = d3.extent(metricValues)
 
@@ -273,7 +332,7 @@ export async function drawpWorldMap (
           .shapePadding(10)
           .title('Quantiles')
           .cells(10)
-          .labels(['0%', '25%', '50%', '75%', '100%'])
+          .labels(['0-20', '20-40', '40-60', '60-80', '80-100'])
           .orient('horizontal')
           .scale(colorScaleLegend)
 
@@ -286,12 +345,28 @@ export async function drawpWorldMap (
     d3.select('#slider')
       .append('svg')
       .attr('width', 600)
-      .attr('height', 100)
+      .attr('height', 80)
+      .style('background-color', 'white')
       .append('g')
       .attr('transform', 'translate(30,40)')
       .call(slider)
 
     var svg = d3.select('#worldMap')
+
+    svg
+      .selectAll('circle')
+      .data(disaster_coordinates)
+      .enter()
+      .append('circle')
+      .attr('cx', function (d) {
+        return projection2(d)[0]
+      })
+      .attr('cy', function (d) {
+        return projection2(d)[1]
+      })
+      .attr('r', '0.5px')
+      .attr('fill', 'red')
+
     svg
       .append('g')
       .attr('class', 'legendLog')
@@ -478,7 +553,7 @@ export async function drawpWorldMap (
       .shapePadding(10)
       .title('Quantiles')
       .cells(5)
-      .labels(['', '', '', '', ''])
+      .labels(['0-20', '20-40', '40-60', '60-80', '80-100'])
       .orient('horizontal')
       .scale(colorScaleLegend)
 
