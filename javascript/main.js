@@ -5,6 +5,7 @@ import { drawScatterPlot } from './scatterPlot.js'
 
 //TODO: read these from the data set
 var allEmissions = [
+  'co2',
   'coal_co2',
   'gas_co2',
   'oil_co2',
@@ -12,7 +13,7 @@ var allEmissions = [
   'flaring_co2',
   'other_industry_co2'
 ]
-var allYears = ['1950', '1960', '1970']
+var allYears = ['1960', '1970', '1990']
 var allCountries = []
 
 const countryNameAccessor = d => d.properties['NAME']
@@ -28,9 +29,9 @@ var promises = [
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedEmissions = ['oil_co2']
-var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname"]
-var selectedYear = 2020 //"2000" //"1990"
+var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
+var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname", "China", "Africa", "Finland", "Germany", "UK", "Denmark", "Japan", "Australia"]
+var selectedYear = 1990 //"2000" //"1990"
 var defaultFilteredData = []
 var filterHandler = new FilterHandler(
   defaultFilteredData,
@@ -59,6 +60,7 @@ d3.select('#year-selector')
     var newYear = d3.select(this).property("value");
     filterHandler.updateYear(newYear)
    // lineChart(filterHandler)
+    drawScatterPlot(promises, filterHandler)
     console.log(filterHandler.getYear())
 })
 
@@ -106,6 +108,7 @@ promises.then(function ([worldMap]) {
       //update countries in filterHandler
       //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
       filterHandler.updateCountries(selectedCountries)
+      drawScatterPlot(promises, filterHandler)
       console.log(filterHandler.getCountries)
     })
 })
@@ -144,6 +147,7 @@ function updateDropdown () {
   }
 
   filterHandler.updateEmissions(selectedEmissions)
+  drawScatterPlot(promises, filterHandler)
   //lineChart(filterHandler)
   console.log(filterHandler.getEmissions());
 }
