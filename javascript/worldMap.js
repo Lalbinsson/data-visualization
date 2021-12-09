@@ -151,8 +151,6 @@ export async function drawpWorldMap (
 
     console.log(disaster_coordinates)
 
-    options.style('transform', `translate(300,360)`)
-
     for (var x in metricDataByCountry) {
       sorted_metricValues.push([metricDataByCountry[x], x])
     }
@@ -280,7 +278,7 @@ export async function drawpWorldMap (
       .step(1)
       .width(530)
       .displayValue(false)
-      .on('onchange', val => {
+      .on('end', val => {
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
 
@@ -288,6 +286,8 @@ export async function drawpWorldMap (
         disaster_coordinates = []
         updateYearForCircles(naturalDisaster_coordinates, disaster_coordinates)
         svg
+          .append('g')
+          .attr('id', 'canvas')
           .selectAll('circle')
           .data(disaster_coordinates)
           .enter()
@@ -300,6 +300,10 @@ export async function drawpWorldMap (
           })
           .attr('r', '0.5px')
           .attr('fill', 'red')
+      })
+      .on('onchange', val => {
+        filterHandler.updateYear(val)
+        year = filterHandler.getYear()
 
         d3.select('#yearTitle').text(year)
         metricDataByCountry = {}
@@ -357,6 +361,8 @@ export async function drawpWorldMap (
     var svg = d3.select('#worldMap')
 
     svg
+      .append('g')
+      .attr('id', 'canvas')
       .selectAll('circle')
       .data(disaster_coordinates)
       .enter()
@@ -561,22 +567,30 @@ export async function drawpWorldMap (
       .scale(colorScaleLegend)
 
     svg.select('.legendLog').call(legendLog)
-
     /*
     svg
       .append('g')
       .attr('class', 'options')
       .attr('id', 'ID_options')
-      .attr('transform', 'translate(30,230)')
+      .attr('transform', 'translate(30,330)')
 
     var options = d3
       .legendColor()
       .shapeWidth(40)
       .shapePadding(10)
-      .cells(3)
+      .cells()
       .orient('vertical')
 
     svg.select('.options').call(options)
     */
+    var x = document.getElementById('toggleNaturalDisasters')
+    d3.select('#toggleNaturalDisasters').on('click', val => {
+      if (x.checked == true) {
+        d3.selectAll('#canvas').attr('visibility', '')
+      } else {
+        d3.selectAll('#canvas').attr('visibility', 'hidden')
+      }
+      console.log('CLICKED')
+    })
   }
 }
