@@ -1,10 +1,19 @@
-
-//TODO: uppdateras på nya globala värden, dvs när year, emission types och countries ändras?
-export async function drawScatterPlot (promises, filterHandler) {
+/*TODO: fixa så att den ändrar på förkortning eller namn?
+- blir ny timeline varje gång man filtrerar?
+- Tror kajsas skala inte är i ton utan miljoner ton?
+- Där man hoverar är inte där rutan kommer upp i kartan
+*/
+export function drawScatterPlot (promises, filterHandler) {
     promises.then(function([world, co2, mappedNaturalDisasterData]) {
       var year = filterHandler.getYear()
       var emissionTypes = filterHandler.getEmissions()
       var countries =  filterHandler.getCountries()
+
+  /*    console.log("Scatterplot")
+     console.log(filterHandler.getCountries())
+     console.log(filterHandler.getEmissions())
+     console.log('year:', filterHandler.getYear()) */
+
       //var mappedNaturalDisasterCountryAndYear = []
       //mapNaturalDisasters(co2, naturalDisasterData, mappedNaturalDisasterCountryAndYear)
 
@@ -182,30 +191,34 @@ export async function drawScatterPlot (promises, filterHandler) {
    //   console.log("tot: ", tot)
       return tot
       }
-      
 
-      //används för att filtrera ut ett nytt json-dataset, tar sjukt lång tid, använd den sparade filen istället.
-      function mapNaturalDisasters(co2_data, naturalDisaster_data, mappedNaturalDisasterCountryAndYear) {
-        co2_data.forEach(d => {
-          var nbr = 0
-          var c = d.country
-          var y = d.year
 
-          naturalDisaster_data.forEach(n => {
-            if (c == n.country && y > n.year){
-              nbr++
-            }
-          })
+//används för att filtrera ut ett nytt json-dataset, tar sjukt lång tid, använd den sparade filen istället.
+function mapNaturalDisasters (
+  co2_data,
+  naturalDisaster_data,
+  mappedNaturalDisasterCountryAndYear
+) {
+  co2_data.forEach(d => {
+    var nbr = 0
+    var c = d.country
+    var y = d.year
 
-        if (nbr>0){
-          mappedNaturalDisasterCountryAndYear.push({
-            'country': c,
-            'year': y,
-            'nbr': nbr
-          })
-        }
+    naturalDisaster_data.forEach(n => {
+      if (c == n.country && y > n.year) {
+        nbr++
+      }
+    })
+
+    if (nbr > 0) {
+      mappedNaturalDisasterCountryAndYear.push({
+        country: c,
+        year: y,
+        nbr: nbr
       })
+    }
+  })
 
-      var jsonData = JSON.stringify(mappedNaturalDisasterCountryAndYear);
-      console.log(jsonData)
+  var jsonData = JSON.stringify(mappedNaturalDisasterCountryAndYear)
+  console.log(jsonData)
 }
