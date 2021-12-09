@@ -280,7 +280,7 @@ export async function drawpWorldMap (
       .step(1)
       .width(530)
       .displayValue(false)
-      .on('onchange', val => {
+      .on('end', val => {
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
 
@@ -300,6 +300,10 @@ export async function drawpWorldMap (
           })
           .attr('r', '0.5px')
           .attr('fill', 'red')
+      })
+      .on('onchange', val => {
+        filterHandler.updateYear(val)
+        year = filterHandler.getYear()
 
         d3.select('#yearTitle').text(year)
         metricDataByCountry = {}
