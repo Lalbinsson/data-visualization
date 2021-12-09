@@ -1,6 +1,6 @@
 import { FilterHandler } from './filterHandler.js'
 import { lineChart } from './lineChart.js'
-import { drawpWorldMap } from './worldMap.js'
+import { drawWorldMap } from './worldMap.js'
 import { drawScatterPlot } from './scatterPlot.js'
 
 //TODO: read these from the data set
@@ -62,7 +62,27 @@ d3.select('#year-selector').on('change', function () {
   console.log(filterHandler.getYear())
 })
 
-promises.then(function ([worldMap]) {
+var disaster_coordinates = []
+function updateYearForCircles (
+  naturalDisaster_coordinates,
+  disaster_coordinates
+) {
+  var id = 0
+
+  naturalDisaster_coordinates.forEach(d => {
+    if (d.year >= filterHandler.getYear()) return
+    disaster_coordinates.push([d.lon, d.lat])
+  })
+}
+
+promises.then(function ([
+  worldMap,
+  co2_dataset,
+  x,
+  naturalDisaster_coordinates
+]) {
+  updateYearForCircles(naturalDisaster_coordinates, disaster_coordinates)
+
   for (let i = 0; i < worldMap.features.length; i++) {
     if (isNaN(countryIdAccessor(worldMap.features[i])))
       allCountries.push(countryIdAccessor(worldMap.features[i]))
@@ -123,6 +143,15 @@ d3.select('#emissions-dropdown')
   .on('click', function (d) {
     addSelectedEmission(d)
     lineChart(filterHandler, promises)
+    drawWorldMap(
+      addSelectedCountry,
+      addSelectedEmission,
+      updateYearForCircles,
+      promises,
+      filterHandler,
+      lineChart,
+      disaster_coordinates
+    )
   })
   .text(function (d) {
     return d
@@ -224,6 +253,14 @@ function addSelectedCountry (country) {
   lineChart(filterHandler, promises)
 }
 
-drawpWorldMap(addSelectedCountry, addSelectedEmission, promises, filterHandler)
+drawWorldMap(
+  addSelectedCountry,
+  addSelectedEmission,
+  updateYearForCircles,
+  promises,
+  filterHandler,
+  lineChart,
+  disaster_coordinates
+)
 lineChart(filterHandler, promises)
 //drawScatterPlot(promises, filterHandler)

@@ -1,9 +1,14 @@
-export async function drawpWorldMap (
+export async function drawWorldMap (
   addSelectedCountry,
   addSelectedEmission,
+  updateYearForCircles,
   promises,
-  filterHandler
+  filterHandler,
+  lineChart,
+  disaster_coordinates
 ) {
+  // remove old svgs
+  d3.select('#worldMap').remove()
   //Global variables
   var countries_quant20 = []
   var countries_quant40 = []
@@ -18,6 +23,8 @@ export async function drawpWorldMap (
   var quantile_100
   var metricValues
   var sorted_metricValues = []
+
+  var toggleNaturalDisaster = document.getElementById('toggleNaturalDisasters')
 
   const countryNameAccessor = d => d.properties['NAME']
   const countryIdAccessor = d => d.properties['ADM0_A3_IS']
@@ -61,18 +68,6 @@ export async function drawpWorldMap (
           metricDataByCountry[d['iso_code']] = +result
         }
       })
-    })
-  }
-
-  function updateYearForCircles (
-    naturalDisaster_coordinates,
-    disaster_coordinates
-  ) {
-    var id = 0
-
-    naturalDisaster_coordinates.forEach(d => {
-      if (d.year >= year) return
-      disaster_coordinates.push([d.lon, d.lat])
     })
   }
 
@@ -126,8 +121,6 @@ export async function drawpWorldMap (
     quantile_100 = d3.quantile(metricValues, 1)
   }
 
-  var disaster_coordinates = []
-
   function mapNaturalDisasters (disasterlocations, disaster_coordinates) {
     disasterlocations.forEach(n => {
       disaster_coordinates.push({
@@ -144,12 +137,9 @@ export async function drawpWorldMap (
 
   function ready ([worldMap, co2_dataset, x, naturalDisaster_coordinates]) {
     filterCO2(co2_dataset, metricDataByCountry)
-    updateYearForCircles(naturalDisaster_coordinates, disaster_coordinates)
 
     //console.log(disasterlocations)
     //mapNaturalDisasters(disasterlocations, disaster_coordinates)
-
-    console.log(disaster_coordinates)
 
     for (var x in metricDataByCountry) {
       sorted_metricValues.push([metricDataByCountry[x], x])
@@ -285,6 +275,7 @@ export async function drawpWorldMap (
         d3.selectAll('circle').remove()
         disaster_coordinates = []
         updateYearForCircles(naturalDisaster_coordinates, disaster_coordinates)
+
         svg
           .append('g')
           .attr('id', 'canvas')
@@ -300,10 +291,15 @@ export async function drawpWorldMap (
           })
           .attr('r', '0.5px')
           .attr('fill', 'red')
+        if (toggleNaturalDisaster.checked == false) {
+          d3.selectAll('#canvas').attr('visibility', 'hidden')
+        }
       })
       .on('onchange', val => {
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
+
+        lineChart(filterHandler, promises)
 
         d3.select('#yearTitle').text(year)
         metricDataByCountry = {}
@@ -349,6 +345,8 @@ export async function drawpWorldMap (
         console.log(year)
       })
 
+    var svg = d3.select('#worldMap')
+
     d3.select('#slider')
       .append('svg')
       .attr('width', 600)
@@ -357,9 +355,6 @@ export async function drawpWorldMap (
       .append('g')
       .attr('transform', 'translate(30,40)')
       .call(slider)
-
-    var svg = d3.select('#worldMap')
-
     svg
       .append('g')
       .attr('id', 'canvas')
@@ -375,6 +370,9 @@ export async function drawpWorldMap (
       })
       .attr('r', '0.5px')
       .attr('fill', 'red')
+    if (toggleNaturalDisaster.checked == false) {
+      d3.selectAll('#canvas').attr('visibility', 'hidden')
+    }
 
     svg
       .append('g')
@@ -583,9 +581,9 @@ export async function drawpWorldMap (
 
     svg.select('.options').call(options)
     */
-    var x = document.getElementById('toggleNaturalDisasters')
+
     d3.select('#toggleNaturalDisasters').on('click', val => {
-      if (x.checked == true) {
+      if (toggleNaturalDisaster.checked == true) {
         d3.selectAll('#canvas').attr('visibility', '')
       } else {
         d3.selectAll('#canvas').attr('visibility', 'hidden')
