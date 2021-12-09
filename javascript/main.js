@@ -58,7 +58,7 @@ d3.select('#year-selector')
   d3.select("#year-selector").on("change", function() {
     var newYear = d3.select(this).property("value");
     filterHandler.updateYear(newYear)
-    lineChart(filterHandler)
+   // lineChart(filterHandler)
     console.log(filterHandler.getYear())
 })
 
@@ -144,7 +144,7 @@ function updateDropdown () {
   }
 
   filterHandler.updateEmissions(selectedEmissions)
-  lineChart(filterHandler)
+  //lineChart(filterHandler)
   console.log(filterHandler.getEmissions());
 }
 
@@ -202,8 +202,8 @@ function addSelectedCountry (country) {
   filterHandler.updateCountries(selectedCountries)
 }
 
-drawpWorldMap(addSelectedCountry, promises, filterHandler)
+//drawpWorldMap(addSelectedCountry, promises, filterHandler)
 drawScatterPlot(promises, filterHandler)
-drawpWorldMap()
-lineChart(filterHandler) //, selectedCountries, selectedEmissions, selectedYear)
-console.log(selectedEmissions)
+//drawpWorldMap()
+//lineChart(filterHandler) //, selectedCountries, selectedEmissions, selectedYear)
+//console.log(selectedEmissions)

@@ -35,31 +35,119 @@ export async function drawScatterPlot (promises, filterHandler) {
           .call(d3.axisLeft(y));
 
         // Add dots
-        svg.append('g')
-          .selectAll("dot")
+        var circ = svg.append('g');
+
+       circ.selectAll("dot")
+        .data(mappedNaturalDisasterData)
+        .enter()
+        .append("rect")
+          .attr('y', function (d) { return y(getNaturalDisastersForCountry(d, year)); } )
+          .data(co2)
+          .attr('x', function (d) { return x(getEmissionsForCountry(d, year, filterHandler)); } )
+          .attr("width", 200)
+          .attr("height", 70)
+          .attr("fill", "#ffffff")
+          .attr("id", function(d) { return "rect"+d.iso_code.toString()+d.year.toString(); })
+          .style('opacity', '0');
+
+          circ.selectAll("dot")
           .data(mappedNaturalDisasterData)
           .enter()
-          .append("circle")
-            .attr("cy", function (d) { return y(getNaturalDisastersForCountry(d, year)); } )
+          .append("text")
+            .attr('y', function (d) { return y(getNaturalDisastersForCountry(d, year)-20); } )
             .data(co2)
-            .attr("cx", function (d) { return x(getEmissionsForCountry(d, year, filterHandler)); } )
-            .attr("r", 3)
-            .style("fill", "#69b3a2")
-          });
+            .attr('x', function (d) { return x(getEmissionsForCountry(d, year, filterHandler)+100); } )
+            .attr("id", function(d) { return "text"+d.iso_code.toString()+d.year.toString(); })
+            .style('opacity', '0')
+            .text(function(d) { return d.country; })
+              .append("tspan")
+              .attr('dy', 20)//(function (d) { return y(getNaturalDisastersForCountry(d, year)-100); } )
+              .data(co2)
+              .attr('x', function (d) { return x(getEmissionsForCountry(d, year, filterHandler)+100); } )
+              .text(function(d) { return "Co2 Emissions: "+getEmissionsForCountry(d, year, filterHandler)+" ton"; })
+              .append("tspan")
+              .attr('x', function (d) { return x(getEmissionsForCountry(d, year, filterHandler)+100); } )
+              .data(mappedNaturalDisasterData)
+              .text(function(d) { return "Natural Disasters: "+getNaturalDisastersForCountry(d, year)+" st"; })
+              .attr('dy', 20)// function (d) { return y(getNaturalDisastersForCountry(d, year)+30); } )
+
+        circ.selectAll("dot")
+        .data(mappedNaturalDisasterData.filter(function (d) {
+            return d.nbr > 0;
+          }))
+        .enter()
+        .append("circle")
+          .attr("cy", function (d) { return (getNaturalDisastersForCountry(d, year)); } )
+          .data(co2.filter(function (d) {
+            return d.co2 != null;
+          }))
+          .attr("cx", function (d) { return (getEmissionsForCountry(d, year, filterHandler)); } )
+          .attr("r", 5)
+          .style("fill", "#69b3a2")
+          .on('mouseover', function (d) {
+            d3.select("#rect"+(d.iso_code.toString()+d.year.toString()))
+             .transition()
+             .duration(0.1)
+             .style('opacity', '1');
+
+            d3.select("#text"+(d.iso_code.toString()+d.year.toString()))
+             .transition()
+             .duration(0.1)
+             .style('opacity', '1');
+
+            //denna är inte samma som det som skrivs ut när man hoverar?
+             console.log(d.year)
+             console.log(d.country)
+             console.log(d.co2)
+
+            //console.log("hover on ", (d.iso_code.toString()+d.year.toString()))
+
+            d3.select(this)
+            .transition()
+            .duration(0.1)
+            .attr("r", 7)
+            .style('opacity', '0.5');
+          })
+          .on('mouseout', function (d) {
+            d3.select(this)
+            .transition()
+            .duration(0.1)
+            .attr("r", 5)
+         //   .front()
+            .style('opacity', '1')
+
+            d3.select("#rect"+(d.iso_code.toString()+d.year.toString()))
+            .transition()
+            .duration(0.1)
+            .style('opacity', '0'); 
+            d3.select("#text"+(d.iso_code.toString()+d.year.toString()))
+              .transition()
+              .duration(0.1)
+              .style('opacity', '0');
+
+          //  console.log("unhover on :", (d.iso_code.toString()+d.year.toString()))
+
+
+
+          }); 
+        
+        })
+
       }
 
       function getNaturalDisastersForCountry(row, year) {
         if (row.year==year){
         //TODO: fixa så att de som är 0 inte visas?
+       // console.log("nbr: ", row.country, row.nbr)
           return row.nbr
         }
       }
 
       function getEmissionsForCountry(row, year, filterHandler) {
         var emissionTypes = filterHandler.getEmissions()
-        //TODO: räkna ihop för alla år, nu är det bara det faktiska årtalet och inte till och med årtalet.
  
         //förlåt för riktigt dålig kod lol
+        //detta ska vara summan t.o.m året, just nu är det bara året.
         if (year == row.year){
           var tot = 0
         if (emissionTypes.includes('oil_co2') && parseInt(row.oil_co2)>0) {
