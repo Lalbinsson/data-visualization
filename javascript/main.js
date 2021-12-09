@@ -79,6 +79,7 @@ promises.then(function ([worldMap]) {
     .attr('id', 'dropdown_elements')
     .on('click', function (d) {
       addSelectedCountry(d)
+      lineChart(filterHandler, promises)
     })
     .text(function (d) {
       return d
@@ -107,7 +108,7 @@ promises.then(function ([worldMap]) {
       //update countries in filterHandler
       //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
       filterHandler.updateCountries(selectedCountries)
-
+      lineChart(filterHandler, promises)
       console.log(filterHandler.getCountries)
     })
 })
@@ -121,6 +122,7 @@ d3.select('#emissions-dropdown')
   .attr('id', 'dropdown_elements')
   .on('click', function (d) {
     addSelectedEmission(d)
+    lineChart(filterHandler, promises)
   })
   .text(function (d) {
     return d
@@ -132,7 +134,10 @@ d3.select('#emissions-dropdown')
     return d
   })
   .style('float', 'left') //move box left of label
-  .on('change', updateDropdown)
+  .on('change', function () {
+    updateDropdown
+    console.log(filterHandler.getEmissions())
+  })
 
 function updateDropdown () {
   if (this.checked) {
@@ -150,7 +155,6 @@ function updateDropdown () {
 
   filterHandler.updateEmissions(selectedEmissions)
   lineChart(filterHandler)
-  console.log(filterHandler.getEmissions())
 }
 
 //gör dropdown-listorna hidden/visible på click, fixa så att de inte tar upp hela ytan när de är hidden.
@@ -217,6 +221,7 @@ function addSelectedCountry (country) {
     element.checked = true
   }
   filterHandler.updateCountries(selectedCountries)
+  lineChart(filterHandler, promises)
 }
 
 drawpWorldMap(addSelectedCountry, addSelectedEmission, promises, filterHandler)

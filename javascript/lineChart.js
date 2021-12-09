@@ -1,8 +1,8 @@
 export async function lineChart (filterHandler, promises) {
   //, countries, emissionTypes, max_year) {
-  console.log(filterHandler.getCountries())
-  console.log(filterHandler.getEmissions())
-  console.log('year:', filterHandler.getYear())
+  //console.log(filterHandler.getCountries())
+  //console.log(filterHandler.getEmissions())
+  //console.log('year:', filterHandler.getYear())
 
   let checkForLargestEmitter = function (datanest) {
     let maxEmissions = 0
@@ -11,16 +11,16 @@ export async function lineChart (filterHandler, promises) {
     let country_i = -1
     for (var i = 0; i < datanest.length; i++) {
       if (datanest[i]['country'] !== country) {
-        console.log('old index:', country_i)
+        //console.log('old index:', country_i)
         country_i = country_i + 1
-        console.log('updated index:', country_i)
+        //console.log('updated index:', country_i)
       }
       country = datanest[i]['country']
       //console.log('largest data:', datanest[i]["co2"])
       if (datanest[i]['co2'] > maxEmissions) {
         maxEmissions = datanest[i]['co2']
         largestEmitter = country_i //datanest[i]["country"]
-        console.log('output:', largestEmitter)
+        //console.log('output:', largestEmitter)
       }
     }
     return largestEmitter
@@ -69,16 +69,17 @@ export async function lineChart (filterHandler, promises) {
   ]) {
     var countries = filterHandler.getCountries()
     var max_year = parseInt(filterHandler.getYear())
-    console.log(
-      'the year is:' + max_year + ' and year is type: ' + typeof max_year
-    )
+    //zconsole.log('the year is:' + max_year + ' and year is type: ' + typeof max_year)
     co2_dataset.forEach(function (d) {
       //if (parseInt(d.year) <= max_year) {
       //console.log("year in int: ", parseInt(d.year))
       //console.log("year in date: ", parseDate(d.year))
       //if (countries.includes(d.country)) { continue }
       //console.log(parseInt(parseDate(d.year)))
-      d.year = parseInt(d.year)
+      if (d.year > 1900) {
+        //console.log(d.year)
+        d.year = parseInt(d.year)
+      }
       //console.log(typeof parseInt(d.year))
       d.total_co2 = 0
       var emissionTypes = filterHandler.getEmissions()
@@ -102,15 +103,16 @@ export async function lineChart (filterHandler, promises) {
 
     // Remove data for years outside chosen intervals
     let filtered_data = filtered_data_countries.filter(function (item) {
-      return item.year < max_year
+      return item.year < max_year && item.year > 1900
     })
-
+    /*
     console.log(
       'date extent:',
       d3.extent(filtered_data, function (d) {
         return d.year
       })
     )
+    */
     // Scale the range of the data
     x.domain(
       d3.extent(filtered_data, function (d) {
@@ -210,7 +212,7 @@ export async function lineChart (filterHandler, promises) {
       })
     })
 
-    console.log('finished dict:', dataDict)
+    //console.log('finished dict:', dataDict)
 
     // Add mouseover
 
@@ -264,7 +266,7 @@ console.log('textbox', textbox)*/
       .style('stroke-width', '1px')
       .style('opacity', '0')
 
-    console.log('mouseG', mouseG)
+    //console.log('mouseG', mouseG)
 
     var lines = document.getElementsByClassName('line')
 
@@ -322,7 +324,7 @@ console.log('textbox', textbox)*/
 
         //d3.select("")
         d3.selectAll('.text-box').attr('transform', function () {
-          console.log('textbox:', this)
+          //console.log('textbox:', this)
           //console.log("d year;", d.value["year"])
           var xDate = x.invert(mouse[0])
           //var bisect = d3.bisector(function(d) { return d.year; }).right;
@@ -362,11 +364,11 @@ console.log('textbox', textbox)*/
             .select('rect')
             .attr('opacity', '0.5')
 
-          console.log('this text:', d3.select(this).select('text'))
+          //console.log('this text:', d3.select(this).select('text'))
 
           return 'translate(' + mouse[0] + ',' + pos.y + ')'
         })
-        console.log(d3.select('.text-box').select('rect'))
+        //console.log(d3.select('.text-box').select('rect'))
         let listOfYPos = []
         d3.selectAll('.mouse-per-line').attr('transform', function (d, i) {
           var xDate = x.invert(mouse[0])
