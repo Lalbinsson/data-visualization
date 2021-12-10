@@ -258,13 +258,16 @@ function initEmissionCheckBox (array) {
 function addSelectedEmission (emission) {
   var index = selectedEmissions.indexOf(emission)
   var element = document.getElementById(emission)
+  var tooltip = document.getElementById(emission + '_tooltip')
   if (index !== -1) {
     selectedEmissions.splice(index, 1)
     element.checked = false
+    d3.select(tooltip).remove()
   } else {
     selectedEmissions.push(emission)
     element.checked = true
   }
+
   filterHandler.updateEmissions(selectedEmissions)
 }
 

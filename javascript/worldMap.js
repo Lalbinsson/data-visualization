@@ -133,14 +133,23 @@ export async function drawWorldMap (
     })
 
     var jsonData = JSON.stringify(disaster_coordinates)
-   // console.log(jsonData)
+    // console.log(jsonData)
   }
 
   function ready ([worldMap, co2_dataset, x, naturalDisaster_coordinates]) {
     filterCO2(co2_dataset, metricDataByCountry)
 
-    //console.log(disasterlocations)
-    //mapNaturalDisasters(disasterlocations, disaster_coordinates)
+    console.log(metricDataByCountry)
+
+    emissionType.forEach(e => {
+      var element = document.getElementById(e)
+      if (element.checked == true) {
+        tooltip
+          .append('div')
+          .attr('id', `${e + '_tooltip'}`)
+          .attr('class', 'tooltip-value')
+      }
+    })
 
     for (var x in metricDataByCountry) {
       sorted_metricValues.push([metricDataByCountry[x], x])
@@ -211,7 +220,7 @@ export async function drawWorldMap (
       })
       .on('click', function (d) {
         var country = countryIdAccessor(d)
-      //  console.log(country)
+        //  console.log(country)
         addSelectedCountry(country)
       })
       .on('mouseenter', onMouseEnter)
@@ -220,19 +229,39 @@ export async function drawWorldMap (
     function onMouseEnter (datum) {
       tooltip.style('opacity', 1)
 
+      co2_dataset.forEach(d => {
+        var result = 0
+        if (d['iso_code'] !== countryIdAccessor(datum) || d['year'] != year) {
+          return
+        }
+        emissionType.forEach(element => {
+          tooltip
+            .select(`#${element}_tooltip`)
+            .text(`${element}: ` + `${parseInt(d[element])} million tons`)
+            .style('font-weight', 'bold')
+            .append('br')
+        })
+      })
+
       const metricValue = metricDataByCountry[countryIdAccessor(datum)]
       tooltip.select('#country').text(countryNameAccessor(datum))
-      tooltip.select('#value').text(`${d3.format(',.2f')(metricValue || 0)}`)
+      tooltip
+        .select('#value')
+        .text(
+          `All emission types: ${d3.format('')(metricValue || 0)} million tons`
+        )
 
       const [centerX, centerY] = pathGenerator.centroid(datum)
 
       const x = centerX + 10
       const y = centerY + 10
-
+      /*
       tooltip.style(
         'transform',
-        `translate(` + `calc( -50% + ${x}px),` + `calc( 500% + ${y}px)` + `)`
+        `translate(` + `calc( -50% + ${x}px),` + `calc( 50% + ${y}px)` + `)`
       )
+      */
+      tooltip.style('transform', 'translate(400px, 200px)')
     }
 
     function onMouseLeave () {
@@ -584,7 +613,7 @@ export async function drawWorldMap (
       } else {
         d3.selectAll('#canvas').attr('visibility', 'hidden')
       }
-     // console.log('CLICKED')
+      // console.log('CLICKED')
     })
   }
 }
