@@ -44,31 +44,36 @@ class FilterHandler {
     currentFilteredData,
     currentEmissions,
     currentCountries,
-    currentYear
+    currentYear,
+    currentNormalization
   ) {
     this.currentFilteredData = currentFilteredData
     this.currentEmissions = currentEmissions
     this.currentCountries = currentCountries
     this.currentYear = currentYear
+    this.currentNormalization = currentNormalization
   }
 
   constructor (
     currentFilteredData,
     currentEmissions,
     currentCountries,
-    currentYear
+    currentYear,
+    currentNormalization
   ) {
     this.filterHandler(
       currentFilteredData,
       currentEmissions,
       currentCountries,
-      currentYear
+      currentYear,
+      currentNormalization
     )
     console.log(
       currentFilteredData,
       currentEmissions,
       currentCountries,
-      currentYear
+      currentYear,
+      currentNormalization
     )
   }
 
@@ -113,6 +118,15 @@ class FilterHandler {
     return this.currentYear
   }
 
+  updateNormalization (newNormalization) {
+    this.currentNormalization = newNormalization
+    console.log('updated normalization to: ', this.currentNormalization)
+  }
+
+  getNormalization() {
+    return this.currentNormalization
+
+  }
   //update the charts that use global attributes, this only updates the printed values in the html right now.
   updateCharts () {
     if (!(this.currentEmissions == undefined)) {

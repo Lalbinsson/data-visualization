@@ -4,7 +4,7 @@ export async function lineChart (filterHandler, promises) {
   //console.log(filterHandler.getEmissions())
   //console.log('year:', filterHandler.getYear())
 
-  let checkForLargestEmitter = function (datanest) {
+  /*let checkForLargestEmitter = function (datanest) {
     let maxEmissions = 0
     let largestEmitter = 0
     let country = ''
@@ -24,7 +24,7 @@ export async function lineChart (filterHandler, promises) {
       }
     }
     return largestEmitter
-  }
+  }*/
   // Set the dimensions of the canvas / graph
   var margin = { top: 30, right: 80, bottom: 50, left: 50 },
     width = 600 - margin.left - margin.right,
@@ -69,31 +69,45 @@ export async function lineChart (filterHandler, promises) {
   ]) {
     var countries = filterHandler.getCountries()
     var max_year = parseInt(filterHandler.getYear())
-    //zconsole.log('the year is:' + max_year + ' and year is type: ' + typeof max_year)
+    var emissionTypes = filterHandler.getEmissions()
+    var normalizationType = filterHandler.getNormalization()
+    console.log('norm type:', normalizationType)
+    console.log('emission types:', emissionTypes)
+    console.log(emissionTypes[0])
+    
+    var normalizationFactor = 1
+    
     co2_dataset.forEach(function (d) {
-      //if (parseInt(d.year) <= max_year) {
-      //console.log("year in int: ", parseInt(d.year))
-      //console.log("year in date: ", parseDate(d.year))
-      //if (countries.includes(d.country)) { continue }
-      //console.log(parseInt(parseDate(d.year)))
+
+      if (normalizationType === "capita") {
+        normalizationFactor = parseInt(d.population)/1000000
+      }
+      else if (normalizationType === "gdp") {
+        normalizationFactor = parseInt(d.gdp)/1000000
+      }
+      else {normalizationFactor = 1}
+
       if (d.year > 1900) {
-        //console.log(d.year)
         d.year = parseInt(d.year)
       }
-      //console.log(typeof parseInt(d.year))
       d.total_co2 = 0
-      var emissionTypes = filterHandler.getEmissions()
-      if (emissionTypes.length === 1) {
-        d.total_co2 = +d['co2']
-      } else {
-        for (let i = 0; i < emissionTypes.length; i++) {
-          var emissionType = emissionTypes[i]
-          if (!isNaN(d[emissionType])) {
-            d.total_co2 += +d[emissionType]
+
+      // Check if denominator is not zero and then sum up all emissions with normalization
+      if (normalizationFactor !== 0) {
+        // If all co2-emissions are choosen:
+        if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
+          d.total_co2 = +d['co2']/normalizationFactor
+          console.log('only co2')
+        } 
+        else {
+          for (let i = 0; i < emissionTypes.length; i++) {
+            var emissionType = emissionTypes[i]
+            if (!isNaN(d[emissionType])) {
+              d.total_co2 += +d[emissionType]/normalizationFactor
+            }
           }
         }
-      }
-      //}
+    }
     })
 
     // Remove data for countries we're not interested in
@@ -105,14 +119,7 @@ export async function lineChart (filterHandler, promises) {
     let filtered_data = filtered_data_countries.filter(function (item) {
       return item.year < max_year && item.year > 1900
     })
-    /*
-    console.log(
-      'date extent:',
-      d3.extent(filtered_data, function (d) {
-        return d.year
-      })
-    )
-    */
+
     // Scale the range of the data
     x.domain(
       d3.extent(filtered_data, function (d) {
@@ -192,6 +199,11 @@ export async function lineChart (filterHandler, promises) {
       .style('font-family', 'Helvetica')
       .style('font-size', 12)
       .text('CO2')
+      .text(function() {
+        console.log('norm type:', normalizationType === 'none')
+        if (normalizationType === 'none') {return 'CO2 (million tonne kg)'}
+        else {return 'CO2 (tonne kg)'}
+      })
 
     // X label
     svg
@@ -204,13 +216,13 @@ export async function lineChart (filterHandler, promises) {
       .text('Year')
 
     // Create dictionary for used data that can be used to floating legend
-    let dataDict = new Object()
+    /*let dataDict = new Object()
     dataNest.forEach(function (d, i) {
       dataDict[d.key] = {}
       d.value.forEach(function (row, index) {
         dataDict[d.key][row.year.toString()] = row.total_co2
       })
-    })
+    })*/
 
     //console.log('finished dict:', dataDict)
 
@@ -270,7 +282,7 @@ console.log('textbox', textbox)*/
 
     var lines = document.getElementsByClassName('line')
 
-    let largestEmittingCountry = checkForLargestEmitter(filtered_data)
+    //let largestEmittingCountry = checkForLargestEmitter(filtered_data)
     var mousePerLine = mouseG
       .selectAll('.mouse-per-line')
       .data(dataNest)
@@ -321,9 +333,9 @@ console.log('textbox', textbox)*/
           d += ' ' + mouse[0] + ',' + 0
           return d
         })
-
+        
         //d3.select("")
-        d3.selectAll('.text-box').attr('transform', function () {
+        /*d3.selectAll('.text-box').attr('transform', function () {
           //console.log('textbox:', this)
           //console.log("d year;", d.value["year"])
           var xDate = x.invert(mouse[0])
@@ -360,14 +372,14 @@ console.log('textbox', textbox)*/
           .style("fill", "black")
           .attr("opacity", "1");*/
 
-          d3.select(this)
+          /*d3.select(this)
             .select('rect')
             .attr('opacity', '0.5')
 
           //console.log('this text:', d3.select(this).select('text'))
 
           return 'translate(' + mouse[0] + ',' + pos.y + ')'
-        })
+        })*/
         //console.log(d3.select('.text-box').select('rect'))
         let listOfYPos = []
         d3.selectAll('.mouse-per-line').attr('transform', function (d, i) {

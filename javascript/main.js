@@ -30,24 +30,28 @@ var promises = [
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
+var selectedEmissions = ['co2', "coal_co2"] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
 var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname", "China", "Africa", "Finland", "Germany", "UK", "Denmark", "Japan", "Australia"]
 var selectedYear = 1990 //"2000" //"1990"
-//var selectedCountries = ['AFG', 'SWE']
+var selectedCountries = ['SWE', 'CAN', "Sweden"]
 //var selectedYear = 2000 //"2000" //"1990"
 //var selectedEmissions = ['oil_co2']
 var defaultFilteredData = []
+var currentNormalization = "none"
 var filterHandler = new FilterHandler(
   defaultFilteredData,
   selectedEmissions,
   selectedCountries,
-  selectedYear
+  selectedYear,
+  currentNormalization
 )
 
 //just to have an initial value to avoid undefined
 filterHandler.updateYear(selectedYear)
-filterHandler.updateEmissions(selectedEmissions)
+//filterHandler.updateEmissions(selectedEmissions)
 filterHandler.updateCountries(selectedCountries)
+filterHandler.updateNormalization(currentNormalization)
+console.log(filterHandler.getNormalization())
 
 d3.select('#year-selector')
   .selectAll()
@@ -95,7 +99,7 @@ promises.then(function ([
       allCountries.push(countryIdAccessor(worldMap.features[i]))
   }
   allCountries.sort()
-  addSelectedEmission(selectedEmissions)
+  //addSelectedEmission(selectedEmissions)
 
   d3.select('#countries-dropdown')
     .selectAll()
@@ -248,6 +252,7 @@ function addSelectedEmission (emission) {
     element.checked = true
   }
   filterHandler.updateEmissions(selectedEmissions)
+  lineChart(filterHandler, promises)
 }
 
 function addSelectedCountry (country) {
@@ -263,6 +268,14 @@ function addSelectedCountry (country) {
   filterHandler.updateCountries(selectedCountries)
   lineChart(filterHandler, promises)
 }
+
+// Update normalization
+var radiobuttons = d3.selectAll('.radiobutton');
+radiobuttons.on('change', function (d) {
+  console.log('Radio button change to ', this.value)
+  filterHandler.updateNormalization(this.value)
+  lineChart(filterHandler, promises)
+});
 
 drawWorldMap(
   addSelectedCountry,
