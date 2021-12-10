@@ -141,10 +141,10 @@ export async function lineChart (filterHandler, promises) {
 .append('g')
 .attr('class', 'legend')*/
 
-    console.log(dataNest)
+  //  console.log(dataNest)
     // Loop through each symbol / key
     dataNest.forEach(function (d, i) {
-      console.log(d.value)
+  //    console.log(d.value)
       svg
         .append('path')
         .attr('class', 'line')
@@ -293,7 +293,7 @@ console.log('textbox', textbox)*/
       .attr('transform', 'translate(10,3)')
       .style('font-size', '10')
 
-    console.log('mouse per line:', mousePerLine)
+   // console.log('mouse per line:', mousePerLine)
     mouseG
       .append('svg:rect')
       .attr('width', width)

@@ -133,7 +133,7 @@ export async function drawWorldMap (
     })
 
     var jsonData = JSON.stringify(disaster_coordinates)
-    console.log(jsonData)
+   // console.log(jsonData)
   }
 
   function ready ([worldMap, co2_dataset, x, naturalDisaster_coordinates]) {
@@ -211,7 +211,7 @@ export async function drawWorldMap (
       })
       .on('click', function (d) {
         var country = countryIdAccessor(d)
-        console.log(country)
+      //  console.log(country)
         addSelectedCountry(country)
       })
       .on('mouseenter', onMouseEnter)
@@ -337,7 +337,7 @@ export async function drawWorldMap (
         d3.select('#worldMap')
           .select('.legendLog')
           .call(legendLog)
-        console.log(year)
+        //console.log(year)
       })
 
     var svg = d3.select('#worldMap')
@@ -584,7 +584,7 @@ export async function drawWorldMap (
       } else {
         d3.selectAll('#canvas').attr('visibility', 'hidden')
       }
-      console.log('CLICKED')
+     // console.log('CLICKED')
     })
   }
 }

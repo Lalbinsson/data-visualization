@@ -5,6 +5,7 @@ import { drawScatterPlot } from './scatterPlot.js'
 
 //TODO: read these from the data set
 var allEmissions = [
+  'co2',
   'coal_co2',
   'gas_co2',
   'oil_co2',
@@ -12,7 +13,7 @@ var allEmissions = [
   'flaring_co2',
   'other_industry_co2'
 ]
-var allYears = ['1950', '1960', '1970']
+var allYears = ['1960', '1970', '1990']
 var allCountries = []
 
 const countryNameAccessor = d => d.properties['NAME']
@@ -29,9 +30,12 @@ var promises = [
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedCountries = ['AFG', 'SWE']
-var selectedYear = 2000 //"2000" //"1990"
-var selectedEmissions = ['oil_co2']
+var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
+var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname", "China", "Africa", "Finland", "Germany", "UK", "Denmark", "Japan", "Australia"]
+var selectedYear = 1990 //"2000" //"1990"
+//var selectedCountries = ['AFG', 'SWE']
+//var selectedYear = 2000 //"2000" //"1990"
+//var selectedEmissions = ['oil_co2']
 var defaultFilteredData = []
 var filterHandler = new FilterHandler(
   defaultFilteredData,
@@ -42,6 +46,8 @@ var filterHandler = new FilterHandler(
 
 //just to have an initial value to avoid undefined
 filterHandler.updateYear(selectedYear)
+filterHandler.updateEmissions(selectedEmissions)
+filterHandler.updateCountries(selectedCountries)
 
 d3.select('#year-selector')
   .selectAll()
@@ -59,6 +65,7 @@ d3.select('#year-selector').on('change', function () {
   var newYear = d3.select(this).property('value')
   filterHandler.updateYear(newYear)
   lineChart(filterHandler)
+  drawScatterPlot(promises, filterHandler)
   console.log(filterHandler.getYear())
 })
 
@@ -99,7 +106,7 @@ promises.then(function ([
     .attr('id', 'dropdown_elements')
     .on('click', function (d) {
       addSelectedCountry(d)
-      lineChart(filterHandler, promises)
+     // lineChart(filterHandler, promises)
     })
     .text(function (d) {
       return d
@@ -112,7 +119,7 @@ promises.then(function ([
     })
     .style('float', 'left') //move box left of label
     .on('change', function () {
-      console.log('clicked on ', this.id)
+    //  console.log('clicked on ', this.id)
       if (this.checked) {
         if (!selectedCountries.includes(this.id)) {
           selectedCountries.push(this.id)
@@ -128,8 +135,9 @@ promises.then(function ([
       //update countries in filterHandler
       //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
       filterHandler.updateCountries(selectedCountries)
+      drawScatterPlot(promises, filterHandler)
       lineChart(filterHandler, promises)
-      console.log(filterHandler.getCountries)
+      //console.log(filterHandler.getCountries)
     })
 })
 
@@ -165,7 +173,7 @@ d3.select('#emissions-dropdown')
   .style('float', 'left') //move box left of label
   .on('change', function () {
     updateDropdown
-    console.log(filterHandler.getEmissions())
+    //console.log(filterHandler.getEmissions())
   })
 
 function updateDropdown () {
@@ -183,8 +191,11 @@ function updateDropdown () {
   }
 
   filterHandler.updateEmissions(selectedEmissions)
+  drawScatterPlot(promises, filterHandler)
   lineChart(filterHandler)
+  //console.log(filterHandler.getEmissions());
 }
+
 
 //gör dropdown-listorna hidden/visible på click, fixa så att de inte tar upp hela ytan när de är hidden.
 var checkListCountries = document.getElementById('countries-selector')
@@ -263,4 +274,4 @@ drawWorldMap(
   disaster_coordinates
 )
 lineChart(filterHandler, promises)
-//drawScatterPlot(promises, filterHandler)
+drawScatterPlot(promises, filterHandler)

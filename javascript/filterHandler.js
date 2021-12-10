@@ -38,7 +38,7 @@
     filterEmission()
    // getEmission()
   } */
-
+  import { lineChart } from './lineChart.js';
 class FilterHandler {
   filterHandler (
     currentFilteredData,
@@ -118,7 +118,7 @@ class FilterHandler {
     if (!(this.currentEmissions == undefined)) {
       document.getElementById('cEmissions').innerHTML = this.currentEmissions
     } else {
-      console.log('undef?')
+    //  console.log('undef?')
     }
     if (!(this.currentYear == undefined)) {
       document.getElementById('cYear').innerHTML = this.currentYear
