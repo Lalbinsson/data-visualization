@@ -30,8 +30,8 @@ var promises = [
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
-var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname", "China", "Africa", "Finland", "Germany", "UK", "Denmark", "Japan", "Australia"]
+var selectedEmissions = ['co2', 'coal_co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
+var selectedCountries = ['SWE']
 var selectedYear = 1990 //"2000" //"1990"
 //var selectedCountries = ['AFG', 'SWE']
 //var selectedYear = 2000 //"2000" //"1990"
@@ -95,7 +95,6 @@ promises.then(function ([
       allCountries.push(countryIdAccessor(worldMap.features[i]))
   }
   allCountries.sort()
-  addSelectedEmission(selectedEmissions)
 
   d3.select('#countries-dropdown')
     .selectAll()
@@ -106,7 +105,7 @@ promises.then(function ([
     .attr('id', 'dropdown_elements')
     .on('click', function (d) {
       addSelectedCountry(d)
-     // lineChart(filterHandler, promises)
+      // lineChart(filterHandler, promises)
     })
     .text(function (d) {
       return d
@@ -115,11 +114,11 @@ promises.then(function ([
     .attr('type', 'checkbox')
     .attr('vertical-align', 'middle')
     .attr('id', function (d) {
-      return d
+      return d + '_checkbox'
     })
     .style('float', 'left') //move box left of label
     .on('change', function () {
-    //  console.log('clicked on ', this.id)
+      //  console.log('clicked on ', this.id)
       if (this.checked) {
         if (!selectedCountries.includes(this.id)) {
           selectedCountries.push(this.id)
@@ -139,6 +138,8 @@ promises.then(function ([
       lineChart(filterHandler, promises)
       //console.log(filterHandler.getCountries)
     })
+  initEmissionCheckBox(selectedEmissions)
+  initCountryCheckBox(selectedCountries)
 })
 
 d3.select('#emissions-dropdown')
@@ -196,7 +197,6 @@ function updateDropdown () {
   //console.log(filterHandler.getEmissions());
 }
 
-
 //gör dropdown-listorna hidden/visible på click, fixa så att de inte tar upp hela ytan när de är hidden.
 var checkListCountries = document.getElementById('countries-selector')
 var countryList = document.getElementsByClassName('countries')[0]
@@ -237,6 +237,24 @@ var currentYear = 2021
   }
   */
 
+function initCountryCheckBox (array) {
+  array.forEach(d => {
+    var element = document.getElementById(d + '_checkbox')
+    if (element.checked == false) {
+      element.checked = true
+    }
+  })
+}
+
+function initEmissionCheckBox (array) {
+  array.forEach(d => {
+    var element = document.getElementById(d)
+    if (element.checked == false) {
+      element.checked = true
+    }
+  })
+}
+
 function addSelectedEmission (emission) {
   var index = selectedEmissions.indexOf(emission)
   var element = document.getElementById(emission)
@@ -252,7 +270,7 @@ function addSelectedEmission (emission) {
 
 function addSelectedCountry (country) {
   var index = selectedCountries.indexOf(country)
-  var element = document.getElementById(country)
+  var element = document.getElementById(country + '_checkbox')
   if (index !== -1) {
     selectedCountries.splice(index, 1)
     element.checked = false
