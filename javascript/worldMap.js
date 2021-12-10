@@ -9,6 +9,7 @@ export async function drawWorldMap (
 ) {
   // remove old svgs
   d3.select('#worldMap').remove()
+  d3.select('#sliderSVG').remove()
   //Global variables
   var countries_quant20 = []
   var countries_quant40 = []
@@ -238,12 +239,6 @@ export async function drawWorldMap (
       tooltip.style('opacity', 0)
     }
 
-    var title = d3
-      .select('#wm-title')
-      .append('text')
-      .attr('id', 'yearTitle')
-      .text(year)
-
     var slider = d3
       .sliderHorizontal()
       .tickFormat(d3.format('.0f'))
@@ -349,6 +344,7 @@ export async function drawWorldMap (
 
     d3.select('#slider')
       .append('svg')
+      .attr('id', 'sliderSVG')
       .attr('width', 600)
       .attr('height', 80)
       .style('background-color', 'white')
