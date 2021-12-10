@@ -12,6 +12,7 @@ var allEmissions = [
   'cement_co2',
   'flaring_co2',
   'other_industry_co2'
+//  'consumption_co2'
 ]
 var allYears = ['1960', '1970', '1990']
 var allCountries = []
@@ -23,7 +24,7 @@ var promises = [
   d3.json('../world-geojson.json'),
   d3.csv('../owid-co2-data.csv'),
   //d3.csv('../disasterlocations.csv')
-  d3.json('../naturalDisastersByYear.json'),
+  d3.json('../naturalDisastersMappedIso.json'),
   d3.json('../naturalDisasters_coordinates.json')
 ]
 
@@ -31,9 +32,8 @@ var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
 var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
-var selectedCountries = ["Afghanistan", "Albania", "Sweden", "Suriname", "China", "Africa", "Finland", "Germany", "UK", "Denmark", "Japan", "Australia"]
 var selectedYear = 1990 //"2000" //"1990"
-//var selectedCountries = ['AFG', 'SWE']
+var selectedCountries = ['AFG', 'SWE']
 //var selectedYear = 2000 //"2000" //"1990"
 //var selectedEmissions = ['oil_co2']
 var defaultFilteredData = []
@@ -61,11 +61,13 @@ d3.select('#year-selector')
     return d
   })
 
+
+  //används ens den här?
 d3.select('#year-selector').on('change', function () {
   var newYear = d3.select(this).property('value')
   filterHandler.updateYear(newYear)
   lineChart(filterHandler)
-  drawScatterPlot(promises, filterHandler)
+  drawScatterPlot(filterHandler)
   console.log(filterHandler.getYear())
 })
 
@@ -150,6 +152,7 @@ d3.select('#emissions-dropdown')
   .attr('id', 'dropdown_elements')
   .on('click', function (d) {
     addSelectedEmission(d)
+    drawScatterPlot(promises, filterHandler)
     lineChart(filterHandler, promises)
     drawWorldMap(
       addSelectedCountry,
@@ -158,6 +161,7 @@ d3.select('#emissions-dropdown')
       promises,
       filterHandler,
       lineChart,
+      drawScatterPlot,
       disaster_coordinates
     )
   })
@@ -191,7 +195,7 @@ function updateDropdown () {
   }
 
   filterHandler.updateEmissions(selectedEmissions)
-  drawScatterPlot(promises, filterHandler)
+  drawScatterPlot(filterHandler)
   lineChart(filterHandler)
   //console.log(filterHandler.getEmissions());
 }
@@ -262,6 +266,7 @@ function addSelectedCountry (country) {
   }
   filterHandler.updateCountries(selectedCountries)
   lineChart(filterHandler, promises)
+  drawScatterPlot(promises, filterHandler)
 }
 
 drawWorldMap(
@@ -271,6 +276,7 @@ drawWorldMap(
   promises,
   filterHandler,
   lineChart,
+  drawScatterPlot,
   disaster_coordinates
 )
 lineChart(filterHandler, promises)

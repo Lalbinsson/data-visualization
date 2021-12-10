@@ -39,6 +39,7 @@
    // getEmission()
   } */
   import { lineChart } from './lineChart.js';
+  import { drawScatterPlot } from './scatterPlot.js';
 class FilterHandler {
   filterHandler (
     currentFilteredData,
