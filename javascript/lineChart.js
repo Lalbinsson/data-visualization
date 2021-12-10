@@ -71,11 +71,8 @@ export async function lineChart (filterHandler, promises) {
     var max_year = parseInt(filterHandler.getYear())
     var emissionTypes = filterHandler.getEmissions()
     var normalizationType = filterHandler.getNormalization()
-    console.log('norm type:', normalizationType)
-    console.log('emission types:', emissionTypes)
-    console.log(emissionTypes[0])
-    
     var normalizationFactor = 1
+    console.log('countries in line', countries)
     
     co2_dataset.forEach(function (d) {
 
@@ -91,9 +88,9 @@ export async function lineChart (filterHandler, promises) {
         d.year = parseInt(d.year)
       }
       d.total_co2 = 0
-
+      var hej = true
       // Check if denominator is not zero and then sum up all emissions with normalization
-      if (normalizationFactor !== 0) {
+      //if (hej) { //(normalizationFactor !== 0) {
         // If all co2-emissions are choosen:
         if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
           d.total_co2 = +d['co2']/normalizationFactor
@@ -103,11 +100,14 @@ export async function lineChart (filterHandler, promises) {
           for (let i = 0; i < emissionTypes.length; i++) {
             var emissionType = emissionTypes[i]
             if (!isNaN(d[emissionType])) {
-              d.total_co2 += +d[emissionType]/normalizationFactor
+              if (isNaN(+d[emissionType]/normalizationFactor)) {
+                d.total_co2 += 0
+              }
+              else  {d.total_co2 += +d[emissionType]/normalizationFactor}
             }
           }
         }
-    }
+    //}
     })
 
     // Remove data for countries we're not interested in
@@ -201,8 +201,9 @@ export async function lineChart (filterHandler, promises) {
       .text('CO2')
       .text(function() {
         console.log('norm type:', normalizationType === 'none')
-        if (normalizationType === 'none') {return 'CO2 (million tonne kg)'}
-        else {return 'CO2 (tonne kg)'}
+        if (normalizationType === 'none') {return 'CO2 (million ton per year)'}
+        else if (normalizationType === 'gdp') {return 'CO2 (ton per GDP and year)'}
+        else {return 'CO2 (ton per capita and year)'}
       })
 
     // X label
@@ -334,53 +335,6 @@ console.log('textbox', textbox)*/
           return d
         })
         
-        //d3.select("")
-        /*d3.selectAll('.text-box').attr('transform', function () {
-          //console.log('textbox:', this)
-          //console.log("d year;", d.value["year"])
-          var xDate = x.invert(mouse[0])
-          //var bisect = d3.bisector(function(d) { return d.year; }).right;
-          //var idx = bisect(d.value, xDate);
-
-          var beginning = 0
-          var end = lines[largestEmittingCountry].getTotalLength()
-          var target = null
-
-          while (true) {
-            var target = Math.floor((beginning + end) / 2)
-            var pos = lines[largestEmittingCountry].getPointAtLength(target)
-
-            if (
-              (target === end || target === beginning) &&
-              pos.x !== mouse[0]
-            ) {
-              break
-            }
-            if (pos.x > mouse[0]) end = target
-            else if (pos.x < mouse[0]) beginning = target
-            else break
-          }
-          //pos.y = 94;
-          let printOutString = ''
-          /*for (var i=0; i<countries.length; i++) {
-          printOutString += ", " + countries[i] + ": " + dataDict[countries[i]][Math.round(xDate).toString()] + " ton/yr"
-        }*/
-
-          //d3.select(this).append("text").attr("text", printOutString).attr("opacity", "1")
-          /*d3.select(this).select("text")
-          .text(printOutString)
-          .style("fill", "black")
-          .attr("opacity", "1");*/
-
-          /*d3.select(this)
-            .select('rect')
-            .attr('opacity', '0.5')
-
-          //console.log('this text:', d3.select(this).select('text'))
-
-          return 'translate(' + mouse[0] + ',' + pos.y + ')'
-        })*/
-        //console.log(d3.select('.text-box').select('rect'))
         let listOfYPos = []
         d3.selectAll('.mouse-per-line').attr('transform', function (d, i) {
           var xDate = x.invert(mouse[0])
@@ -388,11 +342,9 @@ console.log('textbox', textbox)*/
             return d.year
           }).right
           var idx = bisect(d.value, xDate)
-
           var beginning = 0
           var end = lines[i].getTotalLength()
           var target = null
-
           while (true) {
             var target = Math.floor((beginning + end) / 2)
             var pos = lines[i].getPointAtLength(target)
@@ -407,51 +359,22 @@ console.log('textbox', textbox)*/
             else if (pos.x < mouse[0]) beginning = target
             else break
           }
+          console.log('ypos', y.invert(pos.y))
+          console.log(mousePerLine)
           d3.select(this)
             .select('text')
-            .text(d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' ton/yr')
-          /*.text(function() {
-            let outputString = ""
-            for (var i = 0; i<countries.length; i++) {
-              console.log("outside co2 func", d)
-              outputString += countries[i] + ": " + getCO2val(d)
-              console.log(outputString)
+            .text(function(){
+              if (xDate < d.value[0].year ) {return ""}
+              if (normalizationType === 'none') {
+                return d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' million ton/yr'
+              }
+              else {
+                return d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton/yr'
+              }
             }
-          })*/
-          //let overlap = true
-          //if (listOfYPos.length === 0) {
-          // overlap = false
-          //}
-
-          /*let checkOverlap = function(yPos, otherYpos) {
-          for (var i=0; i<otherYpos.length; i++) {
-            
-            if (Math.abs(yPos - otherYpos[i]) < 20) {
-              //console.log(Math.abs(yPos - otherYpos[i]))
-              return true
-            }
-          }
-          return false
-        }
-        var newYPos = pos.y
-        let maxIterations = 100
-        let j = 0
-        while (overlap && j < maxIterations) {
-          j += 1
-          for (var i = 0; i < listOfYPos.length; i++) {
-            if ((Math.abs(listOfYPos[i] - newYPos) < 0.5) && listOfYPos[i]<newYPos) {
-              newYPos += 15
-              //console.log("moved label up")
-            }
-            else if ((Math.abs(listOfYPos[i] - newYPos) < 0.5) && listOfYPos[i]>newYPos) {
-              newYPos -= 15
-              //console.log("moved label down")
-            } 
-          }
-          overlap = checkOverlap(newYPos, listOfYPos)
-        }
-        
-        listOfYPos.push(newYPos)*/
+            )
+            //.attr('opacity', function() {if (xDate < d.value[0].year ) {return "0"}})
+          
           return 'translate(' + mouse[0] + ',' + pos.y + ')'
           //return "translate(" + mouse[0] + "," + newYPos + ")";
         })

@@ -33,7 +33,7 @@ var promises = Promise.all(promises)
 var selectedEmissions = ['co2', 'coal_co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
 var selectedCountries = ['SWE']
 var selectedYear = 1990 //"2000" //"1990"
-var selectedCountries = ['SWE', 'CAN', "Sweden"]
+var selectedCountries = ['SWE', 'CAN']
 //var selectedYear = 2000 //"2000" //"1990"
 //var selectedEmissions = ['oil_co2']
 var defaultFilteredData = []
@@ -49,9 +49,7 @@ var filterHandler = new FilterHandler(
 //just to have an initial value to avoid undefined
 filterHandler.updateYear(selectedYear)
 //filterHandler.updateEmissions(selectedEmissions)
-filterHandler.updateCountries(selectedCountries)
-filterHandler.updateNormalization(currentNormalization)
-console.log(filterHandler.getNormalization())
+//filterHandler.updateCountries(selectedCountries)
 
 d3.select('#year-selector')
   .selectAll()
@@ -198,7 +196,7 @@ function updateDropdown () {
 
   filterHandler.updateEmissions(selectedEmissions)
   drawScatterPlot(promises, filterHandler)
-  lineChart(filterHandler)
+  lineChart(promises, filterHandler)
   //console.log(filterHandler.getEmissions());
 }
 
@@ -277,6 +275,7 @@ function addSelectedEmission (emission) {
 function addSelectedCountry (country) {
   var index = selectedCountries.indexOf(country)
   var element = document.getElementById(country + '_checkbox')
+  console.log('countr', country)
   if (index !== -1) {
     selectedCountries.splice(index, 1)
     element.checked = false
