@@ -18,7 +18,7 @@ export async function drawScatterPlot (promises, filterHandler) {
      // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
 
       // set the dimensions and margins of the graph
-      var margin = {top: 20, right: 250, bottom: 60, left: 20}, //fixa dimensionerna så info-rutan inte hamnar utanför?
+      var margin = {top: 50, right: 270, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
       width = 760 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
@@ -66,6 +66,26 @@ export async function drawScatterPlot (promises, filterHandler) {
         svg.append("g")
           .call(d3.axisLeft(y));
 
+    // Y label
+    svg
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('transform', 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)')
+      .style('font-family', 'Helvetica')
+      .style('font-size', 12)
+      .text('Natural disasters')
+
+    // X label
+    svg
+      .append('text')
+      .attr('x', width / 2)
+      .attr('y', height + 30)
+      //.attr('text-anchor', 'middle')
+      .style('font-family', 'Helvetica')
+      .style('font-size', 12)
+      .text('CO2 Emissions')
+
+
         // Add dots
         var circ = svg.append('g');
 
@@ -77,7 +97,7 @@ export async function drawScatterPlot (promises, filterHandler) {
         .append("rect")
           .attr('y', function (d) { return y(getNaturalDisastersForCountry(d)); } )
           .data(filteredCo2)
-          .attr('x', function (d) { return 1 })//x(getEmissionsForCountry(d, year, emissionTypes)); } )
+          .attr('x', function (d) { return x(getEmissionsForCountry(d, year, emissionTypes)); } )
           .attr("width", 250)
           .attr("height", 70)
           .attr("rx", 5)
@@ -135,7 +155,7 @@ export async function drawScatterPlot (promises, filterHandler) {
         .append("circle")
           .attr("cy", function (d) { return y(getNaturalDisastersForCountry(d)); } )
           .data(filteredCo2)
-          .attr("cx", function (d) { return 1 })//x(getEmissionsForCountry(d, year, emissionTypes)); } )
+          .attr("cx", function (d) { return x(getEmissionsForCountry(d, year, emissionTypes)); } )
           .attr("r", 5)
           .style("fill", "#69b3a2")
           .on('mouseover', function (d) {
