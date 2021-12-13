@@ -5,6 +5,7 @@ export async function drawWorldMap (
   promises,
   filterHandler,
   lineChart,
+  scatterplot,
   disaster_coordinates,
   unitType
 ) {
@@ -384,6 +385,7 @@ export async function drawWorldMap (
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
         lineChart(filterHandler, promises)
+        scatterplot(promises, filterHandler)
 
         d3.select('#yearTitle').text(year)
         metricDataByCountry = {}

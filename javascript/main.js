@@ -156,6 +156,7 @@ promises.then(function ([
       promises,
       filterHandler,
       lineChart,
+      drawScatterPlot,
       disaster_coordinates,
       this.value
     )
@@ -186,6 +187,7 @@ d3.select('#emissions-dropdown')
         promises,
         filterHandler,
         lineChart,
+        drawScatterPlot,
         disaster_coordinates,
         unitType
       )
@@ -209,6 +211,7 @@ d3.select('#emissions-dropdown')
           promises,
           filterHandler,
           lineChart,
+          drawScatterPlot,
           disaster_coordinates,
           unitType
         )
@@ -222,6 +225,7 @@ d3.select('#emissions-dropdown')
           promises,
           filterHandler,
           lineChart,
+          drawScatterPlot,
           disaster_coordinates,
           unitType
         )
@@ -371,6 +375,7 @@ drawWorldMap(
   promises,
   filterHandler,
   lineChart,
+  drawScatterPlot,
   disaster_coordinates,
   unitType
 )
