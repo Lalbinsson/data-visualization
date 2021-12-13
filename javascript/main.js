@@ -30,7 +30,7 @@ var promises = [
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedEmissions = ['co2', 'coal_co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
+var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
 var selectedCountries = ['SWE']
 var selectedYear = 1990 //"2000" //"1990"
 //var selectedCountries = ['AFG', 'SWE']
@@ -43,6 +43,7 @@ var filterHandler = new FilterHandler(
   selectedCountries,
   selectedYear
 )
+var unitType = 'radioDefault'
 
 //just to have an initial value to avoid undefined
 filterHandler.updateYear(selectedYear)
@@ -138,6 +139,21 @@ promises.then(function ([
       lineChart(filterHandler, promises)
       //console.log(filterHandler.getCountries)
     })
+
+  d3.selectAll("input[name='unit']").on('change', function () {
+    unitType = this.value
+    drawWorldMap(
+      addSelectedCountry,
+      addSelectedEmission,
+      updateYearForCircles,
+      promises,
+      filterHandler,
+      lineChart,
+      disaster_coordinates,
+      this.value
+    )
+  })
+
   initEmissionCheckBox(selectedEmissions)
   initCountryCheckBox(selectedCountries)
 })
@@ -148,19 +164,62 @@ d3.select('#emissions-dropdown')
   .enter()
   .append('button')
   .attr('class', 'btn btn-success')
-  .attr('id', 'dropdown_elements')
+  .attr('id', function (d) {
+    return `dropdown_elements_${d}`
+  })
   .on('click', function (d) {
-    addSelectedEmission(d)
-    lineChart(filterHandler, promises)
-    drawWorldMap(
-      addSelectedCountry,
-      addSelectedEmission,
-      updateYearForCircles,
-      promises,
-      filterHandler,
-      lineChart,
-      disaster_coordinates
-    )
+    var element = document.getElementById('co2')
+    if (element.checked == true) {
+      addSelectedEmission('co2', d)
+      lineChart(filterHandler, promises)
+      drawWorldMap(
+        addSelectedCountry,
+        addSelectedEmission,
+        updateYearForCircles,
+        promises,
+        filterHandler,
+        lineChart,
+        disaster_coordinates,
+        unitType
+      )
+      addSelectedEmission(d)
+      lineChart(filterHandler, promises)
+    } else {
+      if (d === 'co2') {
+        var x = selectedEmissions.length
+        while (x != 0) {
+          console.log(selectedEmissions)
+          addSelectedEmission(selectedEmissions[x - 1])
+          console.log(selectedEmissions)
+          x--
+        }
+        addSelectedEmission('co2')
+        lineChart(filterHandler, promises)
+        drawWorldMap(
+          addSelectedCountry,
+          addSelectedEmission,
+          updateYearForCircles,
+          promises,
+          filterHandler,
+          lineChart,
+          disaster_coordinates,
+          unitType
+        )
+      } else {
+        addSelectedEmission(d)
+        lineChart(filterHandler, promises)
+        drawWorldMap(
+          addSelectedCountry,
+          addSelectedEmission,
+          updateYearForCircles,
+          promises,
+          filterHandler,
+          lineChart,
+          disaster_coordinates,
+          unitType
+        )
+      }
+    }
   })
   .text(function (d) {
     return d
@@ -292,7 +351,8 @@ drawWorldMap(
   promises,
   filterHandler,
   lineChart,
-  disaster_coordinates
+  disaster_coordinates,
+  unitType
 )
 lineChart(filterHandler, promises)
 drawScatterPlot(promises, filterHandler)

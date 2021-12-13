@@ -49,3 +49,7 @@ input {
   display: inline-block;
   background-color: white;
 }
+
+#dropdown_elements_co2 {
+  background-color: blue;
+}
