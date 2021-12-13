@@ -5,6 +5,7 @@ export async function drawWorldMap (
   promises,
   filterHandler,
   lineChart,
+  drawScatterPlot,
   disaster_coordinates
 ) {
   // remove old svgs
@@ -293,7 +294,6 @@ export async function drawWorldMap (
       .on('onchange', val => {
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
-
         lineChart(filterHandler, promises)
 
         d3.select('#yearTitle').text(year)

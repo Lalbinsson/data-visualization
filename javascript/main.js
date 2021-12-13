@@ -12,6 +12,7 @@ var allEmissions = [
   'cement_co2',
   'flaring_co2',
   'other_industry_co2'
+//  'consumption_co2'
 ]
 var allYears = ['1960', '1970', '1990']
 var allCountries = []
@@ -23,17 +24,16 @@ var promises = [
   d3.json('../world-geojson.json'),
   d3.csv('../owid-co2-data.csv'),
   //d3.csv('../disasterlocations.csv')
-  d3.json('../naturalDisastersByYear.json'),
+  d3.json('../naturalDisastersMappedIso.json'),
   d3.json('../naturalDisasters_coordinates.json')
 ]
 
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedEmissions = ['co2', 'coal_co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
-var selectedCountries = ['SWE']
+var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
 var selectedYear = 1990 //"2000" //"1990"
-var selectedCountries = ['SWE', 'CAN']
+var selectedCountries = ['AFG', 'SWE']
 //var selectedYear = 2000 //"2000" //"1990"
 //var selectedEmissions = ['oil_co2']
 var defaultFilteredData = []
@@ -63,6 +63,8 @@ d3.select('#year-selector')
     return d
   })
 
+
+  //används ens den här?
 d3.select('#year-selector').on('change', function () {
   var newYear = d3.select(this).property('value')
   filterHandler.updateYear(newYear)
@@ -82,6 +84,8 @@ function updateYearForCircles (
     if (d.year >= filterHandler.getYear()) return
     disaster_coordinates.push([d.lon, d.lat])
   })
+  drawScatterPlot(promises, filterHandler)
+  lineChart(filterHandler, promises)
 }
 
 promises.then(function ([
@@ -138,7 +142,7 @@ promises.then(function ([
       //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
       filterHandler.updateCountries(selectedCountries)
       drawScatterPlot(promises, filterHandler)
-      lineChart(filterHandler, promises)
+      lineChart(filterHandler)
       //console.log(filterHandler.getCountries)
     })
   initEmissionCheckBox(selectedEmissions)
@@ -154,6 +158,7 @@ d3.select('#emissions-dropdown')
   .attr('id', 'dropdown_elements')
   .on('click', function (d) {
     addSelectedEmission(d)
+    drawScatterPlot(promises, filterHandler)
     lineChart(filterHandler, promises)
     drawWorldMap(
       addSelectedCountry,
@@ -162,6 +167,7 @@ d3.select('#emissions-dropdown')
       promises,
       filterHandler,
       lineChart,
+      drawScatterPlot,
       disaster_coordinates
     )
   })
@@ -195,8 +201,10 @@ function updateDropdown () {
   }
 
   filterHandler.updateEmissions(selectedEmissions)
+  //drawScatterPlot(promises, filterHandler)
+  //lineChart(promises, filterHandler)
   drawScatterPlot(promises, filterHandler)
-  lineChart(promises, filterHandler)
+  lineChart(filterHandler)
   //console.log(filterHandler.getEmissions());
 }
 
@@ -285,6 +293,7 @@ function addSelectedCountry (country) {
   }
   filterHandler.updateCountries(selectedCountries)
   lineChart(filterHandler, promises)
+  drawScatterPlot(promises, filterHandler)
 }
 
 // Update normalization
@@ -302,6 +311,7 @@ drawWorldMap(
   promises,
   filterHandler,
   lineChart,
+  drawScatterPlot,
   disaster_coordinates
 )
 lineChart(filterHandler, promises)

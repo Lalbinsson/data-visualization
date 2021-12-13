@@ -3,32 +3,32 @@
 - Tror kajsas skala inte är i ton utan miljoner ton?
 - Där man hoverar är inte där rutan kommer upp i kartan
 */
-export function drawScatterPlot (promises, filterHandler) {
-    promises.then(function([world, co2, mappedNaturalDisasterData]) {
+export async function drawScatterPlot (promises, filterHandler) {
+    promises.then(function([world, co2, mappedNaturalDisasterData]){ //mappedNaturalDisasterData]) {
       var year = filterHandler.getYear()
       var emissionTypes = filterHandler.getEmissions()
       var countries =  filterHandler.getCountries()
 
-  /*    console.log("Scatterplot")
-     console.log(filterHandler.getCountries())
-     console.log(filterHandler.getEmissions())
-     console.log('year:', filterHandler.getYear()) */
+     //console.log("Scatterplot")
+   //  console.log(filterHandler.getCountries())
+     //console.log(filterHandler.getEmissions())
 
-      //var mappedNaturalDisasterCountryAndYear = []
-      //mapNaturalDisasters(co2, naturalDisasterData, mappedNaturalDisasterCountryAndYear)
+    //  var newMappedNaturalDisasterCountryAndYear = []
+     // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
 
       // set the dimensions and margins of the graph
-      var margin = {top: 20, right: 250, bottom: 60, left: 20}, //fixa dimensionerna så info-rutan inte hamnar utanför?
+      var margin = {top: 50, right: 270, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
       width = 760 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
       var filteredNatDis = mappedNaturalDisasterData.filter(function (d) {
        //filtrera på emissions(?)
-        return d.year == year && d.nbr > 0 && countries.includes(d.country)
+       // console.log("filtering data on ", year)
+        return d.year == year && d.nbr > 0 && countries.includes(d.iso_code) //&& getEmissionsForCountry(d, year, emissionTypes)>0
       })
 
       var filteredCo2 = co2.filter(function (d) {
-         return countries.includes(d.country) && d.iso_code != '' && d.year == year
+        return countries.includes(d.iso_code) && d.iso_code != '' && d.year == year //&& getEmissionsForCountry(d, year, emissionTypes)>0
        })
 
     /*  console.log(year)
@@ -65,9 +65,31 @@ export function drawScatterPlot (promises, filterHandler) {
         svg.append("g")
           .call(d3.axisLeft(y));
 
+    // Y label
+    svg
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('transform', 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)')
+      .style('font-family', 'Helvetica')
+      .style('font-size', 12)
+      .text('Natural disasters')
+
+    // X label
+    svg
+      .append('text')
+      .attr('x', width / 2)
+      .attr('y', height + 30)
+      //.attr('text-anchor', 'middle')
+      .style('font-family', 'Helvetica')
+      .style('font-size', 12)
+      .text('CO2 Emissions')
+
+
         // Add dots
         var circ = svg.append('g');
 
+      console.log(emissionTypes.length)
+      if (emissionTypes.length>0){ //om det inte finns någon emission type vald så ska den inte plotta några punkter
        circ.selectAll("dot")
         .data(filteredNatDis)
         .enter()
@@ -90,7 +112,12 @@ export function drawScatterPlot (promises, filterHandler) {
           .append("text")
             .attr('y', function (d) { return parseInt(y(getNaturalDisastersForCountry(d, year))+20); } )
             .data(filteredCo2)
-            .attr('x', function (d) { return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10); } )
+            .attr('x', function (d) { 
+              if (getEmissionsForCountry(d, year, emissionTypes)>0) {
+                return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+             } else {
+                return 10
+             } } )
             .attr("id", function(d) { return "text"+d.iso_code.toString()+d.year.toString(); })
             .style('opacity', '0')
             .text(function(d) { return d.country; })
@@ -99,10 +126,24 @@ export function drawScatterPlot (promises, filterHandler) {
               .attr('dy', 20)
               .attr('font-weight', "normal")
               .data(filteredCo2)
-              .attr('x', function (d) { return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10); } )
+              .attr('dx', function (d) { return 0 })
+              .attr('x', function (d) { 
+                if (getEmissionsForCountry(d, year, emissionTypes)>0) {
+                  return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                } else {
+                  return 10
+                }
+              } )
               .text(function(d) { return "Co2 Emissions: "+getEmissionsForCountry(d, year, emissionTypes)+" million ton"; })
               .append("tspan")
-              .attr('x', function (d) { return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10); } )
+              .attr('dx', function (d) { return 0 })
+              .attr('x', function (d) { 
+                if (getEmissionsForCountry(d, year, emissionTypes)>0) {
+                  return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                } else {
+                  return 10
+                }
+              } )
               .data(filteredNatDis)
               .text(function(d) { return "Natural Disasters: "+getNaturalDisastersForCountry(d)+" st"; })
               .attr('dy', 20)
@@ -150,9 +191,8 @@ export function drawScatterPlot (promises, filterHandler) {
               .duration(0.1)
               .style('opacity', '0');
           }); 
-        
+        }
         })
-
       }
 
       function getNaturalDisastersForCountry(row) {
@@ -160,49 +200,64 @@ export function drawScatterPlot (promises, filterHandler) {
       }
 
       function getEmissionsForCountry(row, year, emissionTypes) { 
+      //  console.log(emissionTypes)
+      //  console.log("in get emissions ", year)
+
+        if(emissionTypes.length>0){ //av någon anledning är arrayen 1 när ingen emission är vald, 2 när en emission är vald etc.
         //förlåt för riktigt dålig kod lol
         var tot = 0
-        for (let y = 1960; y <= year; y++) {
+
+        for (let y = 1700; y <= year; y++) {
+         // console.log(row)
 
         // just nu väljs bara co2 om den i ikryssad, dvs adderar inte co2+ specifika typer av co2, utan tar då co2 totalen
-        if (emissionTypes.includes('co2') && parseInt(row.oil_co2)>0) {
+        if (emissionTypes.includes('co2') && parseInt(row.co2)>0) {
           tot= tot+parseInt(row.co2)
         } else {
-          if (emissionTypes.includes('oil_co2') && parseInt(row.oil_co2)>0) {
+          if (emissionTypes.includes('oil_co2') && row.oil_co2 && parseInt(row.oil_co2)>0) {
             tot= tot+parseInt(row.oil_co2)
           }
-          if (emissionTypes.includes('gas_co2') && parseInt(row.gas_co2)>0) {
+          if (emissionTypes.includes('gas_co2') && row.gas_co2 && parseInt(row.gas_co2)>0) {
             tot= tot+parseInt(row.gas_co2)
           }
-          if (emissionTypes.includes('coal_co2') && parseInt(row.coal_co2)>0) {
+          if (emissionTypes.includes('coal_co2') && row.coal_co2 && parseInt(row.coal_co2)>0) {
             tot= tot+parseInt(row.coal_co2)
           }
-          if (emissionTypes.includes('cement_co2') && parseInt(row.cement_co2)>0) {
+          if (emissionTypes.includes('cement_co2') && row.cement_co2 && parseInt(row.cement_co2)>0) {
             tot= tot+parseInt(row.cement_co2)
           }
-          if (emissionTypes.includes('flaring_co2') && parseInt(row.flaring_co2)>0) {
+          if (emissionTypes.includes('flaring_co2') && (row.flaring_co2 != "") && parseInt(row.flaring_co2)>0) {
             tot= tot+parseInt(row.flaring_co2)
           }
-          if (emissionTypes.includes('other_industry_co2') && (row.other_industry_co2)>0) {
+          if (emissionTypes.includes('other_industry_co2') && row.other_industry_co2 && (row.other_industry_co2)>0) {
             tot= tot+parseInt(row.other_industry_co2)
           }
         }
       }
-   //   console.log("tot: ", tot)
-      return tot
+
+    /*  console.log(row.country)
+      console.log(emissionTypes)
+      console.log(tot) */
+      if (tot>0) {
+        return tot
+      } else {
+        return 0
       }
+     }
+    }
 
 
 //används för att filtrera ut ett nytt json-dataset, tar sjukt lång tid, använd den sparade filen istället.
 function mapNaturalDisasters (
   co2_data,
   naturalDisaster_data,
-  mappedNaturalDisasterCountryAndYear
+  newMappedNaturalDisasterCountryAndYear
 ) {
   co2_data.forEach(d => {
     var nbr = 0
     var c = d.country
     var y = d.year
+    var iso_code = d.iso_code
 
     naturalDisaster_data.forEach(n => {
       if (c == n.country && y > n.year) {
@@ -211,14 +266,15 @@ function mapNaturalDisasters (
     })
 
     if (nbr > 0) {
-      mappedNaturalDisasterCountryAndYear.push({
+      newMappedNaturalDisasterCountryAndYear.push({
         country: c,
         year: y,
-        nbr: nbr
+        nbr: nbr,
+        iso_code: iso_code,
       })
     }
   })
 
-  var jsonData = JSON.stringify(mappedNaturalDisasterCountryAndYear)
+  var jsonData = JSON.stringify(newMappedNaturalDisasterCountryAndYear)
   console.log(jsonData)
 }
