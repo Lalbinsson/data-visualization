@@ -18,8 +18,8 @@ export async function drawScatterPlot (promises, filterHandler) {
 
       // set the dimensions and margins of the graph
       var margin = {top: 50, right: 270, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
-      width = 760 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
+      width = window.innerWidth *0.47  - margin.left - margin.right,
+      height = window.innerHeight *0.5  - margin.top - margin.bottom;
 
       var filteredNatDis = mappedNaturalDisasterData.filter(function (d) {
        //filtrera på emissions(?)
@@ -50,8 +50,8 @@ export async function drawScatterPlot (promises, filterHandler) {
 
         // console.log("co2 max: ", d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, filterHandler) })) // miljoner ton
         // Add X axis
-        var x = d3.scaleLog()
-          .domain( [ 1, d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, emissionTypes) }) ] ) //den här skalan blir inte rätt
+        var x = d3.scaleLinear()
+          .domain( [ 0, d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, emissionTypes) }) ] ) //den här skalan blir inte rätt
           .range([ 0, width ]);
         svg.append("g")
           .attr("transform", "translate(0," + height + ")")

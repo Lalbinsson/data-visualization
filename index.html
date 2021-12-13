@@ -54,68 +54,85 @@
 <div class="container-fluid">
   <div class="row">
     <div id="slider"></div>
-    <div class="col">
-      <!-- outputs to make sure the updated value is updated globally -->
-      <small> Current Year: </small>
-      <br>
-      <small id="cYear"></small>
-      <br>
-      <small> Current Emissions</small>
-      <br>
-      <small id="cEmissions"></small>
-      <br>
-      <small> Current Countries: </small>
-      <br>
-      <small id="cCountries"></small>
+      <div class="col">
+        <small> Current Year: </small>
+        <br>
+        <small id="cYear"></small>
+        <br>
+        <small> Current Emissions</small>
+        <br>
+        <small id="cEmissions"></small>
+        <br>
+        <small> Current Countries: </small>
+        <br>
+        <small id="cCountries"></small>
+      </div>
     </div>
-
   </div>
+</div>
+
 
   <div style="padding: 10px;">
     <div class="row">
-      <div id="wrapper" class="col-sm-7">
-        <div id="tooltip" class="tooltip">
-          <div class="tooltip-country" id="country"></div>
-          <div class="tooltip-value">
-            <span id="value"></span>
+      <div class="col">
+        <div id="wrapper">
+          <div id="tooltip" class="tooltip">
+            <div class="tooltip-country" id="country"></div>
+            <div class="tooltip-value">
+              <span id="value"></span>
+            </div>
+          </div>
+          <div id="options">
+            <div>
+              <input type="checkbox" checked="true" id="toggleNaturalDisasters" style="display:inline-block">
+              <label for="">Show Natural Disasters</label>
+            </div>
+            <div>
+              <input type="radio" id="" name="x">
+              <label for="">Huey</label>
+            </div>
+            <div>
+              <input type="radio" id="" name="x">
+              <label for="">Huey</label>
+            </div>
+            <div>
+              <input type="radio" id="" name="x">
+              <label for="">Huey</label>
+            </div>
           </div>
         </div>
-        <div id="options">
-          <div>
-            <input type="checkbox" checked="true" id="toggleNaturalDisasters" style="display:inline-block">
-            <label for="">Show Natural Disasters</label>
-          </div>
-          <div>
-            <input type="radio" id="" name="x">
-            <label for="">Huey</label>
-          </div>
-          <div>
-            <input type="radio" id="" name="x">
-            <label for="">Huey</label>
-          </div>
-          <div>
-            <input type="radio" id="" name="x">
-            <label for="">Huey</label>
-          </div>
+      </div>
+      <div class="col">
+        worls tezt
+      </div>
+    </div>
+    <div class="row">
+    <form>
+      <div id="radiobuttons">
+              <input class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
+              <input class="radiobutton" type="radio" name="normalization" value="capita"> Per capita<br>
+              <input class="radiobutton" type="radio" name="normalization" value="gdp"> Per GDP<br>
+            </div>
+          </form>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div id="linechart">
         </div>
-
       </div>
-
-      <div id="linechart" class="col-sm-5">
-        <form>
-          <div id="radiobuttons">
-            <input class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
-            <input class="radiobutton" type="radio" name="normalization" value="capita"> Per capita<br>
-            <input class="radiobutton" type="radio" name="normalization" value="gdp"> Per GDP<br>
-          </div>
-        </form>
-      </div>
-      <div class="col-6">
+      <div class="col">
         <div id="scatterPlot">
         </div>
       </div>
     </div>
-
+    <div class="row">
+      <div class="col">
+        line chart tezt
+      </div>
+      <div class="col">
+        scatter tezt
+      </div>
+    </div>
   </div>
 
 

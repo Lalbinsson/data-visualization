@@ -33,13 +33,13 @@ export async function drawWorldMap (
   var emissionType = filterHandler.getEmissions()
   var year = filterHandler.getYear()
 
-  const width = window.innerWidth * 0.6
-  const height = 500
+  const width = window.innerWidth *0.623
+  const height = window.innerWidth * 0.4
 
   const projection2 = d3
     .geoMercator()
-    .scale(120)
-    .translate([width / 2.1, height / 1.5])
+    .scale(190)
+    .translate([width/2, height/1.45])
 
   const pathGenerator = d3.geoPath(projection2)
 
@@ -374,7 +374,7 @@ export async function drawWorldMap (
       .append('g')
       .attr('class', 'legendLog')
       .attr('id', 'ID_legendlog')
-      .attr('transform', 'translate(30,430)')
+      .attr('transform', 'translate(30,700)')
       .on('mouseover', function (d) {
         d3.selectAll('rect')._groups[0][0].setAttribute('id', 'rect-0')
         d3.selectAll('rect')._groups[0][1].setAttribute('id', 'rect-1')
