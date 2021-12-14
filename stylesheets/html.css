@@ -1,11 +1,4 @@
-#countries-dropdown {
-  visibility: hidden;
-  list-style-type: none;
-  height: 300px;
-  width: 400px;
-  overflow: scroll;
-  overflow-x: hidden;
-}
+
 
 .body {
   background: #D8E8EA;
@@ -21,7 +14,7 @@
   display: inline-block;
   position: relative;
   margin: 3px;
-  text-align: center;
+  text-align: left;
   vertical-align: middle;
   width: 200px;
   text-size-adjust: 12;
@@ -29,18 +22,39 @@
   margin-left: 10px;
 }
 
+.btn {
+  text-align: left !important;
+  width: 100%;
+  margin-top: 5px;
+}
+
 #emissions-selector {
   height: 50px;
 }
 
 #emissions-dropdown {
-  margin-left: 10px;
   visibility: hidden;
   list-style-type: none;
   height: wrap;
-  width: 400px;
   overflow: scroll;
   overflow-x: hidden;
+  height: 300px;
+}
+
+#countries-dropdown {
+  visibility: hidden;
+  list-style-type: none;
+  height: 300px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+.checkedEmissions {
+  margin-right: 10px;
+}
+
+.checkedCountries {
+  margin-right: 10px;
 }
 
 input {

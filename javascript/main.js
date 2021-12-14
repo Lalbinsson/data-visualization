@@ -16,6 +16,7 @@ var allEmissions = [
 ]
 var allYears = ['1960', '1970', '1990']
 var allCountries = []
+var allCountriesMap = new Map()
 
 const countryNameAccessor = d => d.properties['NAME']
 const countryIdAccessor = d => d.properties['ADM0_A3_IS']
@@ -98,7 +99,8 @@ promises.then(function ([
 
   for (let i = 0; i < worldMap.features.length; i++) {
     if (isNaN(countryIdAccessor(worldMap.features[i])))
-      allCountries.push(countryIdAccessor(worldMap.features[i]))
+    allCountriesMap.set(countryIdAccessor(worldMap.features[i]), countryNameAccessor(worldMap.features[i]))
+    allCountries.push(countryIdAccessor(worldMap.features[i]))
   }
   allCountries.sort()
   //addSelectedEmission(selectedEmissions)
@@ -115,10 +117,11 @@ promises.then(function ([
       // lineChart(filterHandler, promises)
     })
     .text(function (d) {
-      return d
+      return getCountryName(d)
     }) // text showed in the menu
     .append('input')
     .attr('type', 'checkbox')
+    .attr('class', 'checkedCountries')
     .attr('vertical-align', 'middle')
     .attr('id', function (d) {
       return d + '_checkbox'
@@ -142,7 +145,7 @@ promises.then(function ([
       //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
       filterHandler.updateCountries(selectedCountries)
       drawScatterPlot(promises, filterHandler)
-      lineChart(filterHandler)
+      lineChart(filterHandler, promises)
       //console.log(filterHandler.getCountries)
     })
   initEmissionCheckBox(selectedEmissions)
@@ -172,7 +175,7 @@ d3.select('#emissions-dropdown')
     )
   })
   .text(function (d) {
-    return d
+    return getNameForEmissionsType(d)
   }) // text showed in the menu
   .append('input')
   .attr('type', 'checkbox')
@@ -185,6 +188,37 @@ d3.select('#emissions-dropdown')
     updateDropdown
     //console.log(filterHandler.getEmissions())
   })
+
+function getNameForEmissionsType(d) {
+  if(d == 'gas_co2') {
+    return 'Gas'
+  } 
+  if(d == 'cement_co2') {
+    return 'Cement'
+  }
+  if(d == 'oil_co2') {
+    return 'Oil'
+  }
+  if(d == 'co2') {
+    return 'All'
+  }
+  if(d == 'other_industry_co2') {
+    return 'Other industry'
+  }
+  if(d == 'consumption_co2') {
+    return 'Consumption'
+  }
+  if(d == 'flaring_co2') {
+    return 'Flaring'
+  }
+  if(d == 'coal_co2') {
+    return 'Coal'
+  }
+}
+
+function getCountryName(d) {
+  return allCountriesMap.get(d)
+}
 
 function updateDropdown () {
   if (this.checked) {

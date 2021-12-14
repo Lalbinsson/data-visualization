@@ -207,8 +207,6 @@ export async function drawScatterPlot (promises, filterHandler) {
         //förlåt för riktigt dålig kod lol
         var tot = 0
 
-        console.log("cement: ", row.cement_co2)
-        console.log("type", typeof row.cement_co2)
 
         for (let y = 1700; y <= year; y++) {
          // console.log(row)
@@ -219,7 +217,6 @@ export async function drawScatterPlot (promises, filterHandler) {
         } else {
           if (emissionTypes.includes('oil_co2') && !Number.isNaN(row.oil_co2) && parseFloat(row.oil_co2)>0) {
             tot= tot+parseFloat(row.oil_co2)
-            console.log(row.oil_co2)
           }
           if (emissionTypes.includes('gas_co2') && !Number.isNaN(row.gas_co2) && parseFloat(row.gas_co2)>0) {
             tot= tot+parseFloat(row.gas_co2)
@@ -229,8 +226,6 @@ export async function drawScatterPlot (promises, filterHandler) {
           }
           if (emissionTypes.includes('cement_co2') && !Number.isNaN(row.cement_co2) && parseFloat(row.cement_co2)>0) {
             tot= tot+parseFloat(row.cement_co2)
-            console.log("cement co2: ", row.cement_co2)
-            console.log(parseFloat(row.cement_co2))
           }
           if (emissionTypes.includes('flaring_co2') && !Number.isNaN(row.flaring_co2) && parseFloat(row.flaring_co2)>0) {
             tot= tot+parseFloat(row.flaring_co2)
