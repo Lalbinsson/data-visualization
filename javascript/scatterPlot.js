@@ -17,9 +17,9 @@ export async function drawScatterPlot (promises, filterHandler) {
      // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
 
       // set the dimensions and margins of the graph
-      var margin = {top: 50, right: 270, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
-      width = window.innerWidth *0.47  - margin.left - margin.right,
-      height = window.innerHeight *0.5  - margin.top - margin.bottom;
+      var margin = {top: 30, right: 270, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
+      width = window.innerWidth * 0.47  - margin.left - margin.right,
+      height = window.innerHeight * 0.5  - margin.top - margin.bottom;
 
       var filteredNatDis = mappedNaturalDisasterData.filter(function (d) {
        //filtrera på emissions(?)
@@ -51,7 +51,7 @@ export async function drawScatterPlot (promises, filterHandler) {
         // console.log("co2 max: ", d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, filterHandler) })) // miljoner ton
         // Add X axis
         var x = d3.scaleLinear()
-          .domain( [ 0, d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, emissionTypes) }) ] ) //den här skalan blir inte rätt
+          .domain( [ 0, 1.15*d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, emissionTypes) }) ] ) //den här skalan blir inte rätt
           .range([ 0, width ]);
         svg.append("g")
           .attr("transform", "translate(0," + height + ")")
@@ -60,7 +60,7 @@ export async function drawScatterPlot (promises, filterHandler) {
         // console.log("nbr max: ", d3.max(filteredNatDis, function( d ) { return d.nbr }))
         // Add Y axis
         var y = d3.scaleLinear()
-          .domain( [ 0, d3.max(filteredNatDis, function( d ) { return d.nbr }) ] )
+          .domain( [ 0, 1.1*d3.max(filteredNatDis, function( d ) { return d.nbr }) ] )
           .range([ height, 0]);
         svg.append("g")
           .call(d3.axisLeft(y));

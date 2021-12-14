@@ -94,16 +94,23 @@
     </div>
     <div class="row">
     <form>
-      <div id="radiobuttons">
+      <!--<div id="radiobuttons">
               <input class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
               <input class="radiobutton" type="radio" name="normalization" value="capita"> Per capita<br>
               <input class="radiobutton" type="radio" name="normalization" value="gdp"> Per GDP<br>
-            </div>
-          </form>
+      </div>-->
+    </form>
     </div>
     <div class="row">
       <div class="col plot">
-        <div id="linechart">
+        <div id="lineChartContainer">
+          <div id="linechart">
+          </div>
+          <div id="radiobuttons">
+            <input class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
+            <input class="radiobutton" type="radio" name="normalization" value="capita"> Per capita<br>
+            <input class="radiobutton" type="radio" name="normalization" value="gdp"> Per GDP<br>
+          </div>
         </div>
       </div>
       <div class="col plot">

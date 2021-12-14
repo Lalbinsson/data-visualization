@@ -26,7 +26,7 @@ export async function lineChart (filterHandler, promises) {
     return largestEmitter
   }*/
   // Set the dimensions of the canvas / graph
-  var margin = { top: 30, right: 80, bottom: 50, left: 50 },
+  var margin = { top: 30, right: 270, bottom: 50, left: 50 },
     width = window.innerWidth *0.47 - margin.left - margin.right,
     height = window.innerHeight *0.5 - margin.top - margin.bottom
 
@@ -251,6 +251,13 @@ export async function lineChart (filterHandler, promises) {
       .style('fill', 'black')
     //.text('hejhej')
 
+//class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
+    svg.append('g')
+      .attr('class', 'radiobutton')
+      .attr('type', 'radio')
+      .attr('name', 'normalization')
+      .attr('value', 'none')
+      .attr('transform', function() { return 'translate(30,'+ (height-60) +')' })
     /*
 mouseG.append("rect")
 .attr("class", "text-box")

@@ -33,13 +33,16 @@ export async function drawWorldMap (
   var emissionType = filterHandler.getEmissions()
   var year = filterHandler.getYear()
 
-  const width = window.innerWidth *0.623
-  const height = window.innerWidth * 0.4
+  const width = window.innerWidth * 0.623
+  const height = width * 0.7//window.innerHeight * 0.4
+  const scale = 0.15863*width //143
 
+
+  console.log('skala:', scale)
   const projection2 = d3
     .geoMercator()
-    .scale(190)
-    .translate([width/2, height/1.45])
+    .scale(scale)
+    .translate([width/2, height/1.67])
 
   const pathGenerator = d3.geoPath(projection2)
 
@@ -368,11 +371,12 @@ export async function drawWorldMap (
       d3.selectAll('#canvas').attr('visibility', 'hidden')
     }
 
+    // Quantiles legend
     svg
       .append('g')
       .attr('class', 'legendLog')
       .attr('id', 'ID_legendlog')
-      .attr('transform', 'translate(30,700)')
+      .attr('transform', function() { return 'translate(30,'+ (height-60) +')' })
       .on('mouseover', function (d) {
         d3.selectAll('rect')._groups[0][0].setAttribute('id', 'rect-0')
         d3.selectAll('rect')._groups[0][1].setAttribute('id', 'rect-1')
