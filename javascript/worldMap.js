@@ -125,22 +125,23 @@ export async function drawWorldMap (
     countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
     countries_quant40 = findQuantiles(
       sorted_metricValues,
-      quantile_20 + 0.01,
+      quantile_20 + 0.1,
       quantile_40
     )
+
     countries_quant60 = findQuantiles(
       sorted_metricValues,
-      quantile_40 + 0.01,
+      quantile_40 + 0.1,
       quantile_60
     )
     countries_quant80 = findQuantiles(
       sorted_metricValues,
-      quantile_60 + 0.01,
+      quantile_60 + 0.1,
       quantile_80
     )
     countries_quant100 = findQuantiles(
       sorted_metricValues,
-      quantile_80 + 0.01,
+      quantile_80 + 0.1,
       quantile_100
     )
   }
@@ -230,7 +231,7 @@ export async function drawWorldMap (
       .attr('fill', d => {
         const metricValue = metricDataByCountry[countryIdAccessor(d)]
         if (typeof metricValue == 'undefined') return '#e2e6e9'
-        return colorScale(metricValue)
+        return colorScaleLegend(metricValue)
       })
       .on('mouseover', function (d) {
         d3.selectAll('.country')
@@ -408,7 +409,7 @@ export async function drawWorldMap (
         bounds.selectAll('.country').attr('fill', d => {
           const metricValue = metricDataByCountry[countryIdAccessor(d)]
           if (typeof metricValue == 'undefined') return '#6D6D6D'
-          return colorScale(metricValue)
+          return colorScaleLegend(metricValue)
         })
 
         filterCO2(co2_dataset, metricDataByCountry)
@@ -417,11 +418,18 @@ export async function drawWorldMap (
 
         legendLog = d3
           .legendColor()
-          .shapeWidth(40)
-          .shapePadding(10)
+          .shapeWidth(100)
+          .shapePadding(0)
           .title('Quantiles')
-          .cells(10)
-          .labels(['0-20', '20-40', '40-60', '60-80', '80-100'])
+          .cells(6)
+          .labels([
+            `${d3.format(',.1f')(quantile_20)}`,
+            `${d3.format(',.1f')(quantile_40)}`,
+            `${d3.format(',.1f')(quantile_60)}`,
+            `${d3.format(',.1f')(quantile_80)}`,
+            `${d3.format(',.1f')(quantile_100)}`
+          ])
+          .labelAlign('end')
           .orient('horizontal')
           .scale(colorScaleLegend)
 
@@ -643,11 +651,18 @@ export async function drawWorldMap (
 
     var legendLog = d3
       .legendColor()
-      .shapeWidth(40)
-      .shapePadding(10)
+      .shapeWidth(100)
+      .shapePadding(0)
       .title('Quantiles')
       .cells(6)
-      .labels(['0-20', '20-40', '40-60', '60-80', '80-100'])
+      .labels([
+        `${d3.format(',.1f')(quantile_20)}`,
+        `${d3.format(',.1f')(quantile_40)}`,
+        `${d3.format(',.1f')(quantile_60)}`,
+        `${d3.format(',.1f')(quantile_80)}`,
+        `${d3.format(',.1f')(quantile_100)}`
+      ])
+      .labelAlign('end')
       .orient('horizontal')
       .scale(colorScaleLegend)
 
