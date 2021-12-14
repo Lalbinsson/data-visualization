@@ -4,49 +4,53 @@
 - Där man hoverar är inte där rutan kommer upp i kartan
 */
 export async function drawScatterPlot (promises, filterHandler) {
-    promises.then(function([world, co2, mappedNaturalDisasterData]){ //mappedNaturalDisasterData]) {
-      var year = filterHandler.getYear()
-      var emissionTypes = filterHandler.getEmissions()
-      var countries =  filterHandler.getCountries()
+  promises.then(function ([world, co2, mappedNaturalDisasterData]) {
+    //mappedNaturalDisasterData]) {
+    var year = filterHandler.getYear()
+    var emissionTypes = filterHandler.getEmissions()
+    var countries = filterHandler.getCountries()
 
-     //console.log("Scatterplot")
-   //  console.log(filterHandler.getCountries())
-     //console.log(filterHandler.getEmissions())
+    //console.log("Scatterplot")
+    //  console.log(filterHandler.getCountries())
+    //console.log(filterHandler.getEmissions())
 
     //  var newMappedNaturalDisasterCountryAndYear = []
-     // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
+    // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
 
       // set the dimensions and margins of the graph
       var margin = {top: 30, right: 270, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
       width = window.innerWidth * 0.47  - margin.left - margin.right,
       height = window.innerHeight * 0.5  - margin.top - margin.bottom;
 
-      var filteredNatDis = mappedNaturalDisasterData.filter(function (d) {
-       //filtrera på emissions(?)
-       // console.log("filtering data on ", year)
-        return d.year == year && d.nbr > 0 && countries.includes(d.iso_code) //&& getEmissionsForCountry(d, year, emissionTypes)>0
-      })
+    var filteredNatDis = mappedNaturalDisasterData.filter(function (d) {
+      //filtrera på emissions(?)
+      // console.log("filtering data on ", year)
+      return d.year == year && d.nbr > 0 && countries.includes(d.iso_code) //&& getEmissionsForCountry(d, year, emissionTypes)>0
+    })
 
-      var filteredCo2 = co2.filter(function (d) {
-        return countries.includes(d.iso_code) && d.iso_code != '' && d.year == year //&& getEmissionsForCountry(d, year, emissionTypes)>0
-       })
+    var filteredCo2 = co2.filter(function (d) {
+      return (
+        countries.includes(d.iso_code) && d.iso_code != '' && d.year == year
+      ) //&& getEmissionsForCountry(d, year, emissionTypes)>0
+    })
 
     /*  console.log(year)
       console.log(emissionTypes)
       console.log(filteredNatDis)
       console.log(filteredCo2) */
 
-      // remove old svgs
-      d3.select("#scatterSvg").remove();  
+    // remove old svgs
+    d3.select('#scatterSvg').remove()
 
-      // append the svg object to the body of the page
-      var svg = d3.select("#scatterPlot") //ändra färg på bakgrunden?
-          .append("svg")
-          .attr("id", "scatterSvg")
-          .attr("width", width + margin.left + margin.right)  
-          .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // append the svg object to the body of the page
+    var svg = d3
+      .select('#scatterPlot') //ändra färg på bakgrunden?
+      .append('svg')
+      .attr('id', 'scatterSvg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
         // console.log("co2 max: ", d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, filterHandler) })) // miljoner ton
         // Add X axis
@@ -84,13 +88,14 @@ export async function drawScatterPlot (promises, filterHandler) {
       .style('font-size', 12)
       .text('CO2 Emissions')
 
+    // Add dots
+    var circ = svg.append('g')
 
-        // Add dots
-        var circ = svg.append('g');
-
-      console.log(emissionTypes.length)
-      if (emissionTypes.length>0){ //om det inte finns någon emission type vald så ska den inte plotta några punkter
-       circ.selectAll("dot")
+    console.log(emissionTypes.length)
+    if (emissionTypes.length > 0) {
+      //om det inte finns någon emission type vald så ska den inte plotta några punkter
+      circ
+        .selectAll('dot')
         .data(filteredNatDis)
         .enter()
         .append("rect")
@@ -148,10 +153,14 @@ export async function drawScatterPlot (promises, filterHandler) {
               .text(function(d) { return "Natural Disasters: "+getNaturalDisastersForCountry(d)+" st"; })
               .attr('dy', 20)
 
-        circ.selectAll("dot")
+      circ
+        .selectAll('dot')
         .data(filteredNatDis)
         .enter()
         .append("circle")
+          .attr('id', function (d) {
+            return d.iso_code + '_scatterplot'
+          })
           .attr("cy", function (d) { return parseFloat(y(getNaturalDisastersForCountry(d))); } )
           .data(filteredCo2)
           .attr("cx", function (d) { return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); } )
@@ -163,49 +172,50 @@ export async function drawScatterPlot (promises, filterHandler) {
              .duration(0.1)
              .style('opacity', '1');
 
-            d3.select("#text"+(d.iso_code.toString()+d.year.toString()))
-             .transition()
-             .duration(0.1)
-             .style('opacity', '1');
-
-            d3.select(this)
+          d3.select('#text' + (d.iso_code.toString() + d.year.toString()))
             .transition()
             .duration(0.1)
-            .attr("r", 7)
-            .style('opacity', '0.5');
-          })
-          .on('mouseout', function (d) {
-            d3.select(this)
-            .transition()
-            .duration(0.1)
-            .attr("r", 5)
-         //   .front() //fixa så att de läggs på längst fram?
             .style('opacity', '1')
 
-            d3.select("#rect"+(d.iso_code.toString()+d.year.toString()))
+          d3.select(this)
             .transition()
             .duration(0.1)
-            .style('opacity', '0'); 
-            d3.select("#text"+(d.iso_code.toString()+d.year.toString()))
-              .transition()
-              .duration(0.1)
-              .style('opacity', '0');
-          }); 
-        }
+            .attr('r', 7)
+            .style('opacity', '0.5')
         })
-      }
+        .on('mouseout', function (d) {
+          d3.select(this)
+            .transition()
+            .duration(0.1)
+            .attr('r', 5)
+            //   .front() //fixa så att de läggs på längst fram?
+            .style('opacity', '1')
 
-      function getNaturalDisastersForCountry(row) {
-          return row.nbr
-      }
+          d3.select('#rect' + (d.iso_code.toString() + d.year.toString()))
+            .transition()
+            .duration(0.1)
+            .style('opacity', '0')
+          d3.select('#text' + (d.iso_code.toString() + d.year.toString()))
+            .transition()
+            .duration(0.1)
+            .style('opacity', '0')
+        })
+    }
+  })
+}
 
-      function getEmissionsForCountry(row, year, emissionTypes) { 
-      //  console.log(emissionTypes)
-      //  console.log("in get emissions ", year)
+function getNaturalDisastersForCountry (row) {
+  return row.nbr
+}
 
-        if(emissionTypes.length>0){ //av någon anledning är arrayen 1 när ingen emission är vald, 2 när en emission är vald etc.
-        //förlåt för riktigt dålig kod lol
-        var tot = 0
+function getEmissionsForCountry (row, year, emissionTypes) {
+  //  console.log(emissionTypes)
+  //  console.log("in get emissions ", year)
+
+  if (emissionTypes.length > 0) {
+    //av någon anledning är arrayen 1 när ingen emission är vald, 2 när en emission är vald etc.
+    //förlåt för riktigt dålig kod lol
+    var tot = 0
 
 
         for (let y = 1700; y <= year; y++) {
@@ -235,18 +245,18 @@ export async function drawScatterPlot (promises, filterHandler) {
           }
         }
       }
+    }
 
 
     /*  console.log(row.country)
       console.log(emissionTypes)
       console.log(tot) */
-      if (tot>0) {
-        return tot
-      } else {
-        return 0
-      }
-     }
+    if (tot > 0) {
+      return tot
+    } else {
+      return 0
     }
+  }
 
 
 //används för att filtrera ut ett nytt json-dataset, tar sjukt lång tid, använd den sparade filen istället.
@@ -272,7 +282,7 @@ function mapNaturalDisasters (
         country: c,
         year: y,
         nbr: nbr,
-        iso_code: iso_code,
+        iso_code: iso_code
       })
     }
   })

@@ -5,8 +5,9 @@ export async function drawWorldMap (
   promises,
   filterHandler,
   lineChart,
-  drawScatterPlot,
-  disaster_coordinates
+  scatterplot,
+  disaster_coordinates,
+  unitType
 ) {
   // remove old svgs
   d3.select('#worldMap').remove()
@@ -30,6 +31,7 @@ export async function drawWorldMap (
 
   const countryNameAccessor = d => d.properties['NAME']
   const countryIdAccessor = d => d.properties['ADM0_A3_IS']
+  const yearAccessor = d => d.properties['year']
   var emissionType = filterHandler.getEmissions()
   var year = filterHandler.getYear()
 
@@ -62,14 +64,50 @@ export async function drawWorldMap (
   const tooltip = d3.select('#tooltip')
   const options = d3.select('#options')
 
+  function updateUnitType () {
+    if (document.getElementById('radioDefault').checked == true) {
+      unitType = 'default'
+    }
+    if (document.getElementById('radioGDP').checked == true) {
+      unitType = 'gdp'
+    }
+    if (document.getElementById('radioCapita').checked == true) {
+      unitType = 'capita'
+    }
+  }
+
   function filterCO2 (co2_dataset, metricDataByCountry) {
     co2_dataset.forEach(d => {
       var result = 0
       if (d['iso_code'] == 'OWID_WRL' || d['year'] != year) return
       emissionType.forEach(element => {
         if (!isNaN(parseInt(d[element]))) {
-          result = result + parseInt(d[element])
-          metricDataByCountry[d['iso_code']] = +result
+          if (unitType == 'radioDefault') {
+            result = result + parseFloat(d[element])
+            metricDataByCountry[d['iso_code']] = +result
+          }
+          if (unitType == 'radioGDP') {
+            if (
+              !isNaN(parseFloat(d[element])) &&
+              isFinite(parseFloat(d[element])) &&
+              !isNaN(
+                parseFloat(d['gdp']) && !isNaN(parseFloat(d['population']))
+              ) &&
+              isFinite(
+                parseFloat(d['gdp']) && !isNaN(parseFloat(d['population']))
+              )
+            ) {
+              result =
+                result +
+                (1000 * parseFloat(d[element])) /
+                  parseFloat(d['gdp'] / parseFloat(d['population']))
+              metricDataByCountry[d['iso_code']] = +result
+            }
+          }
+          if (unitType == 'radioCapita') {
+            result = result + parseFloat(d[element + '_per_capita'])
+            metricDataByCountry[d['iso_code']] = +result
+          }
         }
       })
     })
@@ -97,22 +135,23 @@ export async function drawWorldMap (
     countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
     countries_quant40 = findQuantiles(
       sorted_metricValues,
-      quantile_20 + 0.01,
+      quantile_20 + 0.1,
       quantile_40
     )
+
     countries_quant60 = findQuantiles(
       sorted_metricValues,
-      quantile_40 + 0.01,
+      quantile_40 + 0.1,
       quantile_60
     )
     countries_quant80 = findQuantiles(
       sorted_metricValues,
-      quantile_60 + 0.01,
+      quantile_60 + 0.1,
       quantile_80
     )
     countries_quant100 = findQuantiles(
       sorted_metricValues,
-      quantile_80 + 0.01,
+      quantile_80 + 0.1,
       quantile_100
     )
   }
@@ -136,14 +175,26 @@ export async function drawWorldMap (
     })
 
     var jsonData = JSON.stringify(disaster_coordinates)
-   // console.log(jsonData)
+    // console.log(jsonData)
   }
 
   function ready ([worldMap, co2_dataset, x, naturalDisaster_coordinates]) {
+    //updateUnitType()
+    console.log(unitType)
+
     filterCO2(co2_dataset, metricDataByCountry)
 
-    //console.log(disasterlocations)
-    //mapNaturalDisasters(disasterlocations, disaster_coordinates)
+    console.log(metricDataByCountry)
+
+    emissionType.forEach(e => {
+      var element = document.getElementById(e)
+      if (element.checked == true) {
+        tooltip
+          .append('div')
+          .attr('id', `${e + '_tooltip'}`)
+          .attr('class', 'tooltip-value')
+      }
+    })
 
     for (var x in metricDataByCountry) {
       sorted_metricValues.push([metricDataByCountry[x], x])
@@ -190,7 +241,7 @@ export async function drawWorldMap (
       .attr('fill', d => {
         const metricValue = metricDataByCountry[countryIdAccessor(d)]
         if (typeof metricValue == 'undefined') return '#e2e6e9'
-        return colorScale(metricValue)
+        return colorScaleLegend(metricValue)
       })
       .on('mouseover', function (d) {
         d3.selectAll('.country')
@@ -201,6 +252,20 @@ export async function drawWorldMap (
           .transition()
           .duration(200)
           .style('opacity', 1.0)
+
+        d3.select(`#${countryIdAccessor(d)}_scatterplot`)
+          .attr('r', '7')
+          .style('fill', 'red')
+
+        d3.select('#rect' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '1')
+
+        d3.select('#text' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '1')
       })
       .on('mouseout', function (d) {
         d3.selectAll('.country')
@@ -211,10 +276,23 @@ export async function drawWorldMap (
           .style('opacity', 0.9)
           .style('stroke', 'white')
           .style('stroke-width', 0.3)
+
+        d3.select(`#${countryIdAccessor(d)}_scatterplot`)
+          .attr('r', '5')
+          .style('fill', 'rgb(105, 179, 162)')
+
+        d3.select('#rect' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '0')
+        d3.select('#text' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '0')
       })
       .on('click', function (d) {
         var country = countryIdAccessor(d)
-      //  console.log(country)
+        //  console.log(country)
         addSelectedCountry(country)
       })
       .on('mouseenter', onMouseEnter)
@@ -223,19 +301,90 @@ export async function drawWorldMap (
     function onMouseEnter (datum) {
       tooltip.style('opacity', 1)
 
+      co2_dataset.forEach(d => {
+        var result = 0
+        if (d['iso_code'] !== countryIdAccessor(datum) || d['year'] != year) {
+          return
+        }
+        emissionType.forEach(element => {
+          if (unitType == 'radioDefault') {
+            tooltip
+              .select(`#${element}_tooltip`)
+              .text(
+                `${element}: ` + `${d3.format(',.2f')(d[element])} million tons`
+              )
+              .style('font-weight', 'bold')
+              .append('br')
+          }
+          if (unitType == 'radioCapita') {
+            tooltip
+              .select(`#${element}_tooltip`)
+              .text(
+                `${element}: ` +
+                  `${d3.format(',.2f')(
+                    d[element + '_per_capita']
+                  )} million tons/capita`
+              )
+              .style('font-weight', 'bold')
+              .append('br')
+          }
+          if (unitType == 'radioGDP') {
+            tooltip
+              .select(`#${element}_tooltip`)
+              .text(
+                `${element}: ` +
+                  `${d3.format(',.2f')(
+                    (1000 * parseFloat(d[element])) /
+                      parseFloat(d['gdp'] / parseFloat(d['population']))
+                  )} million tons/(GDP/capita) * 1000`
+              )
+              .style('font-weight', 'bold')
+              .append('br')
+          }
+        })
+      })
+
       const metricValue = metricDataByCountry[countryIdAccessor(datum)]
       tooltip.select('#country').text(countryNameAccessor(datum))
-      tooltip.select('#value').text(`${d3.format(',.2f')(metricValue || 0)}`)
+      if (unitType == 'radioDefault') {
+        tooltip
+          .select('#value')
+          .text(
+            `All emission types: ${d3.format(',.2f')(
+              metricValue || 0
+            )} million tons`
+          )
+      }
+      if (unitType == 'radioCapita') {
+        tooltip
+          .select('#value')
+          .text(
+            `All emission types: ${d3.format(',.2f')(
+              metricValue || 0
+            )} million tons/capita`
+          )
+      }
+      if (unitType == 'radioGDP') {
+        tooltip
+          .select('#value')
+          .text(
+            `All emission types: ${d3.format(',.2f')(
+              metricValue || 0
+            )} million tons/(GDP/capita) * 1000`
+          )
+      }
 
       const [centerX, centerY] = pathGenerator.centroid(datum)
 
       const x = centerX + 10
       const y = centerY + 10
-
+      /*
       tooltip.style(
         'transform',
-        `translate(` + `calc( -50% + ${x}px),` + `calc( 500% + ${y}px)` + `)`
+        `translate(` + `calc( -50% + ${x}px),` + `calc( 50% + ${y}px)` + `)`
       )
+      */
+      tooltip.style('transform', 'translate(400px, 200px)')
     }
 
     function onMouseLeave () {
@@ -274,29 +423,29 @@ export async function drawWorldMap (
         disaster_coordinates = []
         updateYearForCircles(naturalDisaster_coordinates, disaster_coordinates)
 
-        svg
-          .append('g')
-          .attr('id', 'canvas')
-          .selectAll('circle')
-          .data(disaster_coordinates)
-          .enter()
-          .append('circle')
-          .attr('cx', function (d) {
-            return projection2(d)[0]
-          })
-          .attr('cy', function (d) {
-            return projection2(d)[1]
-          })
-          .attr('r', '0.5px')
-          .attr('fill', 'red')
-        if (toggleNaturalDisaster.checked == false) {
-          d3.selectAll('#canvas').attr('visibility', 'hidden')
+        if (toggleNaturalDisaster.checked == true) {
+          svg
+            .append('g')
+            .attr('id', 'canvas')
+            .selectAll('circle')
+            .data(disaster_coordinates)
+            .enter()
+            .append('circle')
+            .attr('cx', function (d) {
+              return projection2(d)[0]
+            })
+            .attr('cy', function (d) {
+              return projection2(d)[1]
+            })
+            .attr('r', '0.5px')
+            .attr('fill', 'red')
         }
       })
       .on('onchange', val => {
         filterHandler.updateYear(val)
         year = filterHandler.getYear()
         lineChart(filterHandler, promises)
+        scatterplot(promises, filterHandler)
 
         d3.select('#yearTitle').text(year)
         metricDataByCountry = {}
@@ -319,7 +468,7 @@ export async function drawWorldMap (
         bounds.selectAll('.country').attr('fill', d => {
           const metricValue = metricDataByCountry[countryIdAccessor(d)]
           if (typeof metricValue == 'undefined') return '#6D6D6D'
-          return colorScale(metricValue)
+          return colorScaleLegend(metricValue)
         })
 
         filterCO2(co2_dataset, metricDataByCountry)
@@ -328,11 +477,18 @@ export async function drawWorldMap (
 
         legendLog = d3
           .legendColor()
-          .shapeWidth(40)
-          .shapePadding(10)
+          .shapeWidth(100)
+          .shapePadding(0)
           .title('Quantiles')
-          .cells(10)
-          .labels(['0-20', '20-40', '40-60', '60-80', '80-100'])
+          .cells(6)
+          .labels([
+            `${d3.format(',.1f')(quantile_20)}`,
+            `${d3.format(',.1f')(quantile_40)}`,
+            `${d3.format(',.1f')(quantile_60)}`,
+            `${d3.format(',.1f')(quantile_80)}`,
+            `${d3.format(',.1f')(quantile_100)}`
+          ])
+          .labelAlign('end')
           .orient('horizontal')
           .scale(colorScaleLegend)
 
@@ -554,11 +710,18 @@ export async function drawWorldMap (
 
     var legendLog = d3
       .legendColor()
-      .shapeWidth(40)
-      .shapePadding(10)
+      .shapeWidth(100)
+      .shapePadding(0)
       .title('Quantiles')
       .cells(6)
-      .labels(['0-20', '20-40', '40-60', '60-80', '80-100'])
+      .labels([
+        `${d3.format(',.1f')(quantile_20)}`,
+        `${d3.format(',.1f')(quantile_40)}`,
+        `${d3.format(',.1f')(quantile_60)}`,
+        `${d3.format(',.1f')(quantile_80)}`,
+        `${d3.format(',.1f')(quantile_100)}`
+      ])
+      .labelAlign('end')
       .orient('horizontal')
       .scale(colorScaleLegend)
 
@@ -582,11 +745,26 @@ export async function drawWorldMap (
 
     d3.select('#toggleNaturalDisasters').on('click', val => {
       if (toggleNaturalDisaster.checked == true) {
+        svg
+          .append('g')
+          .attr('id', 'canvas')
+          .selectAll('circle')
+          .data(disaster_coordinates)
+          .enter()
+          .append('circle')
+          .attr('cx', function (d) {
+            return projection2(d)[0]
+          })
+          .attr('cy', function (d) {
+            return projection2(d)[1]
+          })
+          .attr('r', '0.5px')
+          .attr('fill', 'red')
         d3.selectAll('#canvas').attr('visibility', '')
       } else {
         d3.selectAll('#canvas').attr('visibility', 'hidden')
       }
-     // console.log('CLICKED')
+      // console.log('CLICKED')
     })
   }
 }
