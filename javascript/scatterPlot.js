@@ -134,7 +134,7 @@ export async function drawScatterPlot (promises, filterHandler) {
                   return 10
                 }
               } )
-              .text(function(d) { return "Co2 Emissions: "+getEmissionsForCountry(d, year, emissionTypes)+" million ton"; })
+              .text(function(d) { return "Co2 Emissions: "+getEmissionsForCountry(d, year, emissionTypes).toFixed(2)+" million ton"; })
               .append("tspan")
               .attr('dx', function (d) { return 0 })
               .attr('x', function (d) { 
@@ -210,6 +210,9 @@ export async function drawScatterPlot (promises, filterHandler) {
         console.log("cement: ", row.cement_co2)
         console.log("type", typeof row.cement_co2)
 
+        for (let y = 1700; y <= year; y++) {
+         // console.log(row)
+
         // just nu väljs bara co2 om den i ikryssad, dvs adderar inte co2+ specifika typer av co2, utan tar då co2 totalen
         if (emissionTypes.includes('co2') && !Number.isNaN(row.co2) && parseFloat(row.co2)>0) {
           tot= tot+parseFloat(row.co2)
@@ -235,7 +238,9 @@ export async function drawScatterPlot (promises, filterHandler) {
           if (emissionTypes.includes('other_industry_co2') && !Number.isNaN(row.other_industry_co2) && (row.other_industry_co2)>0) {
             tot= tot+parseFloat(row.other_industry_co2)
           }
+        }
       }
+
 
     /*  console.log(row.country)
       console.log(emissionTypes)
