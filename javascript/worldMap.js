@@ -34,8 +34,6 @@ export async function drawWorldMap (
   var emissionType = filterHandler.getEmissions()
   var year = filterHandler.getYear()
 
-  console.log(unitType)
-
   const width = window.innerWidth * 0.6
   const height = 500
 
@@ -46,7 +44,6 @@ export async function drawWorldMap (
 
   const pathGenerator = d3.geoPath(projection2)
 
-  console.log(unitType)
   const wrapper = d3
     .select('#wrapper')
     .append('svg')
@@ -87,12 +84,22 @@ export async function drawWorldMap (
             metricDataByCountry[d['iso_code']] = +result
           }
           if (unitType == 'radioGDP') {
-            console.log(d['gdp'])
-            result =
-              result +
-              parseFloat(d[element]) /
-                parseFloat(d['gdp'] / parseFloat(d['population']))
-            metricDataByCountry[d['iso_code']] = +result
+            if (
+              !isNaN(parseFloat(d[element])) &&
+              isFinite(parseFloat(d[element])) &&
+              !isNaN(
+                parseFloat(d['gdp']) && !isNaN(parseFloat(d['population']))
+              ) &&
+              isFinite(
+                parseFloat(d['gdp']) && !isNaN(parseFloat(d['population']))
+              )
+            ) {
+              result =
+                result +
+                (1000 * parseFloat(d[element])) /
+                  parseFloat(d['gdp'] / parseFloat(d['population']))
+              metricDataByCountry[d['iso_code']] = +result
+            }
           }
           if (unitType == 'radioCapita') {
             result = result + parseFloat(d[element + '_per_capita'])
@@ -290,6 +297,19 @@ export async function drawWorldMap (
               .style('font-weight', 'bold')
               .append('br')
           }
+          if (unitType == 'radioGDP') {
+            tooltip
+              .select(`#${element}_tooltip`)
+              .text(
+                `${element}: ` +
+                  `${d3.format(',.2f')(
+                    (1000 * parseFloat(d[element])) /
+                      parseFloat(d['gdp'] / parseFloat(d['population']))
+                  )} million tons/(GDP/capita) * 1000`
+              )
+              .style('font-weight', 'bold')
+              .append('br')
+          }
         })
       })
 
@@ -311,6 +331,15 @@ export async function drawWorldMap (
             `All emission types: ${d3.format(',.2f')(
               metricValue || 0
             )} million tons/capita`
+          )
+      }
+      if (unitType == 'radioGDP') {
+        tooltip
+          .select('#value')
+          .text(
+            `All emission types: ${d3.format(',.2f')(
+              metricValue || 0
+            )} million tons/(GDP/capita) * 1000`
           )
       }
 
