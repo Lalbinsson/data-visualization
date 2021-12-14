@@ -94,9 +94,9 @@ export async function drawScatterPlot (promises, filterHandler) {
         .data(filteredNatDis)
         .enter()
         .append("rect")
-          .attr('y', function (d) { return y(getNaturalDisastersForCountry(d)); } )
+          .attr('y', function (d) { return parseFloat(y(getNaturalDisastersForCountry(d))); } )
           .data(filteredCo2)
-          .attr('x', function (d) { return x(getEmissionsForCountry(d, year, emissionTypes)); } )
+          .attr('x', function (d) { return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); } )
           .attr("width", 250)
           .attr("height", 70)
           .attr("rx", 5)
@@ -110,11 +110,11 @@ export async function drawScatterPlot (promises, filterHandler) {
           .data(filteredNatDis)
           .enter()
           .append("text")
-            .attr('y', function (d) { return parseInt(y(getNaturalDisastersForCountry(d, year))+20); } )
+            .attr('y', function (d) { return parseFloat(y(getNaturalDisastersForCountry(d, year))+20); } )
             .data(filteredCo2)
             .attr('x', function (d) { 
               if (getEmissionsForCountry(d, year, emissionTypes)>0) {
-                return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))+10)
              } else {
                 return 10
              } } )
@@ -129,7 +129,7 @@ export async function drawScatterPlot (promises, filterHandler) {
               .attr('dx', function (d) { return 0 })
               .attr('x', function (d) { 
                 if (getEmissionsForCountry(d, year, emissionTypes)>0) {
-                  return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                  return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))+10)
                 } else {
                   return 10
                 }
@@ -139,7 +139,7 @@ export async function drawScatterPlot (promises, filterHandler) {
               .attr('dx', function (d) { return 0 })
               .attr('x', function (d) { 
                 if (getEmissionsForCountry(d, year, emissionTypes)>0) {
-                  return parseInt(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                  return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))+10)
                 } else {
                   return 10
                 }
@@ -152,9 +152,9 @@ export async function drawScatterPlot (promises, filterHandler) {
         .data(filteredNatDis)
         .enter()
         .append("circle")
-          .attr("cy", function (d) { return y(getNaturalDisastersForCountry(d)); } )
+          .attr("cy", function (d) { return parseFloat(y(getNaturalDisastersForCountry(d))); } )
           .data(filteredCo2)
-          .attr("cx", function (d) { return x(getEmissionsForCountry(d, year, emissionTypes)); } )
+          .attr("cx", function (d) { return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); } )
           .attr("r", 5)
           .style("fill", "#69b3a2")
           .on('mouseover', function (d) {
@@ -207,32 +207,34 @@ export async function drawScatterPlot (promises, filterHandler) {
         //förlåt för riktigt dålig kod lol
         var tot = 0
 
-        for (let y = 1700; y <= year; y++) {
-         // console.log(row)
+        console.log("cement: ", row.cement_co2)
+        console.log("type", typeof row.cement_co2)
 
         // just nu väljs bara co2 om den i ikryssad, dvs adderar inte co2+ specifika typer av co2, utan tar då co2 totalen
-        if (emissionTypes.includes('co2') && parseInt(row.co2)>0) {
-          tot= tot+parseInt(row.co2)
+        if (emissionTypes.includes('co2') && !Number.isNaN(row.co2) && parseFloat(row.co2)>0) {
+          tot= tot+parseFloat(row.co2)
         } else {
-          if (emissionTypes.includes('oil_co2') && row.oil_co2 && parseInt(row.oil_co2)>0) {
-            tot= tot+parseInt(row.oil_co2)
+          if (emissionTypes.includes('oil_co2') && !Number.isNaN(row.oil_co2) && parseFloat(row.oil_co2)>0) {
+            tot= tot+parseFloat(row.oil_co2)
+            console.log(row.oil_co2)
           }
-          if (emissionTypes.includes('gas_co2') && row.gas_co2 && parseInt(row.gas_co2)>0) {
-            tot= tot+parseInt(row.gas_co2)
+          if (emissionTypes.includes('gas_co2') && !Number.isNaN(row.gas_co2) && parseFloat(row.gas_co2)>0) {
+            tot= tot+parseFloat(row.gas_co2)
           }
-          if (emissionTypes.includes('coal_co2') && row.coal_co2 && parseInt(row.coal_co2)>0) {
-            tot= tot+parseInt(row.coal_co2)
+          if (emissionTypes.includes('coal_co2') && !Number.isNaN(row.coal_co2) && parseFloat(row.coal_co2)>0) {
+            tot= tot+parseFloat(row.coal_co2)
           }
-          if (emissionTypes.includes('cement_co2') && row.cement_co2 && parseInt(row.cement_co2)>0) {
-            tot= tot+parseInt(row.cement_co2)
+          if (emissionTypes.includes('cement_co2') && !Number.isNaN(row.cement_co2) && parseFloat(row.cement_co2)>0) {
+            tot= tot+parseFloat(row.cement_co2)
+            console.log("cement co2: ", row.cement_co2)
+            console.log(parseFloat(row.cement_co2))
           }
-          if (emissionTypes.includes('flaring_co2') && (row.flaring_co2 != "") && parseInt(row.flaring_co2)>0) {
-            tot= tot+parseInt(row.flaring_co2)
+          if (emissionTypes.includes('flaring_co2') && !Number.isNaN(row.flaring_co2) && parseFloat(row.flaring_co2)>0) {
+            tot= tot+parseFloat(row.flaring_co2)
           }
-          if (emissionTypes.includes('other_industry_co2') && row.other_industry_co2 && (row.other_industry_co2)>0) {
-            tot= tot+parseInt(row.other_industry_co2)
+          if (emissionTypes.includes('other_industry_co2') && !Number.isNaN(row.other_industry_co2) && (row.other_industry_co2)>0) {
+            tot= tot+parseFloat(row.other_industry_co2)
           }
-        }
       }
 
     /*  console.log(row.country)
