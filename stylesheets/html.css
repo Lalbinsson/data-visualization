@@ -93,6 +93,16 @@
   border-color: #8bb098;
 }
 
+.dropdown_elements {
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
+  text-align: left;
+  color: #000;
+  background-color: #8bb098;
+  border-color: #8bb098;
+}
+
 #current-filters {
   padding-top: 10px;
   padding-left: 10px;
@@ -139,7 +149,6 @@
   list-style-type: none;
   height: 300px;
   overflow: scroll;
-  height: wrap;
   overflow-x: hidden;
   text-align: left !important;
   width: 100%;
@@ -192,5 +201,5 @@ input {
 }
 
 #dropdown_elements_co2 {
-  background-color: blue;
+  background-color: #698d76;
 }

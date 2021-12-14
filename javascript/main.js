@@ -110,8 +110,8 @@ promises.then(function ([
     .data(allCountries)
     .enter()
     .append('button')
-    .attr('class', 'btn btn-success')
-    .attr('id', 'dropdown_elements')
+    .attr('class', 'btn dropdown_elements')
+   // .attr('id', 'dropdown_elements')
     .on('click', function (d) {
       addSelectedCountry(d)
       // lineChart(filterHandler, promises)
@@ -174,7 +174,7 @@ d3.select('#emissions-dropdown')
   .data(allEmissions)
   .enter()
   .append('button')
-  .attr('class', 'btn btn-success')
+  .attr('class', 'btn dropdown_elements')
   .attr('id', function (d) {
     return `dropdown_elements_${d}`
   })

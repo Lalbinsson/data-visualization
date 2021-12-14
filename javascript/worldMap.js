@@ -254,8 +254,10 @@ export async function drawWorldMap (
           .style('opacity', 1.0)
 
         d3.select(`#${countryIdAccessor(d)}_scatterplot`)
-          .attr('r', '7')
-          .style('fill', 'red')
+        .transition()
+        .duration(0.1)
+        .attr('r', 7)
+        .style('opacity', '0.5')
 
         d3.select('#rect' + (countryIdAccessor(d) + filterHandler.getYear()))
           .transition()
