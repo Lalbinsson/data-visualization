@@ -7,21 +7,30 @@
   overflow-x: hidden;
 }
 
-#dropdown_elements {
-  width: 80px;
+.body {
+  background: #D8E8EA;
+}
+
+.textarea {
+  background: #f8f9fa;
+  border-radius: 15px;
+  margin: 10px;
+}
+
+.dropdown {
   display: inline-block;
   position: relative;
   margin: 3px;
   text-align: center;
   vertical-align: middle;
+  width: 200px;
+  text-size-adjust: 12;
+  height: 50px;
+  margin-left: 10px;
 }
 
 #emissions-selector {
   height: 50px;
-}
-
-#choose_country {
-  width: 400px;
 }
 
 #emissions-dropdown {
@@ -34,10 +43,6 @@
   overflow-x: hidden;
 }
 
-#choose_emission {
-  width: 400px;
-}
-
 input {
   width: 14px;
   height: 19px;
@@ -47,5 +52,20 @@ input {
 #slider {
   width: 700px;
   display: inline-block;
-  background-color: white;
+  color: 000;
+}
+
+.plot {
+  background: #f8f9fa;
+  border-radius: 15px;
+  margin: 10px;
+}
+
+.navbar {
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+  height: 100px;
+  width: 100%;
+  margin-top: 10px;
 }

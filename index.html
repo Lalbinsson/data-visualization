@@ -23,38 +23,25 @@
   <link rel="stylesheet" href="stylesheets/html.css">
 </head>
 
-<nav class="col-sm-5" style="height: 70px; margin-top:10px">
+<body class="body">
+<nav id="navbar" class="col-sm-5 navbar navbar-light bg-light">
   <div id="global_settings" class="btn-group">
-    <!-- <div>
-        <select name="Dataset" id="year-selector" type="button"
-          class="form-control btn btn-secondary btn-lg dropdown-toggle">
-          <option value=1950>1950</option>
-          <option value=1960>1960</option>
-        </select>
-      </div> -->
-    <div id="choose_emission" style="height: 50px; margin-left: 10px;">
-      <span id="emissions-selector" type="button"
-        class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Choose Emission Types:
+    <div id="choose_emission" class="dropdown">
+      <span id="emissions-selector" type="button" class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Select Emission Types:
       </span>
       <ul id="emissions-dropdown" class="emissions form-control btn btn-secondary btn-lg"
         style="visibility:hidden;list-style-type:none">
       </ul>
     </div>
-    <div id="choose_country" style="height: 50px; margin-left: 10px">
+    <div id="choose_country"  class="dropdown">
       <span id="countries-selector" type="button"
-        class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Choose Countries:
+        class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Select Countries:
       </span>
       <ul id="countries-dropdown" class="countries form-control btn btn-secondary btn-lg">
       </ul>
     </div>
   </div>
-  </div>
-</nav>
-
-<div class="container-fluid">
-  <div class="row">
     <div id="slider"></div>
-      <div class="col">
         <small> Current Year: </small>
         <br>
         <small id="cYear"></small>
@@ -66,10 +53,9 @@
         <small> Current Countries: </small>
         <br>
         <small id="cCountries"></small>
-      </div>
-    </div>
   </div>
-</div>
+</nav>
+
 
 
   <div style="padding: 10px;">
@@ -81,7 +67,7 @@
             <div class="tooltip-value">
               <span id="value"></span>
             </div>
-          </div>
+          </div> 
           <div id="options">
             <div>
               <input type="checkbox" checked="true" id="toggleNaturalDisasters" style="display:inline-block">
@@ -102,8 +88,8 @@
           </div>
         </div>
       </div>
-      <div class="col">
-        worls tezt
+      <div class="col textarea">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </div>
     <div class="row">
@@ -116,21 +102,21 @@
           </form>
     </div>
     <div class="row">
-      <div class="col">
+      <div class="col plot">
         <div id="linechart">
         </div>
       </div>
-      <div class="col">
+      <div class="col plot">
         <div id="scatterPlot">
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="col">
-        line chart tezt
+      <div class="col textarea">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
-      <div class="col">
-        scatter tezt
+      <div class="col textarea">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </div>
   </div>
@@ -141,5 +127,5 @@
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
   </body>
-
+</body>
 </html>

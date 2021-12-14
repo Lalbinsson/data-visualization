@@ -3,7 +3,6 @@
 }
 
 .earth {
-  fill: #afdbdb;
   stroke: none;
 }
 
@@ -13,10 +12,6 @@
 
 p {
   font-size: 0.85em;
-}
-
-svg {
-  background: #efefef;
 }
 
 .tooltip {

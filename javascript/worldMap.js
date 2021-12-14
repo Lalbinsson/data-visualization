@@ -47,7 +47,6 @@ export async function drawWorldMap (
     .select('#wrapper')
     .append('svg')
     .attr('id', 'worldMap')
-    .style('background', '#afdbdb')
     .attr('width', width)
     .attr('height', height)
 
@@ -345,9 +344,8 @@ export async function drawWorldMap (
     d3.select('#slider')
       .append('svg')
       .attr('id', 'sliderSVG')
-      .attr('width', 600)
+      .attr('width', 500)
       .attr('height', 80)
-      .style('background-color', 'white')
       .append('g')
       .attr('transform', 'translate(30,40)')
       .call(slider)
