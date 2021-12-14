@@ -4,10 +4,62 @@
   background: #D8E8EA;
 }
 
+.header {
+  padding-top: 60px;
+  padding-bottom: 60px;
+  text-align: center;
+  background: #87a39d;
+  color: f8f9fa;
+  font-size: 40px;
+  width: 100%;
+}
+
+.info {
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  text-align: left;
+  font-size: 20px;
+}
+
+.by {
+  font-size: 15px;
+}
+
+.rqs {
+  padding-left: 60px;
+  padding-right: 60px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.rq {
+  text-align: left;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.plot-title {
+  text-align: left;
+  font-size: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+#geo-text {
+  padding: 40px;
+}
+
 .textarea {
   background: #f8f9fa;
   border-radius: 15px;
-  margin: 10px;
+  margin: 20px;
+  margin-top: 50px;
+}
+
+.linetext {
+  margin-top: 540px;
 }
 
 .dropdown {
@@ -130,12 +182,15 @@ input {
 	position: sticky;
   align-items: left;
   vertical-align: middle;
-	top: 0;
+  top: 0;
   height: 110px;
   width: 100%;
+  margin-top: 10px;
+  z-index: 20;
   background-color: #dfdfdf;
   padding-top: 10px;
 }
+
 #dropdown_elements_co2 {
   background-color: blue;
 }
