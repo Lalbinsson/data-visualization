@@ -100,7 +100,7 @@ export async function drawScatterPlot (promises, filterHandler) {
           .attr("width", 250)
           .attr("height", 70)
           .attr("rx", 5)
-          .attr("stroke", "#69b3a2")
+          .attr("stroke", "#8bb098")
           .attr("stroke-opacity", 0.5)
           .attr("fill", "#ffffff")
           .attr("id", function(d) { return "rect"+d.iso_code.toString()+d.year.toString(); })
@@ -156,7 +156,7 @@ export async function drawScatterPlot (promises, filterHandler) {
           .data(filteredCo2)
           .attr("cx", function (d) { return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); } )
           .attr("r", 5)
-          .style("fill", "#69b3a2")
+          .style("fill", "#8bb098")
           .on('mouseover', function (d) {
             d3.select("#rect"+(d.iso_code.toString()+d.year.toString()))
              .transition()

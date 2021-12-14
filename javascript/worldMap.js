@@ -264,7 +264,7 @@ export async function drawWorldMap (
       .min(1902)
       .max(2020)
       .step(1)
-      .width(530)
+      .width(430)
       .displayValue(false)
       .on('end', val => {
         filterHandler.updateYear(val)
@@ -350,7 +350,7 @@ export async function drawWorldMap (
       .attr('width', 500)
       .attr('height', 80)
       .append('g')
-      .attr('transform', 'translate(30,40)')
+      .attr('transform', 'translate(20,8)')
       .call(slider)
     svg
       .append('g')

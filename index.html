@@ -24,10 +24,11 @@
 </head>
 
 <body class="body">
-<nav id="navbar" class="col-sm-5 navbar navbar-light bg-light">
-  <div id="global_settings" class="btn-group">
+<nav id="navbar" class="my-navbar row">
+  <div id="global_settings" class="btn-group col-3">
     <div id="choose_emission" class="dropdown">
-      <span id="emissions-selector" type="button" class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Select Emission Types:
+      <span id="emissions-selector" type="button" 
+      class="items form-control btn btn-lg dropdown-toggle dropdown-check-list">Select Emission Types:
       </span>
       <ul id="emissions-dropdown" class="emissions form-control btn btn-secondary btn-lg"
         style="visibility:hidden;list-style-type:none">
@@ -35,24 +36,21 @@
     </div>
     <div id="choose_country"  class="dropdown">
       <span id="countries-selector" type="button"
-        class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Select Countries:
+        class="items form-control btn btn-lg dropdown-toggle dropdown-check-list">Select Countries:
       </span>
       <ul id="countries-dropdown" class="countries form-control btn btn-secondary btn-lg">
       </ul>
     </div>
   </div>
-    <div id="slider"></div>
-        <small> Current Year: </small>
-        <br>
-        <small id="cYear"></small>
-        <br>
-        <small> Current Emissions</small>
-        <br>
-        <small id="cEmissions"></small>
-        <br>
-        <small> Current Countries: </small>
-        <br>
-        <small id="cCountries"></small>
+  <div id="current-filters" class="nav-item navbar-right col-6">
+          <div>Selected Emissions: <b id="cEmissions"></b></div>
+          <div>Selected Countries: <b id="cCountries"></b></div>
+  </div>
+  <div class="col-3">
+    <p id="year-text">Selected Year: <b id="cYear"></b></p>
+    <div id="slider" class="nav-item"></div>
+  </div>
+
   </div>
 </nav>
 

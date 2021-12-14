@@ -13,22 +13,59 @@
 .dropdown {
   display: inline-block;
   position: relative;
-  margin: 3px;
-  text-align: left;
+  margin: 10px;
+  text-align: left !important;
   vertical-align: middle;
-  width: 200px;
+  width: 250px;
   text-size-adjust: 12;
   height: 50px;
   margin-left: 10px;
+  border-radius: 10px;
+  background: #d3d2d2;
+  height: 70px;
 }
 
-.btn {
-  text-align: left !important;
+.dropdown-toggle {
   width: 100%;
-  margin-top: 5px;
+  margin-top: 10px;
+  height: 100%
+}
+
+#dropdown_elements {
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
+  text-align: left;
+  color: #000;
+  background-color: #8bb098;
+  border-color: #8bb098;
+}
+
+#current-filters {
+  padding-top: 10px;
+  padding-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  margin-right: 10px;
+  margin-left: 80px;
+  width: 800px;
+  margin-right: 10px;
+  text-align: left;
+  border-radius: 10px;
+  background: #d3d2d2;
+  height: 70px;
+}
+
+#filters-title {
+  text-align: left;
 }
 
 #emissions-selector {
+  height: 50px;
+}
+
+#countries-selector {
+  width: 250px;
   height: 50px;
 }
 
@@ -39,6 +76,10 @@
   overflow: scroll;
   overflow-x: hidden;
   height: 300px;
+  text-align: left !important;
+  width: 100%;
+  margin-top: 15px;
+  background: #d3d2d2;
 }
 
 #countries-dropdown {
@@ -46,7 +87,12 @@
   list-style-type: none;
   height: 300px;
   overflow: scroll;
+  height: wrap;
   overflow-x: hidden;
+  text-align: left !important;
+  width: 100%;
+  margin-top: 15px;
+  background: #d3d2d2
 }
 
 .checkedEmissions {
@@ -64,9 +110,13 @@ input {
 }
 
 #slider {
-  width: 700px;
   display: inline-block;
   color: 000;
+}
+
+#year-text {
+  padding-top: 5px;
+  text-align: center;
 }
 
 .plot {
@@ -75,11 +125,14 @@ input {
   margin: 10px;
 }
 
-.navbar {
+.my-navbar {
 	position: -webkit-sticky;
 	position: sticky;
+  align-items: left;
+  vertical-align: middle;
 	top: 0;
-  height: 100px;
+  height: 110px;
   width: 100%;
-  margin-top: 10px;
+  background-color: #dfdfdf;
+  padding-top: 10px;
 }

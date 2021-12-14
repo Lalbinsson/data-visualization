@@ -99,8 +99,8 @@ promises.then(function ([
 
   for (let i = 0; i < worldMap.features.length; i++) {
     if (isNaN(countryIdAccessor(worldMap.features[i])))
-    allCountriesMap.set(countryIdAccessor(worldMap.features[i]), countryNameAccessor(worldMap.features[i]))
-    allCountries.push(countryIdAccessor(worldMap.features[i]))
+      allCountriesMap.set(countryIdAccessor(worldMap.features[i]), countryNameAccessor(worldMap.features[i]))
+      allCountries.push(countryIdAccessor(worldMap.features[i]))
   }
   allCountries.sort()
   //addSelectedEmission(selectedEmissions)
