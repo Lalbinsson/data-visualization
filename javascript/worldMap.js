@@ -31,6 +31,7 @@ export async function drawWorldMap (
 
   const countryNameAccessor = d => d.properties['NAME']
   const countryIdAccessor = d => d.properties['ADM0_A3_IS']
+  const yearAccessor = d => d.properties['year']
   var emissionType = filterHandler.getEmissions()
   var year = filterHandler.getYear()
 
@@ -248,6 +249,20 @@ export async function drawWorldMap (
           .transition()
           .duration(200)
           .style('opacity', 1.0)
+
+        d3.select(`#${countryIdAccessor(d)}_scatterplot`)
+          .attr('r', '7')
+          .style('fill', 'red')
+
+        d3.select('#rect' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '1')
+
+        d3.select('#text' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '1')
       })
       .on('mouseout', function (d) {
         d3.selectAll('.country')
@@ -258,6 +273,19 @@ export async function drawWorldMap (
           .style('opacity', 0.9)
           .style('stroke', 'white')
           .style('stroke-width', 0.3)
+
+        d3.select(`#${countryIdAccessor(d)}_scatterplot`)
+          .attr('r', '5')
+          .style('fill', 'rgb(105, 179, 162)')
+
+        d3.select('#rect' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '0')
+        d3.select('#text' + (countryIdAccessor(d) + filterHandler.getYear()))
+          .transition()
+          .duration(0.1)
+          .style('opacity', '0')
       })
       .on('click', function (d) {
         var country = countryIdAccessor(d)

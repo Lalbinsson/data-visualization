@@ -204,6 +204,9 @@ export async function drawScatterPlot (promises, filterHandler) {
         .data(filteredNatDis)
         .enter()
         .append('circle')
+        .attr('id', function (d) {
+          return d.iso_code + '_scatterplot'
+        })
         .attr('cy', function (d) {
           return y(getNaturalDisastersForCountry(d))
         })
