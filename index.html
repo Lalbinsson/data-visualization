@@ -24,10 +24,11 @@
 </head>
 
 <body class="body">
-<nav id="navbar" class="col-sm-5 navbar navbar-light bg-light">
-  <div id="global_settings" class="btn-group">
+<nav id="navbar" class="my-navbar row">
+  <div id="global_settings" class="btn-group col-3">
     <div id="choose_emission" class="dropdown">
-      <span id="emissions-selector" type="button" class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Select Emission Types:
+      <span id="emissions-selector" type="button" 
+      class="items form-control btn btn-lg dropdown-toggle dropdown-check-list">Select Emission Types:
       </span>
       <ul id="emissions-dropdown" class="emissions form-control btn btn-secondary btn-lg"
         style="visibility:hidden;list-style-type:none">
@@ -35,26 +36,34 @@
     </div>
     <div id="choose_country"  class="dropdown">
       <span id="countries-selector" type="button"
-        class="items form-control btn btn-secondary btn-lg dropdown-toggle dropdown-check-list">Select Countries:
+        class="items form-control btn btn-lg dropdown-toggle dropdown-check-list">Select Countries:
       </span>
       <ul id="countries-dropdown" class="countries form-control btn btn-secondary btn-lg">
       </ul>
     </div>
   </div>
-    <div id="slider"></div>
-        <small> Current Year: </small>
-        <br>
-        <small id="cYear"></small>
-        <br>
-        <small> Current Emissions</small>
-        <br>
-        <small id="cEmissions"></small>
-        <br>
-        <small> Current Countries: </small>
-        <br>
-        <small id="cCountries"></small>
+  <div id="current-filters" class="nav-item navbar-right col-6">
+          <div>Selected Emissions: <b id="cEmissions"></b></div>
+          <div>Selected Countries: <b id="cCountries"></b></div>
+  </div>
+  <div class="col-3">
+    <p id="year-text">Selected Year: <b id="cYear"></b></p>
+    <div id="slider" class="nav-item"></div>
+  </div>
+
   </div>
 </nav>
+
+<div class="header">
+  <h1>Co2 Emissions and Natural Disasters</h1>
+  <p class="by">A Geographical Visualization by Henrik Tao, Kajsa Andreasson and Lucy Albinsson, for IN4089 Data Visualization at TU Delft</p>
+  <p class="info">About the project/dataset: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <div class="rqs">
+  <h6 class="rq">RQ1: How are the distributions of CO2-emissions inter- and intra- countries, and does geographical location have any correlation on CO2?</h6>
+  <h6 class="rq">RQ2: How different types of CO2-emissions are correlated to global emissions and GDP of countries?</h6>
+  <h6 class="rq">RQ3: Are there any geographic correlations between where natural disasters occur and where high CO2 is emitted?</h6>
+</div>
+</div>
 
 
 
@@ -70,16 +79,29 @@
               </div>
             </div> 
             <div id="options">
+              <div>
                 <input type="checkbox" checked="true" id="toggleNaturalDisasters" style="display:inline-block">
                 <label for="">Show Natural Disasters</label>
-                <input type="radio" id="" name="x">Per GDP<br>
-                <input type="radio" id="" name="x">Per GDP<br>
-                <input type="radio" id="" name="x">Per GDP<br>
+              </div>
+              <b>Show in:</b>
+              <div>
+                <div>
+                  <input type="radio" id="radioDefault" name="unit" checked=true class="radioUnit" value="radioDefault">
+                  <label for="">Emissions</label>
+                </div>
+                <input type="radio" id="radioGDP" name="unit" class="radioUnit" value="radioGDP">
+                <label for="">Emissions/GDP</label>
+              </div>
+              <div>
+                <input type="radio" id="radioCapita" name="unit" class="radioUnit" value="radioCapita">
+                <label for="">Emission/Capita</label>
+              </div>
             </div>
-          
         </div>
+
       </div>
-      <div class="col textarea">
+      <div id="geo-text" class="col textarea">
+        <h1 class="plot-title">Geographical correlations between Co2 Emissions, GPD and Natural Disasters</h1>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </div>
@@ -103,18 +125,18 @@
             <input class="radiobutton" type="radio" name="normalization" value="gdp"> Per GDP<br>
           </div>
         </div>
+        <div class="textarea linetext">
+        <h1 class="plot-title">Co2 Emissions over time</h1>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </div>
       </div>
       <div class="col plot">
         <div id="scatterPlot">
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col textarea">
+        <div class="textarea">
+        <h1 class="plot-title">Correlation between Co2 Emissions and Natural Disasters</h1>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
-      <div class="col textarea">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </div>
     </div>
   </div>
