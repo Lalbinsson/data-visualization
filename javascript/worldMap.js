@@ -106,6 +106,10 @@ export async function drawWorldMap (
             result = result + parseFloat(d[element + '_per_capita'])
             metricDataByCountry[d['iso_code']] = +result
           }
+          if (unitType === 'radioCumulative') {
+            result = result + parseFloat(d['cumulative_' + element])
+            metricDataByCountry[d['iso_code']] = +result
+          }
         }
       })
     })
@@ -177,6 +181,29 @@ export async function drawWorldMap (
       )
     }
     if (unitType === 'radioDefault') {
+      countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
+      countries_quant40 = findQuantiles(
+        sorted_metricValues,
+        quantile_20 + 0.1,
+        quantile_40
+      )
+      countries_quant60 = findQuantiles(
+        sorted_metricValues,
+        quantile_40 + 0.1,
+        quantile_60
+      )
+      countries_quant80 = findQuantiles(
+        sorted_metricValues,
+        quantile_60 + 0.1,
+        quantile_80
+      )
+      countries_quant100 = findQuantiles(
+        sorted_metricValues,
+        quantile_80 + 0.1,
+        quantile_100
+      )
+    }
+    if (unitType === 'radioCumulative') {
       countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
       countries_quant40 = findQuantiles(
         sorted_metricValues,
@@ -358,7 +385,7 @@ export async function drawWorldMap (
             tooltip
               .select(`#${element}_tooltip`)
               .text(
-                `${element}: ` + `${d3.format(',.2f')(d[element])} million tons`
+                `${element}: ` + `${d3.format('.2f')(d[element])} million tons`
               )
               .style('font-weight', 'bold')
               .append('br')
@@ -371,6 +398,16 @@ export async function drawWorldMap (
                   `${d3.format(',.2f')(
                     d[element + '_per_capita']
                   )} million tons/capita`
+              )
+              .style('font-weight', 'bold')
+              .append('br')
+          }
+          if (unitType == 'radioCumulative') {
+            tooltip
+              .select(`#${element}_tooltip`)
+              .text(
+                `${element}: ` +
+                  `${d3.format('.2f')(d['cumulative_' + element])} million tons`
               )
               .style('font-weight', 'bold')
               .append('br')
@@ -396,7 +433,16 @@ export async function drawWorldMap (
         tooltip
           .select('#value')
           .text(
-            `All emission types: ${d3.format(',.2f')(
+            `All emission types: ${d3.format('.2f')(
+              metricValue || 0
+            )} million tons`
+          )
+      }
+      if (unitType == 'radioCumulative') {
+        tooltip
+          .select('#value')
+          .text(
+            `All emission types: ${d3.format('.2f')(
               metricValue || 0
             )} million tons`
           )
@@ -524,11 +570,11 @@ export async function drawWorldMap (
           .title('Quantiles')
           .cells(6)
           .labels([
-            `${d3.format(',.1f')(quantile_20)}`,
-            `${d3.format(',.1f')(quantile_40)}`,
-            `${d3.format(',.1f')(quantile_60)}`,
-            `${d3.format(',.1f')(quantile_80)}`,
-            `${d3.format(',.1f')(quantile_100)}`
+            `${d3.format('.1f')(quantile_20)}`,
+            `${d3.format('.1f')(quantile_40)}`,
+            `${d3.format('.1f')(quantile_60)}`,
+            `${d3.format('.1f')(quantile_80)}`,
+            `${d3.format('.1f')(quantile_100)}`
           ])
           .labelAlign('end')
           .orient('horizontal')
@@ -759,11 +805,11 @@ export async function drawWorldMap (
       .title('Quantiles')
       .cells(6)
       .labels([
-        `${d3.format(',.1f')(quantile_20)}`,
-        `${d3.format(',.1f')(quantile_40)}`,
-        `${d3.format(',.1f')(quantile_60)}`,
-        `${d3.format(',.1f')(quantile_80)}`,
-        `${d3.format(',.1f')(quantile_100)}`
+        `${d3.format('.1f')(quantile_20)}`,
+        `${d3.format('.1f')(quantile_40)}`,
+        `${d3.format('.1f')(quantile_60)}`,
+        `${d3.format('.1f')(quantile_80)}`,
+        `${d3.format('.1f')(quantile_100)}`
       ])
       .labelAlign('end')
       .orient('horizontal')
