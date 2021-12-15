@@ -11,8 +11,8 @@ var allEmissions = [
   'oil_co2',
   'cement_co2',
   'flaring_co2',
-  'other_industry_co2'
-  //  'consumption_co2'
+  'other_industry_co2',
+  'consumption_co2'
 ]
 var allYears = ['1960', '1970', '1990']
 var allCountries = []
@@ -259,6 +259,9 @@ function getNameForEmissionsType(d) {
   }
   if(d == 'oil_co2') {
     return 'Oil'
+  }
+  if(d == 'consumption_co2') {
+    return 'Consumption'
   }
   if(d == 'co2') {
     return 'All'

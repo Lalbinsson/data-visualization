@@ -228,6 +228,10 @@ function getEmissionsForCountry (row, year, emissionTypes) {
           if (emissionTypes.includes('oil_co2') && !Number.isNaN(row.oil_co2) && parseFloat(row.oil_co2)>0) {
             tot= tot+parseFloat(row.oil_co2)
           }
+          if (emissionTypes.includes('consumption_co2') && !Number.isNaN(row.consumption_co2) && parseFloat(row.consumption_co2)>0) {
+            console.log(row.consumption_co2)
+            tot= tot+parseFloat(row.consumption_co2)
+          }
           if (emissionTypes.includes('gas_co2') && !Number.isNaN(row.gas_co2) && parseFloat(row.gas_co2)>0) {
             tot= tot+parseFloat(row.gas_co2)
           }
