@@ -46,7 +46,7 @@ var filterHandler = new FilterHandler(
   selectedYear,
   currentNormalization
 )
-var unitType = 'radioDefault'
+var unitType = 'radioCumulative'
 
 //just to have an initial value to avoid undefined
 filterHandler.updateYear(selectedYear)
@@ -99,8 +99,11 @@ promises.then(function ([
 
   for (let i = 0; i < worldMap.features.length; i++) {
     if (isNaN(countryIdAccessor(worldMap.features[i])))
-      allCountriesMap.set(countryIdAccessor(worldMap.features[i]), countryNameAccessor(worldMap.features[i]))
-      allCountries.push(countryIdAccessor(worldMap.features[i]))
+      allCountriesMap.set(
+        countryIdAccessor(worldMap.features[i]),
+        countryNameAccessor(worldMap.features[i])
+      )
+    allCountries.push(countryIdAccessor(worldMap.features[i]))
   }
   allCountries.sort()
   //addSelectedEmission(selectedEmissions)
@@ -111,7 +114,7 @@ promises.then(function ([
     .enter()
     .append('button')
     .attr('class', 'btn dropdown_elements')
-   // .attr('id', 'dropdown_elements')
+    // .attr('id', 'dropdown_elements')
     .on('click', function (d) {
       addSelectedCountry(d)
       // lineChart(filterHandler, promises)
@@ -250,37 +253,37 @@ d3.select('#emissions-dropdown')
     //console.log(filterHandler.getEmissions())
   })
 
-function getNameForEmissionsType(d) {
-  if(d == 'gas_co2') {
+function getNameForEmissionsType (d) {
+  if (d == 'gas_co2') {
     return 'Gas'
-  } 
-  if(d == 'cement_co2') {
+  }
+  if (d == 'cement_co2') {
     return 'Cement'
   }
-  if(d == 'oil_co2') {
+  if (d == 'oil_co2') {
     return 'Oil'
   }
-  if(d == 'consumption_co2') {
+  if (d == 'consumption_co2') {
     return 'Consumption'
   }
-  if(d == 'co2') {
+  if (d == 'co2') {
     return 'All'
   }
-  if(d == 'other_industry_co2') {
+  if (d == 'other_industry_co2') {
     return 'Other industry'
   }
-  if(d == 'consumption_co2') {
+  if (d == 'consumption_co2') {
     return 'Consumption'
   }
-  if(d == 'flaring_co2') {
+  if (d == 'flaring_co2') {
     return 'Flaring'
   }
-  if(d == 'coal_co2') {
+  if (d == 'coal_co2') {
     return 'Coal'
   }
 }
 
-function getCountryName(d) {
+function getCountryName (d) {
   return allCountriesMap.get(d)
 }
 

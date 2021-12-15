@@ -94,8 +94,13 @@
             <b>Show in:</b>
             <div>
               <div>
-                <input type="radio" id="radioDefault" name="unit" checked=true class="radioUnit" value="radioDefault">
-                <label for="">Emissions</label>
+                <input type="radio" id="radioCumulative" name="unit" class="radioUnit" value="radioCumulative"
+                  checked=true>
+                <label for="">Cumulative Emissions</label>
+              </div>
+              <div>
+                <input type="radio" id="radioDefault" name="unit" class="radioUnit" value="radioDefault">
+                <label for="">Emissions/Year</label>
               </div>
               <input type="radio" id="radioGDP" name="unit" class="radioUnit" value="radioGDP">
               <label for="">Emissions/GDP</label>
@@ -110,7 +115,7 @@
       </div>
       <div id="geo-text" class="col textarea">
         <h1 class="plot-title">Geographical correlations between Co2 Emissions, GPD and Natural Disasters</h1>
-        The world map shows
+        The world map shows the distribution of CO2-emissions from each country geographically.
       </div>
     </div>
     <div class="row">
