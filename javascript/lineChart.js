@@ -201,7 +201,7 @@ export async function lineChart (filterHandler, promises) {
       .text('CO2')
       .text(function() {
         console.log('norm type:', normalizationType === 'none')
-        if (normalizationType === 'none') {return 'CO2 (million ton per year)'}
+        if (normalizationType === 'none') {return 'CO2 (million ton)'}
         else if (normalizationType === 'gdp') {return 'CO2 (ton per GDP and year)'}
         else {return 'CO2 (ton per capita and year)'}
       })
