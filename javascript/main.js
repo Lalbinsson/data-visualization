@@ -189,6 +189,7 @@ d3.select('#emissions-dropdown')
     if (element.checked == true) {
       addSelectedEmission('co2', d)
       lineChart(filterHandler, promises)
+      drawScatterPlot(promises, filterHandler)
       drawWorldMap(
         addSelectedCountry,
         addSelectedEmission,
@@ -202,6 +203,7 @@ d3.select('#emissions-dropdown')
       )
       addSelectedEmission(d)
       lineChart(filterHandler, promises)
+      drawScatterPlot(promises, filterHandler)
     } else {
       if (d === 'co2') {
         var x = selectedEmissions.length
@@ -213,6 +215,7 @@ d3.select('#emissions-dropdown')
         }
         addSelectedEmission('co2')
         lineChart(filterHandler, promises)
+        drawScatterPlot(promises, filterHandler)
         drawWorldMap(
           addSelectedCountry,
           addSelectedEmission,
@@ -227,6 +230,7 @@ d3.select('#emissions-dropdown')
       } else {
         addSelectedEmission(d)
         lineChart(filterHandler, promises)
+        drawScatterPlot(promises, filterHandler)
         drawWorldMap(
           addSelectedCountry,
           addSelectedEmission,
@@ -385,6 +389,7 @@ function addSelectedEmission (emission) {
 
   filterHandler.updateEmissions(selectedEmissions)
   lineChart(filterHandler, promises)
+  drawScatterPlot(promises, filterHandler)
 }
 
 function addSelectedCountry (country) {
@@ -409,6 +414,7 @@ radiobuttons.on('change', function (d) {
   console.log('Radio button change to ', this.value)
   filterHandler.updateNormalization(this.value)
   lineChart(filterHandler, promises)
+  drawScatterPlot(promises, filterHandler)
 })
 
 drawWorldMap(
