@@ -129,7 +129,37 @@
       </div>
       <div id="geo-text" class="col textarea">
         <h1 class="plot-title">Geographical correlations between Co2 Emissions, GPD and Natural Disasters</h1>
-        The world map shows the distribution of CO2-emissions from each country geographically.
+        <p style="font-size: 15;">
+          The world map shows the distribution of CO2-emissions from each country geographically. The map initially
+          shows
+          the co2-emissions accumulated throughout the years until the selected year on the slider on the top right. The
+          small red dots shows all the accumulated reported natural disasters until the selected year.
+
+          <br>
+          <br>
+          There are several interactions/features implemented for the world map:
+        <ul style="font-size:12">
+          <li>
+            Hover over country: Shows a tooltip with the name of the country and information about the selected emission
+            types.
+          </li>
+          <li>
+            Hover over legend: Highlights the countries within the quantile,where each quantile contains 20%.
+          </li>
+          <li>
+            Radio buttons: Allows user to change between different values for the emissions on the map. The map can show
+            the values in emissions/year, emissions/GDP, emissions/capita, and cumulatively.
+          </li>
+          <li>
+            Checkbox: Toggle to show or hide the dots representing natural disasters
+          </li>
+        </ul>
+
+
+
+
+        </p>
+
       </div>
     </div>
     <div class="row">

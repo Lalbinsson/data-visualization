@@ -1,6 +1,5 @@
-
 .body {
-  background: #D8E8EA;
+  background: #d8e8ea;
 }
 
 .header {
@@ -79,7 +78,7 @@
 .dropdown-toggle {
   width: 100%;
   margin-top: 10px;
-  height: 100%
+  height: 100%;
 }
 
 #dropdown_elements {
@@ -152,7 +151,7 @@
   text-align: left !important;
   width: 100%;
   margin-top: 15px;
-  background: #d3d2d2
+  background: #d3d2d2;
 }
 
 .checkedEmissions {
@@ -186,8 +185,8 @@ input {
 }
 
 .my-navbar {
-	position: -webkit-sticky;
-	position: sticky;
+  position: -webkit-sticky;
+  position: sticky;
   align-items: left;
   vertical-align: middle;
   top: 0;

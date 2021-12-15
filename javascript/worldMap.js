@@ -381,7 +381,7 @@ export async function drawWorldMap (
           return
         }
         emissionType.forEach(element => {
-          if (unitType == 'radioDefault') {
+          if (unitType == 'radioDefault' && element !== 'co2') {
             tooltip
               .select(`#${element}_tooltip`)
               .text(
@@ -390,7 +390,7 @@ export async function drawWorldMap (
               .style('font-weight', 'bold')
               .append('br')
           }
-          if (unitType == 'radioCapita') {
+          if (unitType == 'radioCapita' && element !== 'co2') {
             tooltip
               .select(`#${element}_tooltip`)
               .text(
@@ -402,7 +402,7 @@ export async function drawWorldMap (
               .style('font-weight', 'bold')
               .append('br')
           }
-          if (unitType == 'radioCumulative') {
+          if (unitType == 'radioCumulative' && element !== 'co2') {
             tooltip
               .select(`#${element}_tooltip`)
               .text(
@@ -414,7 +414,7 @@ export async function drawWorldMap (
           }
           if (unitType == 'radioGDP') {
             tooltip
-              .select(`#${element}_tooltip`)
+              .select(`#${element}_tooltip` && element !== 'co2')
               .text(
                 `${element}: ` +
                   `${d3.format(',.2f')(
@@ -429,39 +429,80 @@ export async function drawWorldMap (
 
       const metricValue = metricDataByCountry[countryIdAccessor(datum)]
       tooltip.select('#country').text(countryNameAccessor(datum))
-      if (unitType == 'radioDefault') {
-        tooltip
-          .select('#value')
-          .text(
-            `All emission types: ${d3.format('.2f')(
-              metricValue || 0
-            )} million tons`
-          )
-      }
-      if (unitType == 'radioCumulative') {
-        tooltip
-          .select('#value')
-          .text(
-            `All emission types: ${d3.format('.2f')(
-              metricValue || 0
-            )} million tons`
-          )
-      }
-      if (unitType == 'radioCapita') {
-        tooltip
-          .select('#value')
-          .text(
-            `All emission types: ${d3.format(',.2f')(
-              metricValue || 0
-            )} million tons/capita`
-          )
-      }
-      if (unitType == 'radioGDP') {
-        tooltip
-          .select('#value')
-          .text(
-            `All emission types: ${d3.format(',.2f')(metricValue || 0)} kg/GDP`
-          )
+      if (document.getElementById('co2').checked === true) {
+        if (unitType == 'radioDefault') {
+          tooltip
+            .select('#value')
+            .text(
+              `All emission types: ${d3.format('.2f')(
+                metricValue || 0
+              )} million tons`
+            )
+        }
+        if (unitType == 'radioCumulative') {
+          tooltip
+            .select('#value')
+            .text(
+              `All emission types: ${d3.format('.2f')(
+                metricValue || 0
+              )} million tons`
+            )
+        }
+        if (unitType == 'radioCapita') {
+          tooltip
+            .select('#value')
+            .text(
+              `All emission types: ${d3.format(',.2f')(
+                metricValue || 0
+              )} million tons/capita`
+            )
+        }
+        if (unitType == 'radioGDP') {
+          tooltip
+            .select('#value')
+            .text(
+              `All emission types: ${d3.format(',.2f')(
+                metricValue || 0
+              )} kg/GDP`
+            )
+        }
+      } else {
+        if (unitType == 'radioDefault') {
+          tooltip
+            .select('#value')
+            .text(
+              `Sum elected types: ${d3.format('.2f')(
+                metricValue || 0
+              )} million tons`
+            )
+        }
+        if (unitType == 'radioCumulative') {
+          tooltip
+            .select('#value')
+            .text(
+              `Sum selected types: ${d3.format('.2f')(
+                metricValue || 0
+              )} million tons`
+            )
+        }
+        if (unitType == 'radioCapita') {
+          tooltip
+            .select('#value')
+            .text(
+              `Sum selected types: ${d3.format(',.2f')(
+                metricValue || 0
+              )} million tons/capita`
+            )
+        }
+        if (unitType == 'radioGDP') {
+          tooltip
+            .select('#value')
+            .text(
+              `Sum selected types: ${d3.format(',.2f')(
+                metricValue || 0
+              )} kg/GDP`
+            )
+        }
       }
 
       const [centerX, centerY] = pathGenerator.centroid(datum)
