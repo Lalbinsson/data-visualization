@@ -36,15 +36,14 @@ export async function drawWorldMap (
   var year = filterHandler.getYear()
 
   const width = window.innerWidth * 0.623
-  const height = width * 0.7//window.innerHeight * 0.4
-  const scale = 0.15863*width //143
-
+  const height = width * 0.7 //window.innerHeight * 0.4
+  const scale = 0.15863 * width //143
 
   console.log('skala:', scale)
   const projection2 = d3
     .geoMercator()
     .scale(scale)
-    .translate([width/2, height/1.67])
+    .translate([width / 2, height / 1.67])
 
   const pathGenerator = d3.geoPath(projection2)
 
@@ -99,8 +98,7 @@ export async function drawWorldMap (
             ) {
               result =
                 result +
-                (1000 * parseFloat(d[element])) /
-                  parseFloat(d['gdp'] / parseFloat(d['population']))
+                (1000000000 * parseFloat(d[element])) / parseFloat(d['gdp'])
               metricDataByCountry[d['iso_code']] = +result
             }
           }
@@ -131,29 +129,76 @@ export async function drawWorldMap (
     quantile_80,
     quantile_100
   ) {
-    var result = []
-    countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
-    countries_quant40 = findQuantiles(
-      sorted_metricValues,
-      quantile_20 + 0.1,
-      quantile_40
-    )
+    if (unitType === 'radioGDP') {
+      countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
+      countries_quant40 = findQuantiles(
+        sorted_metricValues,
+        quantile_20 + 0.0000001,
+        quantile_40
+      )
 
-    countries_quant60 = findQuantiles(
-      sorted_metricValues,
-      quantile_40 + 0.1,
-      quantile_60
-    )
-    countries_quant80 = findQuantiles(
-      sorted_metricValues,
-      quantile_60 + 0.1,
-      quantile_80
-    )
-    countries_quant100 = findQuantiles(
-      sorted_metricValues,
-      quantile_80 + 0.1,
-      quantile_100
-    )
+      countries_quant60 = findQuantiles(
+        sorted_metricValues,
+        quantile_40 + 0.0000001,
+        quantile_60
+      )
+      countries_quant80 = findQuantiles(
+        sorted_metricValues,
+        quantile_60 + 0.0000001,
+        quantile_80
+      )
+      countries_quant100 = findQuantiles(
+        sorted_metricValues,
+        quantile_80 + 0.0000001,
+        quantile_100
+      )
+    }
+    if (unitType === 'radioCapita') {
+      countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
+      countries_quant40 = findQuantiles(
+        sorted_metricValues,
+        quantile_20 + 0.0001,
+        quantile_40
+      )
+      countries_quant60 = findQuantiles(
+        sorted_metricValues,
+        quantile_40 + 0.0001,
+        quantile_60
+      )
+      countries_quant80 = findQuantiles(
+        sorted_metricValues,
+        quantile_60 + 0.0001,
+        quantile_80
+      )
+      countries_quant100 = findQuantiles(
+        sorted_metricValues,
+        quantile_80 + 0.0001,
+        quantile_100
+      )
+    }
+    if (unitType === 'radioDefault') {
+      countries_quant20 = findQuantiles(sorted_metricValues, 0, quantile_20)
+      countries_quant40 = findQuantiles(
+        sorted_metricValues,
+        quantile_20 + 0.1,
+        quantile_40
+      )
+      countries_quant60 = findQuantiles(
+        sorted_metricValues,
+        quantile_40 + 0.1,
+        quantile_60
+      )
+      countries_quant80 = findQuantiles(
+        sorted_metricValues,
+        quantile_60 + 0.1,
+        quantile_80
+      )
+      countries_quant100 = findQuantiles(
+        sorted_metricValues,
+        quantile_80 + 0.1,
+        quantile_100
+      )
+    }
   }
 
   function updateQuantileValues (metricValues) {
@@ -223,7 +268,7 @@ export async function drawWorldMap (
       .scaleQuantile()
       .domain(metricValues)
       .range(['white', '#bbcfb8', '#89ad86', '#588a56', '#035e18'])
-    
+
     const countries = bounds
       .selectAll('.country')
       .data(
@@ -254,10 +299,10 @@ export async function drawWorldMap (
           .style('opacity', 1.0)
 
         d3.select(`#${countryIdAccessor(d)}_scatterplot`)
-        .transition()
-        .duration(0.1)
-        .attr('r', 7)
-        .style('opacity', '0.5')
+          .transition()
+          .duration(0.1)
+          .attr('r', 7)
+          .style('opacity', '0.5')
 
         d3.select('#rect' + (countryIdAccessor(d) + filterHandler.getYear()))
           .transition()
@@ -336,9 +381,8 @@ export async function drawWorldMap (
               .text(
                 `${element}: ` +
                   `${d3.format(',.2f')(
-                    (1000 * parseFloat(d[element])) /
-                      parseFloat(d['gdp'] / parseFloat(d['population']))
-                  )} million tons/(GDP/capita) * 1000`
+                    (1000000000 * parseFloat(d[element])) / parseFloat(d['gdp'])
+                  )} kg/GDP`
               )
               .style('font-weight', 'bold')
               .append('br')
@@ -370,9 +414,7 @@ export async function drawWorldMap (
         tooltip
           .select('#value')
           .text(
-            `All emission types: ${d3.format(',.2f')(
-              metricValue || 0
-            )} million tons/(GDP/capita) * 1000`
+            `All emission types: ${d3.format(',.2f')(metricValue || 0)} kg/GDP`
           )
       }
 
@@ -380,13 +422,11 @@ export async function drawWorldMap (
 
       const x = centerX + 10
       const y = centerY + 10
-      /*
+
       tooltip.style(
         'transform',
-        `translate(` + `calc( -50% + ${x}px),` + `calc( 50% + ${y}px)` + `)`
+        `translate(` + `calc( -55% + ${x}px),` + `calc( -120% + ${y}px)` + `)`
       )
-      */
-      tooltip.style('transform', 'translate(400px, 200px)')
     }
 
     function onMouseLeave () {
@@ -529,7 +569,6 @@ export async function drawWorldMap (
       d3.selectAll('#canvas').attr('visibility', 'hidden')
     }
 
-
     //svg.select('.options')
     //.attr('transform', function() { return 'translate(30,'+ (height-60) +')' })
     // Quantiles legend
@@ -537,7 +576,9 @@ export async function drawWorldMap (
       .append('g')
       .attr('class', 'legendLog')
       .attr('id', 'ID_legendlog')
-      .attr('transform', function() { return 'translate(30,'+ (height-60) +')' })
+      .attr('transform', function () {
+        return 'translate(30,' + (height - 60) + ')'
+      })
       .on('mouseover', function (d) {
         d3.selectAll('rect')._groups[0][0].setAttribute('id', 'rect-0')
         d3.selectAll('rect')._groups[0][1].setAttribute('id', 'rect-1')
@@ -749,7 +790,9 @@ export async function drawWorldMap (
     */
 
     d3.select('#toggleNaturalDisasters').on('click', val => {
+      console.log('HEEEEEEEEEEJ2')
       if (toggleNaturalDisaster.checked == true) {
+        console.log('HEEEEEEEEEEJ')
         svg
           .append('g')
           .attr('id', 'canvas')
