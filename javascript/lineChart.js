@@ -1,32 +1,7 @@
 export async function lineChart (filterHandler, promises) {
-  //, countries, emissionTypes, max_year) {
-  //console.log(filterHandler.getCountries())
-  //console.log(filterHandler.getEmissions())
-  //console.log('year:', filterHandler.getYear())
 
-  /*let checkForLargestEmitter = function (datanest) {
-    let maxEmissions = 0
-    let largestEmitter = 0
-    let country = ''
-    let country_i = -1
-    for (var i = 0; i < datanest.length; i++) {
-      if (datanest[i]['country'] !== country) {
-        //console.log('old index:', country_i)
-        country_i = country_i + 1
-        //console.log('updated index:', country_i)
-      }
-      country = datanest[i]['country']
-      //console.log('largest data:', datanest[i]["co2"])
-      if (datanest[i]['co2'] > maxEmissions) {
-        maxEmissions = datanest[i]['co2']
-        largestEmitter = country_i //datanest[i]["country"]
-        //console.log('output:', largestEmitter)
-      }
-    }
-    return largestEmitter
-  }*/
   // Set the dimensions of the canvas / graph
-  var margin = { top: 30, right: 270, bottom: 50, left: 50 },
+  var margin = { top: 30, right: 120, bottom: 50, left: 60 },
     width = window.innerWidth *0.47 - margin.left - margin.right,
     height = window.innerHeight *0.5 - margin.top - margin.bottom
 
@@ -88,9 +63,8 @@ export async function lineChart (filterHandler, promises) {
         d.year = parseInt(d.year)
       }
       d.total_co2 = 0
-      var hej = true
+
       // Check if denominator is not zero and then sum up all emissions with normalization
-      //if (hej) { //(normalizationFactor !== 0) {
         // If all co2-emissions are choosen:
         if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
           d.total_co2 = +d['co2']/normalizationFactor
@@ -126,12 +100,14 @@ export async function lineChart (filterHandler, promises) {
         return d.year
       })
     )
+    //.nice()
     y.domain([
       0,
       d3.max(filtered_data, function (d) {
         return d.total_co2
       })
     ])
+    .nice()
 
     // Group the entries by symbol
     var dataNest = Array.from(
@@ -195,7 +171,12 @@ export async function lineChart (filterHandler, promises) {
     svg
       .append('text')
       .attr('text-anchor', 'middle')
-      .attr('transform', 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)')
+      .attr('transform', function () {
+      if (normalizationType === 'gdp') {
+        return 'translate(' + -48 + ',' + height / 2 + ')rotate(-90)'
+      }
+      return 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)'
+    })
       .style('font-family', 'Helvetica')
       .style('font-size', 12)
       .text('CO2')
@@ -252,12 +233,12 @@ export async function lineChart (filterHandler, promises) {
     //.text('hejhej')
 
 //class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
-    svg.append('g')
+    /*svg.append('g')
       .attr('class', 'radiobutton')
       .attr('type', 'radio')
       .attr('name', 'normalization')
       .attr('value', 'none')
-      .attr('transform', function() { return 'translate(30,'+ (height-60) +')' })
+      .attr('transform', function() { return 'translate(30,'+ (height-60) +')' })*/
     /*
 mouseG.append("rect")
 .attr("class", "text-box")
@@ -343,7 +324,9 @@ console.log('textbox', textbox)*/
         })
         
         let listOfYPos = []
-        d3.selectAll('.mouse-per-line').attr('transform', function (d, i) {
+
+        // Update position for circle in floating legend
+        d3.selectAll('.mouse-per-line circle').attr('transform', function (d, i) {
           var xDate = x.invert(mouse[0])
           var bisect = d3.bisector(function (d) {
             return d.year
@@ -368,22 +351,56 @@ console.log('textbox', textbox)*/
           }
           console.log('ypos', y.invert(pos.y))
           console.log(mousePerLine)
-          d3.select(this)
-            .select('text')
-            .text(function(){
-              if (xDate < d.value[0].year ) {return ""}
-              if (normalizationType === 'none') {
-                return d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' million ton/yr'
-              }
-              else {
-                return d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton/yr'
-              }
-            }
-            )
-            //.attr('opacity', function() {if (xDate < d.value[0].year ) {return "0"}})
-          
           return 'translate(' + mouse[0] + ',' + pos.y + ')'
-          //return "translate(" + mouse[0] + "," + newYPos + ")";
+        })
+
+        // Update text and position for text in floating legend
+        d3.selectAll('.mouse-per-line text').attr('transform', function (d, i) {
+          var xDate = x.invert(mouse[0])
+          var bisect = d3.bisector(function (d) {
+            return d.year
+          }).right
+          var idx = bisect(d.value, xDate)
+          var beginning = 0
+          var end = lines[i].getTotalLength()
+          var target = null
+          while (true) {
+            var target = Math.floor((beginning + end) / 2)
+            var pos = lines[i].getPointAtLength(target)
+
+            if (
+              (target === end || target === beginning) &&
+              pos.x !== mouse[0]
+            ) {
+              break
+            }
+            if (pos.x > mouse[0]) end = target
+            else if (pos.x < mouse[0]) beginning = target
+            else break
+          }
+
+          if (xDate < d.value[0].year ) {
+            var outputString = ""
+          }
+          if (normalizationType === 'none') {
+            var outputString = d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' million ton/yr'
+          }
+          else {
+            var outputString = d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton/yr'
+          }
+          const stringLength = outputString.length
+          console.log('str length', stringLength)
+          d3.select(this)
+            .text(outputString) 
+          
+          if (width-mouse[0]<130) {
+            if (normalizationType === 'none') {
+              return 'translate(' + (mouse[0]-140) + ',' + (pos.y+3) + ')'}
+            else {
+              return 'translate(' + (mouse[0]-120) + ',' + (pos.y+3) + ')'
+            }
+          }
+          return 'translate(' + (mouse[0]+8) + ',' + (pos.y+3) + ')'
         })
       })
   })

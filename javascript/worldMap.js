@@ -172,7 +172,7 @@ export async function drawWorldMap (
       .scaleQuantile()
       .domain(metricValues)
       .range(['white', '#bbcfb8', '#89ad86', '#588a56', '#035e18'])
-
+    
     const countries = bounds
       .selectAll('.country')
       .data(
@@ -190,7 +190,7 @@ export async function drawWorldMap (
       .attr('fill', d => {
         const metricValue = metricDataByCountry[countryIdAccessor(d)]
         if (typeof metricValue == 'undefined') return '#e2e6e9'
-        return colorScale(metricValue)
+        return colorScaleLegend(metricValue)
       })
       .on('mouseover', function (d) {
         d3.selectAll('.country')
@@ -319,7 +319,7 @@ export async function drawWorldMap (
         bounds.selectAll('.country').attr('fill', d => {
           const metricValue = metricDataByCountry[countryIdAccessor(d)]
           if (typeof metricValue == 'undefined') return '#6D6D6D'
-          return colorScale(metricValue)
+          return colorScaleLegend(metricValue)
         })
 
         filterCO2(co2_dataset, metricDataByCountry)
@@ -371,6 +371,9 @@ export async function drawWorldMap (
       d3.selectAll('#canvas').attr('visibility', 'hidden')
     }
 
+
+    //svg.select('.options')
+    //.attr('transform', function() { return 'translate(30,'+ (height-60) +')' })
     // Quantiles legend
     svg
       .append('g')

@@ -5,6 +5,7 @@
   width: 400px;
   overflow: scroll;
   overflow-x: hidden;
+  z-index: 20;
 }
 
 .body {
@@ -15,6 +16,7 @@
   background: #f8f9fa;
   border-radius: 15px;
   margin: 10px;
+  z-index: 20;
 }
 
 .dropdown {
@@ -27,6 +29,7 @@
   text-size-adjust: 12;
   height: 50px;
   margin-left: 10px;
+  z-index: 20;
 }
 
 #emissions-selector {
@@ -41,6 +44,7 @@
   width: 400px;
   overflow: scroll;
   overflow-x: hidden;
+  z-index: 20;
 }
 
 input {
@@ -68,4 +72,5 @@ input {
   height: 100px;
   width: 100%;
   margin-top: 10px;
+  z-index: 20;
 }

@@ -17,7 +17,7 @@ export async function drawScatterPlot (promises, filterHandler) {
      // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
 
       // set the dimensions and margins of the graph
-      var margin = {top: 30, right: 270, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
+      var margin = {top: 30, right: 120, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
       width = window.innerWidth * 0.47  - margin.left - margin.right,
       height = window.innerHeight * 0.5  - margin.top - margin.bottom;
 
@@ -87,18 +87,33 @@ export async function drawScatterPlot (promises, filterHandler) {
 
         // Add dots
         var circ = svg.append('g');
-
+       const box_width = 210
+       const box_height = 70
       console.log(emissionTypes.length)
       if (emissionTypes.length>0){ //om det inte finns någon emission type vald så ska den inte plotta några punkter
        circ.selectAll("dot")
         .data(filteredNatDis)
         .enter()
         .append("rect")
-          .attr('y', function (d) { return parseFloat(y(getNaturalDisastersForCountry(d))); } )
+          .attr('y', function (d) { 
+            const temp_y = parseFloat(y(getNaturalDisastersForCountry(d)));
+            console.log('temp y', temp_y, d.country)
+            console.log(height - temp_y)
+            if (height - temp_y < box_height) {
+              return temp_y - box_height
+            }
+            return temp_y
+          } )
           .data(filteredCo2)
-          .attr('x', function (d) { return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); } )
-          .attr("width", 250)
-          .attr("height", 70)
+          .attr('x', function (d) { 
+            var temp_x = parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); 
+            if (width - temp_x < box_width) {
+              return temp_x - box_width
+            }
+            return temp_x
+          } )
+          .attr("width", box_width)
+          .attr("height", box_height)
           .attr("rx", 5)
           .attr("stroke", "#69b3a2")
           .attr("stroke-opacity", 0.5)
@@ -110,11 +125,23 @@ export async function drawScatterPlot (promises, filterHandler) {
           .data(filteredNatDis)
           .enter()
           .append("text")
-            .attr('y', function (d) { return parseFloat(y(getNaturalDisastersForCountry(d, year))+20); } )
+          .attr('y', function (d) { 
+            const temp_y = parseFloat(y(getNaturalDisastersForCountry(d)));
+            console.log('temp y', temp_y, d.country)
+            console.log(height - temp_y)
+            if (height - temp_y < box_height) {
+              return temp_y - (box_height - 20)
+            }
+            return temp_y + 20
+          } )
             .data(filteredCo2)
             .attr('x', function (d) { 
               if (getEmissionsForCountry(d, year, emissionTypes)>0) {
-                return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                var temp_x = parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); 
+                if (width - temp_x < box_width) {
+                  return temp_x - (box_width - 10)
+                }
+                return temp_x + 10
              } else {
                 return 10
              } } )
@@ -122,6 +149,7 @@ export async function drawScatterPlot (promises, filterHandler) {
             .style('opacity', '0')
             .text(function(d) { return d.country; })
             .attr('font-weight', "bold")
+            .style('font-size', 12)
               .append("tspan")
               .attr('dy', 20)
               .attr('font-weight', "normal")
@@ -129,7 +157,11 @@ export async function drawScatterPlot (promises, filterHandler) {
               .attr('dx', function (d) { return 0 })
               .attr('x', function (d) { 
                 if (getEmissionsForCountry(d, year, emissionTypes)>0) {
-                  return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                  var temp_x = parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); 
+                  if (width - temp_x < box_width) {
+                    return temp_x - (box_width - 10)
+                  }
+                  return temp_x + 10
                 } else {
                   return 10
                 }
@@ -139,7 +171,11 @@ export async function drawScatterPlot (promises, filterHandler) {
               .attr('dx', function (d) { return 0 })
               .attr('x', function (d) { 
                 if (getEmissionsForCountry(d, year, emissionTypes)>0) {
-                  return parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))+10)
+                  var temp_x = parseFloat(x(getEmissionsForCountry(d, year, emissionTypes))); 
+                  if (width - temp_x < box_width) {
+                    return temp_x - (box_width - 10)
+                  }
+                  return temp_x + 10
                 } else {
                   return 10
                 }

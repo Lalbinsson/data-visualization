@@ -32,7 +32,7 @@ var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
 var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
-var selectedYear = 1990 //"2000" //"1990"
+var selectedYear = 1954 //"2000" //"1990"
 var selectedCountries = ['AFG', 'SWE']
 //var selectedYear = 2000 //"2000" //"1990"
 //var selectedEmissions = ['oil_co2']
@@ -142,7 +142,7 @@ promises.then(function ([
       //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
       filterHandler.updateCountries(selectedCountries)
       drawScatterPlot(promises, filterHandler)
-      lineChart(filterHandler)
+      lineChart(filterHandler, promises)
       //console.log(filterHandler.getCountries)
     })
   initEmissionCheckBox(selectedEmissions)
