@@ -67,7 +67,7 @@
   margin: 10px;
   text-align: left !important;
   vertical-align: middle;
-  width: 250px;
+  width: 100%;
   text-size-adjust: 12;
   height: 50px;
   margin-left: 10px;
@@ -108,8 +108,8 @@
   margin-top: 10px;
   margin-bottom: 5px;
   margin-right: 10px;
-  margin-left: 80px;
-  width: 800px;
+  margin-left: 20px;
+  width: 30%;
   margin-right: 10px;
   text-align: left;
   border-radius: 10px;
@@ -126,7 +126,7 @@
 }
 
 #countries-selector {
-  width: 250px;
+  width: 100%;
   height: 50px;
 }
 

@@ -76,7 +76,7 @@ export async function drawScatterPlot (promises, filterHandler) {
       .attr('transform', 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)')
       .style('font-family', 'Helvetica')
       .style('font-size', 12)
-      .text('Natural disasters')
+      .text('Natural disasters (nbr)')
 
     // X label
     svg
@@ -86,7 +86,7 @@ export async function drawScatterPlot (promises, filterHandler) {
       //.attr('text-anchor', 'middle')
       .style('font-family', 'Helvetica')
       .style('font-size', 12)
-      .text('CO2 Emissions')
+      .text('CO2 Emissions (million ton)')
 
     // Add dots
     var circ = svg.append('g')
@@ -266,6 +266,10 @@ function getEmissionsForCountry (row, year, emissionTypes) {
         } else {
           if (emissionTypes.includes('oil_co2') && !Number.isNaN(row.oil_co2) && parseFloat(row.oil_co2)>0) {
             tot= tot+parseFloat(row.oil_co2)
+          }
+          if (emissionTypes.includes('consumption_co2') && !Number.isNaN(row.consumption_co2) && parseFloat(row.consumption_co2)>0) {
+            console.log(row.consumption_co2)
+            tot= tot+parseFloat(row.consumption_co2)
           }
           if (emissionTypes.includes('gas_co2') && !Number.isNaN(row.gas_co2) && parseFloat(row.gas_co2)>0) {
             tot= tot+parseFloat(row.gas_co2)
