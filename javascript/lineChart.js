@@ -1,9 +1,8 @@
 export async function lineChart (filterHandler, promises) {
-
   // Set the dimensions of the canvas / graph
   var margin = { top: 30, right: 120, bottom: 50, left: 60 },
-    width = window.innerWidth *0.47 - margin.left - margin.right,
-    height = window.innerHeight *0.5 - margin.top - margin.bottom
+    width = window.innerWidth * 0.47 - margin.left - margin.right,
+    height = window.innerHeight * 0.5 - margin.top - margin.bottom
 
   // Parse the date / time
   var parseDate = d3.timeParse('%Y')
@@ -18,6 +17,7 @@ export async function lineChart (filterHandler, promises) {
     .x(function (d) {
       return x(d.year)
     })
+
     .y(function (d) {
       return y(d.total_co2)
     })
@@ -48,16 +48,15 @@ export async function lineChart (filterHandler, promises) {
     var normalizationType = filterHandler.getNormalization()
     var normalizationFactor = 1
     console.log('countries in line', countries)
-    
-    co2_dataset.forEach(function (d) {
 
-      if (normalizationType === "capita") {
-        normalizationFactor = parseInt(d.population)/1000000
+    co2_dataset.forEach(function (d) {
+      if (normalizationType === 'capita') {
+        normalizationFactor = parseInt(d.population) / 1000000
+      } else if (normalizationType === 'gdp') {
+        normalizationFactor = parseInt(d.gdp) / 1000000
+      } else {
+        normalizationFactor = 1
       }
-      else if (normalizationType === "gdp") {
-        normalizationFactor = parseInt(d.gdp)/1000000
-      }
-      else {normalizationFactor = 1}
 
       if (d.year > 1900) {
         d.year = parseInt(d.year)
@@ -65,22 +64,22 @@ export async function lineChart (filterHandler, promises) {
       d.total_co2 = 0
 
       // Check if denominator is not zero and then sum up all emissions with normalization
-        // If all co2-emissions are choosen:
-        if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
-          d.total_co2 = +d['co2']/normalizationFactor
-          console.log('only co2')
-        } 
-        else {
-          for (let i = 0; i < emissionTypes.length; i++) {
-            var emissionType = emissionTypes[i]
-            if (!isNaN(d[emissionType])) {
-              if (isNaN(+d[emissionType]/normalizationFactor)) {
-                d.total_co2 += 0
-              }
-              else  {d.total_co2 += +d[emissionType]/normalizationFactor}
+      // If all co2-emissions are choosen:
+      if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
+        d.total_co2 = +d['co2'] / normalizationFactor
+        console.log('only co2')
+      } else {
+        for (let i = 0; i < emissionTypes.length; i++) {
+          var emissionType = emissionTypes[i]
+          if (!isNaN(d[emissionType])) {
+            if (isNaN(+d[emissionType] / normalizationFactor)) {
+              d.total_co2 += 0
+            } else {
+              d.total_co2 += +d[emissionType] / normalizationFactor
             }
           }
         }
+      }
     })
 
     // Remove data for countries we're not interested in
@@ -90,7 +89,7 @@ export async function lineChart (filterHandler, promises) {
 
     // Remove data for years outside chosen intervals
     let filtered_data = filtered_data_countries.filter(function (item) {
-      return item.year < max_year && item.year > 1900
+      return item.year <= max_year + 1 && item.year >= 1900
     })
 
     // Scale the range of the data
@@ -105,8 +104,7 @@ export async function lineChart (filterHandler, promises) {
       d3.max(filtered_data, function (d) {
         return d.total_co2
       })
-    ])
-    .nice()
+    ]).nice()
 
     // Group the entries by symbol
     var dataNest = Array.from(
@@ -163,19 +161,23 @@ export async function lineChart (filterHandler, promises) {
       .append('text')
       .attr('text-anchor', 'middle')
       .attr('transform', function () {
-      if (normalizationType === 'gdp') {
-        return 'translate(' + -48 + ',' + height / 2 + ')rotate(-90)'
-      }
-      return 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)'
-    })
+        if (normalizationType === 'gdp') {
+          return 'translate(' + -48 + ',' + height / 2 + ')rotate(-90)'
+        }
+        return 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)'
+      })
       .style('font-family', 'Helvetica')
       .style('font-size', 12)
       .text('CO2')
-      .text(function() {
+      .text(function () {
         console.log('norm type:', normalizationType === 'none')
-        if (normalizationType === 'none') {return 'CO2 (million ton)'}
-        else if (normalizationType === 'gdp') {return 'CO2 (ton per GDP and year)'}
-        else {return 'CO2 (ton per capita and year)'}
+        if (normalizationType === 'none') {
+          return 'CO2 (million ton)'
+        } else if (normalizationType === 'gdp') {
+          return 'CO2 (ton per GDP and year)'
+        } else {
+          return 'CO2 (ton per capita and year)'
+        }
       })
 
     // X label
@@ -218,7 +220,6 @@ export async function lineChart (filterHandler, promises) {
       .style('stroke-width', '1px')
       .style('opacity', '0')
 
-
     var lines = document.getElementsByClassName('line')
 
     var mousePerLine = mouseG
@@ -243,7 +244,14 @@ export async function lineChart (filterHandler, promises) {
       .attr('transform', 'translate(10,3)')
       .style('font-size', '10')
 
-   // console.log('mouse per line:', mousePerLine)
+    // console.log('mouse per line:', mousePerLine)
+
+    d3.select('#lineplot')
+      .append('text')
+      .attr('id', 'yearBox')
+      .attr('x', '450px')
+      .attr('y', '30px')
+
     mouseG
       .append('svg:rect')
       .attr('width', width)
@@ -255,6 +263,7 @@ export async function lineChart (filterHandler, promises) {
         d3.selectAll('.mouse-per-line circle').style('opacity', '0')
         d3.selectAll('.mouse-per-line text').style('opacity', '0')
         d3.selectAll('.text-box').style('opacity', '0')
+        d3.select('#yearBox').style('opacity', '0')
       })
       .on('mouseover', function () {
         d3.select('.mouse-line').style('opacity', '1')
@@ -271,11 +280,14 @@ export async function lineChart (filterHandler, promises) {
           d += ' ' + mouse[0] + ',' + 0
           return d
         })
-        
+
         let listOfYPos = []
 
         // Update position for circle in floating legend
-        d3.selectAll('.mouse-per-line circle').attr('transform', function (d, i) {
+        d3.selectAll('.mouse-per-line circle').attr('transform', function (
+          d,
+          i
+        ) {
           var xDate = x.invert(mouse[0])
           var bisect = d3.bisector(function (d) {
             return d.year
@@ -298,6 +310,9 @@ export async function lineChart (filterHandler, promises) {
             else if (pos.x < mouse[0]) beginning = target
             else break
           }
+          d3.select('#yearBox')
+            .text(parseInt(xDate))
+            .style('opacity', '1')
           console.log('ypos', y.invert(pos.y))
           console.log(mousePerLine)
           return 'translate(' + mouse[0] + ',' + pos.y + ')'
@@ -328,27 +343,39 @@ export async function lineChart (filterHandler, promises) {
             else break
           }
 
-          if (xDate < d.value[0].year ) {
-            var outputString = ""
+          if (xDate < d.value[0].year) {
+            var outputString = ''
           }
           if (normalizationType === 'none') {
-            var outputString = d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' million ton/yr'
-          }
-          else {
-            var outputString = d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton/yr'
+            var outputString =
+              d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' million ton/yr'
+          } else {
+            var outputString =
+              d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton/yr'
           }
           const stringLength = outputString.length
-          d3.select(this)
-            .text(outputString) 
-          
-          if (width-mouse[0]<130) {
+          d3.select(this).text(outputString)
+
+          if (width - mouse[0] < 130) {
             if (normalizationType === 'none') {
-              return 'translate(' + (mouse[0] - 4.4*stringLength - 8) + ',' + (pos.y+3) + ')'}
-            else {
-              return 'translate(' + (mouse[0] - 4.4*stringLength - 12) + ',' + (pos.y+3) + ')'
+              return (
+                'translate(' +
+                (mouse[0] - 4.4 * stringLength - 8) +
+                ',' +
+                (pos.y + 3) +
+                ')'
+              )
+            } else {
+              return (
+                'translate(' +
+                (mouse[0] - 4.4 * stringLength - 12) +
+                ',' +
+                (pos.y + 3) +
+                ')'
+              )
             }
           }
-          return 'translate(' + (mouse[0]+8) + ',' + (pos.y+3) + ')'
+          return 'translate(' + (mouse[0] + 8) + ',' + (pos.y + 3) + ')'
         })
       })
   })
