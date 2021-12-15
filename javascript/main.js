@@ -106,6 +106,9 @@ promises.then(function ([
     allCountries.push(countryIdAccessor(worldMap.features[i]))
   }
   allCountries.sort()
+  allCountries.reverse()
+  allCountries.pop()
+  allCountries.reverse()
   //addSelectedEmission(selectedEmissions)
 
   d3.select('#countries-dropdown')
