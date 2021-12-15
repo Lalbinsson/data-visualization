@@ -353,7 +353,7 @@ export async function drawWorldMap (
 
         d3.select(`#${countryIdAccessor(d)}_scatterplot`)
           .attr('r', '5')
-          .style('fill', 'rgb(105, 179, 162)')
+          .style("fill", "#8bb098")
 
         d3.select('#rect' + (countryIdAccessor(d) + filterHandler.getYear()))
           .transition()
