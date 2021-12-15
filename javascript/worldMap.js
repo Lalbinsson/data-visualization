@@ -569,8 +569,6 @@ export async function drawWorldMap (
       d3.selectAll('#canvas').attr('visibility', 'hidden')
     }
 
-    //svg.select('.options')
-    //.attr('transform', function() { return 'translate(30,'+ (height-60) +')' })
     // Quantiles legend
     svg
       .append('g')

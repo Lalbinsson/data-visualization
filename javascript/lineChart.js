@@ -81,7 +81,6 @@ export async function lineChart (filterHandler, promises) {
             }
           }
         }
-    //}
     })
 
     // Remove data for countries we're not interested in
@@ -118,16 +117,8 @@ export async function lineChart (filterHandler, promises) {
     // set the colour scale
     var color = d3.scaleOrdinal(d3.schemeCategory10)
 
-    /*var legend = svg.selectAll('g')
-.data(filtered_data)
-.enter()
-.append('g')
-.attr('class', 'legend')*/
-
-  //  console.log(dataNest)
     // Loop through each symbol / key
     dataNest.forEach(function (d, i) {
-  //    console.log(d.value)
       svg
         .append('path')
         .attr('class', 'line')
@@ -197,17 +188,6 @@ export async function lineChart (filterHandler, promises) {
       .style('font-size', 12)
       .text('Year')
 
-    // Create dictionary for used data that can be used to floating legend
-    /*let dataDict = new Object()
-    dataNest.forEach(function (d, i) {
-      dataDict[d.key] = {}
-      d.value.forEach(function (row, index) {
-        dataDict[d.key][row.year.toString()] = row.total_co2
-      })
-    })*/
-
-    //console.log('finished dict:', dataDict)
-
     // Add mouseover
 
     var mouseG = svg.append('g').attr('class', 'mouse-over-effects')
@@ -230,35 +210,6 @@ export async function lineChart (filterHandler, promises) {
       .attr('transform', 'translate(10,3)')
       .style('font-size', '10')
       .style('fill', 'black')
-    //.text('hejhej')
-
-//class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
-    /*svg.append('g')
-      .attr('class', 'radiobutton')
-      .attr('type', 'radio')
-      .attr('name', 'normalization')
-      .attr('value', 'none')
-      .attr('transform', function() { return 'translate(30,'+ (height-60) +')' })*/
-    /*
-mouseG.append("rect")
-.attr("class", "text-box")
-.attr("width", 100)
-.attr("height", 100)
-.style("opacity", "0");
-
-
-var textbox = mouseG.select("text-box")
-.enter()
-.append('g')
-.attr("class", "textlegend")
-
-textbox.append("text")
-.attr("transform", "translate(10,3)")
-.style('font-size', '10')
-.text('HEJHEJHEJ')
-.style('fill', 'black')
-
-console.log('textbox', textbox)*/
 
     mouseG
       .append('path')
@@ -267,11 +218,9 @@ console.log('textbox', textbox)*/
       .style('stroke-width', '1px')
       .style('opacity', '0')
 
-    //console.log('mouseG', mouseG)
 
     var lines = document.getElementsByClassName('line')
 
-    //let largestEmittingCountry = checkForLargestEmitter(filtered_data)
     var mousePerLine = mouseG
       .selectAll('.mouse-per-line')
       .data(dataNest)
@@ -389,15 +338,14 @@ console.log('textbox', textbox)*/
             var outputString = d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton/yr'
           }
           const stringLength = outputString.length
-          console.log('str length', stringLength)
           d3.select(this)
             .text(outputString) 
           
           if (width-mouse[0]<130) {
             if (normalizationType === 'none') {
-              return 'translate(' + (mouse[0]-140) + ',' + (pos.y+3) + ')'}
+              return 'translate(' + (mouse[0] - 4.4*stringLength - 8) + ',' + (pos.y+3) + ')'}
             else {
-              return 'translate(' + (mouse[0]-120) + ',' + (pos.y+3) + ')'
+              return 'translate(' + (mouse[0] - 4.4*stringLength - 12) + ',' + (pos.y+3) + ')'
             }
           }
           return 'translate(' + (mouse[0]+8) + ',' + (pos.y+3) + ')'

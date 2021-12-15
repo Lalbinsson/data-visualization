@@ -9,16 +9,41 @@
   top: 0;
   left: 0;
 }
-#options {
+#checkboxWorldMap {
   border: 0px;
   width: 150px;
-  height: 85px;
+  height: 20px;
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 22;
+  right: 80;
   float: bottom;
   font-size: 12;
   border: 1px;
+}
+#options {
+  border: 0px;
+  width: 120px;
+  height: 75px;
+  position: absolute;
+  bottom: 22;
+  right: 230;
+  float: bottom;
+  font-size: 12;
+  border: 1px;
+}
+
+input[type="checkbox"] {
+  margin-right: 0;
+  margin-top: -1;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+input[type="radio"] {
+  margin-right: 0;
+  margin-top: -1;
+  margin-bottom: 0;
+  vertical-align: middle;
 }
 /*#options {
   z-index: 0;
