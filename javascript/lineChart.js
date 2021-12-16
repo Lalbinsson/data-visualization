@@ -47,7 +47,6 @@ export async function lineChart (filterHandler, promises) {
     var emissionTypes = filterHandler.getEmissions()
     var normalizationType = filterHandler.getNormalization()
     var normalizationFactor = 1
-    console.log('countries in line', countries)
 
     co2_dataset.forEach(function (d) {
       if (normalizationType === 'capita') {
@@ -64,22 +63,22 @@ export async function lineChart (filterHandler, promises) {
       d.total_co2 = 0
 
       // Check if denominator is not zero and then sum up all emissions with normalization
-      // If all co2-emissions are choosen:
-      if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
-        d.total_co2 = +d['co2'] / normalizationFactor
-        console.log('only co2')
-      } else {
-        for (let i = 0; i < emissionTypes.length; i++) {
-          var emissionType = emissionTypes[i]
-          if (!isNaN(d[emissionType])) {
-            if (isNaN(+d[emissionType] / normalizationFactor)) {
-              d.total_co2 += 0
-            } else {
-              d.total_co2 += +d[emissionType] / normalizationFactor
+        // If all co2-emissions are choosen:
+        if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
+          d.total_co2 = +d['co2']/normalizationFactor
+        } 
+        else {
+          for (let i = 0; i < emissionTypes.length; i++) {
+            var emissionType = emissionTypes[i]
+            if (!isNaN(d[emissionType])) {
+              if (isNaN(+d[emissionType]/normalizationFactor)) {
+                d.total_co2 += 0
+              }
+              else  {d.total_co2 += +d[emissionType]/normalizationFactor}
             }
           }
         }
-      }
+      //}
     })
 
     // Remove data for countries we're not interested in
@@ -161,23 +160,18 @@ export async function lineChart (filterHandler, promises) {
       .append('text')
       .attr('text-anchor', 'middle')
       .attr('transform', function () {
-        if (normalizationType === 'gdp') {
-          return 'translate(' + -48 + ',' + height / 2 + ')rotate(-90)'
-        }
-        return 'translate(' + -30 + ',' + height / 2 + ')rotate(-90)'
-      })
+      if (normalizationType === 'gdp') {
+        return 'translate(' + -48 + ',' + height / 2 + ')rotate(-90)'
+      }
+      return 'translate(' + -35 + ',' + height / 2 + ')rotate(-90)'
+    })
       .style('font-family', 'Helvetica')
       .style('font-size', 12)
       .text('CO2')
-      .text(function () {
-        console.log('norm type:', normalizationType === 'none')
-        if (normalizationType === 'none') {
-          return 'CO2 (million ton)'
-        } else if (normalizationType === 'gdp') {
-          return 'CO2 (ton per GDP and year)'
-        } else {
-          return 'CO2 (ton per capita and year)'
-        }
+      .text(function() {
+        if (normalizationType === 'none') {return 'CO2 (million ton)'}
+        else if (normalizationType === 'gdp') {return 'CO2 (ton per GDP)'}
+        else {return 'CO2 (ton per capita)'}
       })
 
     // X label
@@ -194,8 +188,9 @@ export async function lineChart (filterHandler, promises) {
 
     var mouseG = svg.append('g').attr('class', 'mouse-over-effects')
 
-    var legend = mouseG
-      .selectAll('text-box')
+
+    /*var legend = mouseG
+      .select('text-box')
       .data(dataNest)
       .enter()
       .append('g')
@@ -211,7 +206,7 @@ export async function lineChart (filterHandler, promises) {
       .append('text')
       .attr('transform', 'translate(10,3)')
       .style('font-size', '10')
-      .style('fill', 'black')
+      .style('fill', 'black')*/
 
     mouseG
       .append('path')
@@ -269,9 +264,6 @@ export async function lineChart (filterHandler, promises) {
         d3.select('.mouse-line').style('opacity', '1')
         d3.selectAll('.mouse-per-line circle').style('opacity', '1')
         d3.selectAll('.mouse-per-line text').style('opacity', '1')
-        d3.selectAll('.text-box')
-          .style('opacity', '0.75')
-          .style('fill', 'white')
       })
       .on('mousemove', function () {
         var mouse = d3.mouse(this)
@@ -280,7 +272,6 @@ export async function lineChart (filterHandler, promises) {
           d += ' ' + mouse[0] + ',' + 0
           return d
         })
-
         let listOfYPos = []
 
         // Update position for circle in floating legend
@@ -347,11 +338,10 @@ export async function lineChart (filterHandler, promises) {
             var outputString = ''
           }
           if (normalizationType === 'none') {
-            var outputString =
-              d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' million ton/yr'
-          } else {
-            var outputString =
-              d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton/yr'
+            var outputString = Math.round(xDate) + ': ' + d.key + '\n ' + y.invert(pos.y).toFixed(2) + ' mil. ton'
+          }
+          else {
+            var outputString = Math.round(xDate) + ': ' + d.key + '\n ' + y.invert(pos.y).toFixed(4) + ' ton'
           }
           const stringLength = outputString.length
           d3.select(this).text(outputString)
