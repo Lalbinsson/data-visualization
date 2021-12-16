@@ -1,43 +1,3 @@
-/* //gammal kod som inte tillhör klassen, men kanske kan återanvända filteringen.
-// får fortfarande promise på denna så måste lösa det, men rätt data loggas.
-  function updateDataFromFilters() {
-    currentFilteredData = d3.csv("owid-co2-data.csv").then(function(csv) {
-        csv = csv.filter(function(row) {
-                return row[currentEmission] != ""
-        });
-        console.log(csv)
-        return csv
-        });
-    getFiltered()
-  }
-
-  function getFiltered(){
-    console.log(currentFilteredData) //denna blir fortf promise
-  }
-
-
-
-  function updateYear() {
-    var year = document.getElementById("year-selector").value;
-    currentYear = year
-    document.getElementById("cYear").innerHTML = currentYear
-    filterYear()
-    updateDataFromFilters()
-    //getYear()
-  }
-
-  function getYear(){
-    console.log("get year:", currentYear)
-    return currentYear
-  }
-
-  function updateEmission() {
-    var emission = document.getElementById("emission-selector").value;
-    currentEmission = emission
-    document.getElementById("cEmission").innerHTML = currentEmission
-    filterEmission()
-   // getEmission()
-  } */
   import { lineChart } from './lineChart.js';
   import { drawScatterPlot } from './scatterPlot.js';
 class FilterHandler {
@@ -69,26 +29,10 @@ class FilterHandler {
       currentYear,
       currentNormalization
     )
-    console.log(
-      currentFilteredData,
-      currentEmissions,
-      currentCountries,
-      currentYear,
-      currentNormalization
-    )
   }
 
-  // funkar inte som den ska än.
   filterDataSetOnCurrentFilters () {
     this.filterYear()
-    //denna funkar inte nu, får promise
-    /*  var dat = d3.csv("owid-co2-data.csv").then(function(csv) {
-          csv = csv.filter(function(row) {
-              return row['year'] == this.currentYear //&& row[this.currentEmissions] != ""
-          });
-          console.log(csv)
-          return csv
-          }); */
     this.updateCharts()
   }
 
@@ -121,19 +65,16 @@ class FilterHandler {
 
   updateNormalization (newNormalization) {
     this.currentNormalization = newNormalization
-    console.log('updated normalization to: ', this.currentNormalization)
   }
 
   getNormalization() {
     return this.currentNormalization
 
   }
-  //update the charts that use global attributes, this only updates the printed values in the html right now.
+
   updateCharts () {
     if (!(this.currentEmissions == undefined)) {
       document.getElementById('cEmissions').innerHTML = this.currentEmissions
-    } else {
-    //  console.log('undef?')
     }
     if (!(this.currentYear == undefined)) {
       document.getElementById('cYear').innerHTML = this.currentYear
@@ -141,18 +82,13 @@ class FilterHandler {
     if (!(this.currentCountries == undefined)) {
       document.getElementById('cCountries').innerHTML = this.currentCountries
     }
-    //console.log(this.filterHandler.getCountries())
-    //lineChart(this.filterHandler, this.filterHandler.getCountries(), this.filterHandler.getEmissions(), this.filterHandler.getYear())
   }
 
-  //den här funkar inte som den ska än.
   filterYear () {
     var dat = d3.csv('owid-co2-data.csv').then(function (csv, currentYear) {
-      // console.log(currentYear) //denna blir undefined, kanske pga nested func?
       csv = csv.filter(function (row) {
-        return row['year'] == currentYear //går att filtrera på hårdkodat värde
+        return row['year'] == currentYear
       })
-      //  console.log(csv)
       return csv
     })
     return dat

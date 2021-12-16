@@ -3,7 +3,6 @@ import { lineChart } from './lineChart.js'
 import { drawWorldMap } from './worldMap.js'
 import { drawScatterPlot } from './scatterPlot.js'
 
-//TODO: read these from the data set
 var allEmissions = [
   'co2',
   'coal_co2',
@@ -24,7 +23,6 @@ const countryIdAccessor = d => d.properties['ADM0_A3_IS']
 var promises = [
   d3.json('../world-geojson.json'),
   d3.csv('../owid-co2-data.csv'),
-  //d3.csv('../disasterlocations.csv')
   d3.json('../naturalDisastersMappedIso.json'),
   d3.json('../naturalDisasters_coordinates.json')
 ]
@@ -32,11 +30,9 @@ var promises = [
 var promises = Promise.all(promises)
 
 // initializing the FilterHandler-class with defaultValues
-var selectedEmissions = ['co2'] //''coal_co2', 'gas_co2', 'oil_co2', 'cement_co2', 'flaring_co2', 'other_industry_co2']
-var selectedYear = 1990 //"2000" //"1990"
+var selectedEmissions = ['co2']
+var selectedYear = 1990
 var selectedCountries = ['SWE']
-//var selectedYear = 2000 //"2000" //"1990"
-//var selectedEmissions = ['oil_co2']
 var defaultFilteredData = []
 var currentNormalization = 'none'
 var filterHandler = new FilterHandler(
@@ -47,11 +43,7 @@ var filterHandler = new FilterHandler(
   currentNormalization
 )
 var unitType = 'radioCumulative'
-
-//just to have an initial value to avoid undefined
 filterHandler.updateYear(selectedYear)
-//filterHandler.updateEmissions(selectedEmissions)
-//filterHandler.updateCountries(selectedCountries)
 
 d3.select('#year-selector')
   .selectAll()
@@ -60,18 +52,16 @@ d3.select('#year-selector')
   .append('li')
   .text(function (d) {
     return d
-  }) // text showed in the menu
+  })
   .attr('value', function (d) {
     return d
   })
 
-//används ens den här?
 d3.select('#year-selector').on('change', function () {
   var newYear = d3.select(this).property('value')
   filterHandler.updateYear(newYear)
   lineChart(filterHandler)
   drawScatterPlot(promises, filterHandler)
-  console.log(filterHandler.getYear())
 })
 
 var disaster_coordinates = []
@@ -109,7 +99,6 @@ promises.then(function ([
   allCountries.reverse()
   allCountries.pop()
   allCountries.reverse()
-  //addSelectedEmission(selectedEmissions)
 
   d3.select('#countries-dropdown')
     .selectAll()
@@ -117,14 +106,12 @@ promises.then(function ([
     .enter()
     .append('button')
     .attr('class', 'btn dropdown_elements')
-    // .attr('id', 'dropdown_elements')
     .on('click', function (d) {
       addSelectedCountry(d)
-      // lineChart(filterHandler, promises)
     })
     .text(function (d) {
       return getCountryName(d)
-    }) // text showed in the menu
+    })
     .append('input')
     .attr('type', 'checkbox')
     .attr('class', 'checkedCountries')
@@ -132,9 +119,8 @@ promises.then(function ([
     .attr('id', function (d) {
       return d + '_checkbox'
     })
-    .style('float', 'left') //move box left of label
+    .style('float', 'left')
     .on('change', function () {
-      //  console.log('clicked on ', this.id)
       if (this.checked) {
         if (!selectedCountries.includes(this.id)) {
           selectedCountries.push(this.id)
@@ -147,17 +133,13 @@ promises.then(function ([
           }
         }
       }
-      //update countries in filterHandler
-      //osäker på hur vi ska få detta att gå åt båda hållen så att boxes blir unchecked om man väljer det på kartan, tror att vi kanske bara kan selecta det elementet och sätta checked till false eller något.
-      filterHandler.updateCountries(selectedCountries)
+     filterHandler.updateCountries(selectedCountries)
       drawScatterPlot(promises, filterHandler)
       lineChart(filterHandler, promises)
-      //console.log(filterHandler.getCountries)
     })
 
   d3.selectAll("input[name='unit']").on('change', function () {
     unitType = this.value
-    console.log(unitType)
     drawWorldMap(
       addSelectedCountry,
       addSelectedEmission,
@@ -208,9 +190,7 @@ d3.select('#emissions-dropdown')
       if (d === 'co2') {
         var x = selectedEmissions.length
         while (x != 0) {
-          console.log(selectedEmissions)
           addSelectedEmission(selectedEmissions[x - 1])
-          console.log(selectedEmissions)
           x--
         }
         addSelectedEmission('co2')
@@ -247,17 +227,16 @@ d3.select('#emissions-dropdown')
   })
   .text(function (d) {
     return getNameForEmissionsType(d)
-  }) // text showed in the menu
+  })
   .append('input')
   .attr('type', 'checkbox')
   .attr('class', 'checkedEmissions')
   .attr('id', function (d) {
     return d
   })
-  .style('float', 'left') //move box left of label
+  .style('float', 'left')
   .on('change', function () {
     updateDropdown
-    //console.log(filterHandler.getEmissions())
   })
 
 function getNameForEmissionsType (d) {
@@ -309,14 +288,10 @@ function updateDropdown () {
   }
 
   filterHandler.updateEmissions(selectedEmissions)
-  //drawScatterPlot(promises, filterHandler)
-  //lineChart(promises, filterHandler)
   drawScatterPlot(promises, filterHandler)
   lineChart(filterHandler)
-  //console.log(filterHandler.getEmissions());
 }
 
-//gör dropdown-listorna hidden/visible på click, fixa så att de inte tar upp hela ytan när de är hidden.
 var checkListCountries = document.getElementById('countries-selector')
 var countryList = document.getElementsByClassName('countries')[0]
 checkListCountries.onclick = function (evt) {
@@ -340,21 +315,6 @@ checkListEmissions.onclick = function (evt) {
 checkListEmissions.onblur = function (evt) {
   emissionList.style.visibility = 'hidden'
 }
-
-/*
-var currentYear = 2021
-
-  function filterYear(year) {
-    var dat = d3.csv("owid-co2-data.csv").then(function(csv) {
-      csv = csv.filter(function(row) {
-          return row['year'] == year
-      });
-      console.log(csv)
-      currentYear = year
-      return csv
-      });
-  }
-  */
 
 function initCountryCheckBox (array) {
   array.forEach(d => {
@@ -395,7 +355,6 @@ function addSelectedEmission (emission) {
 function addSelectedCountry (country) {
   var index = selectedCountries.indexOf(country)
   var element = document.getElementById(country + '_checkbox')
-  console.log('countr', country)
   if (index !== -1) {
     selectedCountries.splice(index, 1)
     element.checked = false
@@ -411,7 +370,6 @@ function addSelectedCountry (country) {
 // Update normalization
 var radiobuttons = d3.selectAll('.radiobutton')
 radiobuttons.on('change', function (d) {
-  console.log('Radio button change to ', this.value)
   filterHandler.updateNormalization(this.value)
   lineChart(filterHandler, promises)
   drawScatterPlot(promises, filterHandler)

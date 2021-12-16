@@ -61,9 +61,6 @@ export async function lineChart (filterHandler, promises) {
         d.year = parseInt(d.year)
       }
       d.total_co2 = 0
-
-      // Check if denominator is not zero and then sum up all emissions with normalization
-        // If all co2-emissions are choosen:
         if (emissionTypes[0] === ['co2'] && emissionTypes.length === 1) {
           d.total_co2 = +d['co2']/normalizationFactor
         } 
@@ -78,7 +75,6 @@ export async function lineChart (filterHandler, promises) {
             }
           }
         }
-      //}
     })
 
     // Remove data for countries we're not interested in
@@ -97,7 +93,7 @@ export async function lineChart (filterHandler, promises) {
         return d.year
       })
     )
-    //.nice()
+
     y.domain([
       0,
       d3.max(filtered_data, function (d) {
@@ -120,7 +116,6 @@ export async function lineChart (filterHandler, promises) {
         .append('path')
         .attr('class', 'line')
         .style('stroke', function () {
-          // Add the colours dynamically
           return (d.color = color(d.key))
         })
         .style('fill-opacity', 0)
@@ -185,28 +180,7 @@ export async function lineChart (filterHandler, promises) {
       .text('Year')
 
     // Add mouseover
-
     var mouseG = svg.append('g').attr('class', 'mouse-over-effects')
-
-
-    /*var legend = mouseG
-      .select('text-box')
-      .data(dataNest)
-      .enter()
-      .append('g')
-      .attr('class', 'text-box')
-
-    legend
-      .append('rect')
-      .attr('width', 100)
-      .attr('height', 100)
-      .style('opacity', '0')
-
-    legend
-      .append('text')
-      .attr('transform', 'translate(10,3)')
-      .style('font-size', '10')
-      .style('fill', 'black')*/
 
     mouseG
       .append('path')
@@ -238,8 +212,6 @@ export async function lineChart (filterHandler, promises) {
       .append('text')
       .attr('transform', 'translate(10,3)')
       .style('font-size', '10')
-
-    // console.log('mouse per line:', mousePerLine)
 
     d3.select('#lineplot')
       .append('text')
@@ -304,8 +276,6 @@ export async function lineChart (filterHandler, promises) {
           d3.select('#yearBox')
             .text(parseInt(xDate))
             .style('opacity', '1')
-          console.log('ypos', y.invert(pos.y))
-          console.log(mousePerLine)
           return 'translate(' + mouse[0] + ',' + pos.y + ')'
         })
 

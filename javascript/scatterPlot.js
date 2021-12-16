@@ -1,50 +1,30 @@
-/*TODO: fixa så att den ändrar på förkortning eller namn?
-- blir ny timeline varje gång man filtrerar?
-- Tror kajsas skala inte är i ton utan miljoner ton?
-- Där man hoverar är inte där rutan kommer upp i kartan
-*/
 export async function drawScatterPlot (promises, filterHandler) {
   promises.then(function ([world, co2, mappedNaturalDisasterData]) {
-    //mappedNaturalDisasterData]) {
     var year = filterHandler.getYear()
     var emissionTypes = filterHandler.getEmissions()
     var countries = filterHandler.getCountries()
 
-    //console.log("Scatterplot")
-    //  console.log(filterHandler.getCountries())
-    //console.log(filterHandler.getEmissions())
-
-    //  var newMappedNaturalDisasterCountryAndYear = []
-    // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
-
       // set the dimensions and margins of the graph
-      var margin = {top: 30, right: 30, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
+      var margin = {top: 30, right: 30, bottom: 50, left: 50},
       width = window.innerWidth * 0.47  - margin.left - margin.right,
       height = window.innerHeight * 0.5  - margin.top - margin.bottom;
 
     var filteredNatDis = mappedNaturalDisasterData.filter(function (d) {
-      //filtrera på emissions(?)
-      // console.log("filtering data on ", year)
-      return d.year == year && d.nbr > 0 && countries.includes(d.iso_code) //&& getEmissionsForCountry(d, year, emissionTypes)>0
+      return d.year == year && d.nbr > 0 && countries.includes(d.iso_code)
     })
 
     var filteredCo2 = co2.filter(function (d) {
       return (
         countries.includes(d.iso_code) && d.iso_code != '' && d.year == year
-      ) //&& getEmissionsForCountry(d, year, emissionTypes)>0
+      )
     })
-
-    /*  console.log(year)
-      console.log(emissionTypes)
-      console.log(filteredNatDis)
-      console.log(filteredCo2) */
 
     // remove old svgs
     d3.select('#scatterSvg').remove()
 
     // append the svg object to the body of the page
     var svg = d3
-      .select('#scatterPlot') //ändra färg på bakgrunden?
+      .select('#scatterPlot')
       .append('svg')
       .attr('id', 'scatterSvg')
       .attr('width', width + margin.left + margin.right)
@@ -52,17 +32,15 @@ export async function drawScatterPlot (promises, filterHandler) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-        // console.log("co2 max: ", d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, filterHandler) })) // miljoner ton
         // Add X axis
         var x = d3.scaleLinear()
-          .domain( [ 0, 1.15*d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, emissionTypes) }) ] ) //den här skalan blir inte rätt
+          .domain( [ 0, 1.15*d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, emissionTypes) }) ] )
           .range([ 0, width ])
           .nice();
         svg.append("g")
           .attr("transform", "translate(0," + height + ")")
           .call(d3.axisBottom(x).ticks(5));
 
-        // console.log("nbr max: ", d3.max(filteredNatDis, function( d ) { return d.nbr }))
         // Add Y axis
         var y = d3.scaleLinear()
           .domain( [ 0, 1.1*d3.max(filteredNatDis, function( d ) { return d.nbr }) ] )
@@ -85,21 +63,15 @@ export async function drawScatterPlot (promises, filterHandler) {
       .append('text')
       .attr('x', width / 2 -75)
       .attr('y', height + 30)
-      //.attr('text-anchor', 'middle')
       .style('font-family', 'Helvetica')
       .style('font-size', 12)
       .text('CO2 Emissions (million ton)')
-
-    // Add dots
-    var circ = svg.append('g')
 
         // Add dots
       var circ = svg.append('g');
       const box_width = 210
       const box_height = 70
-      console.log(emissionTypes.length)
       if (emissionTypes.length>0){ 
-        //om det inte finns någon emission type vald så ska den inte plotta några punkter
         circ
         .selectAll("dot")
         .data(filteredNatDis)
@@ -107,8 +79,6 @@ export async function drawScatterPlot (promises, filterHandler) {
         .append("rect")
           .attr('y', function (d) { 
             const temp_y = parseFloat(y(getNaturalDisastersForCountry(d)));
-            console.log('temp y', temp_y, d.country)
-            console.log(height - temp_y)
             if (height - temp_y < box_height) {
               return temp_y - box_height
             }
@@ -137,8 +107,6 @@ export async function drawScatterPlot (promises, filterHandler) {
           .append("text")
           .attr('y', function (d) { 
             const temp_y = parseFloat(y(getNaturalDisastersForCountry(d)));
-            console.log('temp y', temp_y, d.country)
-            console.log(height - temp_y)
             if (height - temp_y < box_height) {
               return temp_y - (box_height - 20)
             }
@@ -229,7 +197,6 @@ export async function drawScatterPlot (promises, filterHandler) {
             .transition()
             .duration(0.1)
             .attr('r', 5)
-            //   .front() //fixa så att de läggs på längst fram?
             .style('opacity', '1')
 
           d3.select('#rect' + (d.iso_code.toString() + d.year.toString()))
@@ -250,19 +217,11 @@ function getNaturalDisastersForCountry (row) {
 }
 
 function getEmissionsForCountry (row, year, emissionTypes) {
-  //  console.log(emissionTypes)
-  //  console.log("in get emissions ", year)
-
   if (emissionTypes.length > 0) {
-    //av någon anledning är arrayen 1 när ingen emission är vald, 2 när en emission är vald etc.
-    //förlåt för riktigt dålig kod lol
     var tot = 0
 
 
         for (let y = 1700; y <= year; y++) {
-         // console.log(row)
-
-        // just nu väljs bara co2 om den i ikryssad, dvs adderar inte co2+ specifika typer av co2, utan tar då co2 totalen
         if (emissionTypes.includes('co2') && !Number.isNaN(row.co2) && parseFloat(row.co2)>0) {
           tot= tot+parseFloat(row.co2)
         } else {
@@ -270,7 +229,6 @@ function getEmissionsForCountry (row, year, emissionTypes) {
             tot= tot+parseFloat(row.oil_co2)
           }
           if (emissionTypes.includes('consumption_co2') && !Number.isNaN(row.consumption_co2) && parseFloat(row.consumption_co2)>0) {
-            console.log(row.consumption_co2)
             tot= tot+parseFloat(row.consumption_co2)
           }
           if (emissionTypes.includes('gas_co2') && !Number.isNaN(row.gas_co2) && parseFloat(row.gas_co2)>0) {
@@ -292,10 +250,6 @@ function getEmissionsForCountry (row, year, emissionTypes) {
       }
     }
 
-
-    /*  console.log(row.country)
-      console.log(emissionTypes)
-      console.log(tot) */
     if (tot > 0) {
       return tot
     } else {
@@ -303,8 +257,6 @@ function getEmissionsForCountry (row, year, emissionTypes) {
     }
   }
 
-
-//används för att filtrera ut ett nytt json-dataset, tar sjukt lång tid, använd den sparade filen istället.
 function mapNaturalDisasters (
   co2_data,
   naturalDisaster_data,
@@ -333,5 +285,5 @@ function mapNaturalDisasters (
   })
 
   var jsonData = JSON.stringify(newMappedNaturalDisasterCountryAndYear)
-  console.log(jsonData)
+  //console.log(jsonData)
 }

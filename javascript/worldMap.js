@@ -36,10 +36,8 @@ export async function drawWorldMap (
   var year = filterHandler.getYear()
 
   const width = window.innerWidth * 0.623
-  const height = width * 0.7 //window.innerHeight * 0.4
-  const scale = 0.15863 * width //143
-
-  console.log('skala:', scale)
+  const height = width * 0.7
+  const scale = 0.15863 * width
   const projection2 = d3
     .geoMercator()
     .scale(scale)
@@ -251,12 +249,7 @@ export async function drawWorldMap (
   }
 
   function ready ([worldMap, co2_dataset, x, naturalDisaster_coordinates]) {
-    //updateUnitType()
-    console.log(unitType)
-
     filterCO2(co2_dataset, metricDataByCountry)
-
-    console.log(metricDataByCountry)
 
     emissionType.forEach(e => {
       var element = document.getElementById(e)
@@ -366,7 +359,6 @@ export async function drawWorldMap (
       })
       .on('click', function (d) {
         var country = countryIdAccessor(d)
-        //  console.log(country)
         addSelectedCountry(country)
       })
       .on('mouseenter', onMouseEnter)
@@ -624,7 +616,6 @@ export async function drawWorldMap (
         d3.select('#worldMap')
           .select('.legendLog')
           .call(legendLog)
-        //console.log(year)
       })
 
     var svg = d3.select('#worldMap')
@@ -857,27 +848,9 @@ export async function drawWorldMap (
       .scale(colorScaleLegend)
 
     svg.select('.legendLog').call(legendLog)
-    /*
-    svg
-      .append('g')
-      .attr('class', 'options')
-      .attr('id', 'ID_options')
-      .attr('transform', 'translate(30,330)')
-
-    var options = d3
-      .legendColor()
-      .shapeWidth(40)
-      .shapePadding(10)
-      .cells()
-      .orient('vertical')
-
-    svg.select('.options').call(options)
-    */
 
     d3.select('#toggleNaturalDisasters').on('click', val => {
-      console.log('HEEEEEEEEEEJ2')
       if (toggleNaturalDisaster.checked == true) {
-        console.log('HEEEEEEEEEEJ')
         svg
           .append('g')
           .attr('id', 'canvas')
@@ -897,7 +870,6 @@ export async function drawWorldMap (
       } else {
         d3.selectAll('#canvas').attr('visibility', 'hidden')
       }
-      // console.log('CLICKED')
     })
   }
 }
