@@ -15,7 +15,7 @@
   height: 20px;
   position: absolute;
   bottom: 5;
-  right: 60;
+  right: 40;
   float: bottom;
   font-size: 12;
   border: 1px;
@@ -32,14 +32,14 @@
   border: 1px;
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   margin-right: 0;
   margin-top: -1;
   margin-bottom: 0;
   vertical-align: middle;
 }
 
-input[type="radio"] {
+input[type='radio'] {
   margin-right: 0;
   margin-top: -1;
   margin-bottom: 0;
@@ -100,5 +100,3 @@ p {
   font-size: 0.8em;
   text-align: left;
 }
-
-
