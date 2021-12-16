@@ -198,6 +198,10 @@ input {
   background-color: #dfdfdf;
 }
 
+.sub {
+  margin-left: 30px;
+}
+
 #dropdown_elements_co2 {
   background-color: #698d76;
 }
