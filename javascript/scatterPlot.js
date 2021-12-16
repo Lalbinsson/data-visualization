@@ -18,7 +18,7 @@ export async function drawScatterPlot (promises, filterHandler) {
     // mapNaturalDisasters(co2, naturalDisasterData, newMappedNaturalDisasterCountryAndYear)
 
       // set the dimensions and margins of the graph
-      var margin = {top: 30, right: 120, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
+      var margin = {top: 30, right: 30, bottom: 50, left: 50}, //fixa dimensionerna så info-rutan inte hamnar utanför?
       width = window.innerWidth * 0.47  - margin.left - margin.right,
       height = window.innerHeight * 0.5  - margin.top - margin.bottom;
 
@@ -56,7 +56,8 @@ export async function drawScatterPlot (promises, filterHandler) {
         // Add X axis
         var x = d3.scaleLinear()
           .domain( [ 0, 1.15*d3.max(filteredCo2, function( d ) { return getEmissionsForCountry(d, year, emissionTypes) }) ] ) //den här skalan blir inte rätt
-          .range([ 0, width ]);
+          .range([ 0, width ])
+          .nice();
         svg.append("g")
           .attr("transform", "translate(0," + height + ")")
           .call(d3.axisBottom(x).ticks(5));
@@ -65,7 +66,8 @@ export async function drawScatterPlot (promises, filterHandler) {
         // Add Y axis
         var y = d3.scaleLinear()
           .domain( [ 0, 1.1*d3.max(filteredNatDis, function( d ) { return d.nbr }) ] )
-          .range([ height, 0]);
+          .range([ height, 0])
+          .nice();
         svg.append("g")
           .call(d3.axisLeft(y));
 
@@ -81,7 +83,7 @@ export async function drawScatterPlot (promises, filterHandler) {
     // X label
     svg
       .append('text')
-      .attr('x', width / 2)
+      .attr('x', width / 2 -75)
       .attr('y', height + 30)
       //.attr('text-anchor', 'middle')
       .style('font-family', 'Helvetica')

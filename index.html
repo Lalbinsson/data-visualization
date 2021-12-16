@@ -46,7 +46,7 @@
       <div>Selected Emissions: <b id="cEmissions"></b></div>
       <div>Selected Countries: <b id="cCountries"></b></div>
     </div>
-    <div class="col-3">
+    <div class="col-2">
       <p id="year-text">Selected Year: <b id="cYear"></b></p>
       <div id="slider" class="nav-item"></div>
     </div>
@@ -104,7 +104,7 @@
               <label for="">Show Natural Disasters</label>
             </div>
           </div>
-          <div id="options" style="width: 130px;">
+          <div id="options">
             <b>Show in:</b>
             <div>
               <div>
@@ -121,7 +121,7 @@
             </div>
             <div>
               <input type="radio" id="radioCapita" name="unit" class="radioUnit" value="radioCapita">
-              <label for="">Emission/Capita/Year</label>
+              <label for="">Emissions/Capita/Year</label>
             </div>
           </div>
         </div>
@@ -164,11 +164,6 @@
     </div>
     <div class="row">
       <form>
-        <!--<div id="radiobuttons">
-              <input class="radiobutton" type="radio" name="normalization" value="none" checked> No normalization<br>
-              <input class="radiobutton" type="radio" name="normalization" value="capita"> Per capita<br>
-              <input class="radiobutton" type="radio" name="normalization" value="gdp"> Per GDP<br>
-      </div>-->
       </form>
     </div>
     <div class="row">
@@ -182,19 +177,26 @@
             <input class="radiobutton" type="radio" name="normalization" value="gdp"> Per GDP<br>
           </div>
         </div>
-        <div class="textarea linetext">
+        <div class="textarea-line">
           <h1 class="plot-title">Different types of Co2 Emissions over time</h1>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum.
+          The line plot above shows the choosen countries' CO2 emissions from the choosen categories (if any categories 
+          are choosen, otherwise it shows the sum of all categories), with the purpose of comparing the historical 
+          emissions of multiple different countries. In the top left corner, it is possible to switch 
+          inbetween different ways to normalize the data which makes it possible to see emissions 
+          per capita or per GDP. By analyzing the emissions in relation to the population size, it is possible to make
+          a more fair comparison between the countries, since countries with large population naturally would yield 
+          larger CO2 emissions than a country with a smaller population size, given that the two countries are fairly 
+          equally far developed. Analyzing the emissions per GDP gives a better idea of how the emissions relate to the 
+          wealth of the country.
+          <br>
+          <br>
+          By hoovering over the plot, the specific values of emission for each country is displayed.
         </div>
       </div>
       <div class="col plot">
         <div id="scatterPlot">
         </div>
-        <div class="textarea">
+        <div class="textarea-scatter">
           <h1 class="plot-title">Correlation between Co2 Emissions and Natural Disasters</h1>
           This interactive scatterplot shows the cumulative CO2 in relation to the cumulative number of natural
           disasters that have occured, for each country. The cumulative CO2 and natural disasters for each country is

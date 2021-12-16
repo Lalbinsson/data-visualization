@@ -14,19 +14,19 @@
   width: 150px;
   height: 20px;
   position: absolute;
-  bottom: 22;
-  right: 80;
+  bottom: 5;
+  right: 60;
   float: bottom;
   font-size: 12;
   border: 1px;
 }
 #options {
   border: 0px;
-  width: 120px;
-  height: 75px;
+  width: 170px;
+  height: 95px;
   position: absolute;
-  bottom: 22;
-  right: 230;
+  bottom: 5;
+  right: 190;
   float: bottom;
   font-size: 12;
   border: 1px;

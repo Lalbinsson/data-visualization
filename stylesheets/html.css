@@ -49,15 +49,16 @@
   padding: 40px;
 }
 
-.textarea {
+.textarea-scatter {
   background: #f8f9fa;
   border-radius: 15px;
   margin: 20px;
-  margin-top: 50px;
+  margin-top: 26px;
 }
 
-.linetext {
-  margin-top: 540px;
+.textarea-line {
+  height: 100%;
+  margin-top: 420px;
 }
 
 .dropdown {
@@ -110,9 +111,10 @@
   margin-left: 20px;
   width: 30%;
   margin-right: 10px;
-  text-align: left;
+  text-align: right;
   border-radius: 10px;
   background: #d3d2d2;
+  font-size: 15;
   height: 70px;
 }
 
@@ -174,7 +176,7 @@ input {
 }
 
 #year-text {
-  padding-top: 5px;
+  padding-top: 15px;
   text-align: center;
 }
 
@@ -194,7 +196,6 @@ input {
   width: 100%;
   z-index: 20;
   background-color: #dfdfdf;
-  padding-top: 10px;
 }
 
 #dropdown_elements_co2 {

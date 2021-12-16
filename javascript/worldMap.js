@@ -843,7 +843,7 @@ export async function drawWorldMap (
       .legendColor()
       .shapeWidth(100)
       .shapePadding(0)
-      .title('Quantiles')
+      .title('Quantiles (million ton)')
       .cells(6)
       .labels([
         `${d3.format('.1f')(quantile_20)}`,
