@@ -33,6 +33,7 @@ var promises = Promise.all(promises)
 var selectedEmissions = ['co2']
 var selectedYear = 1990
 var selectedCountries = ['SWE']
+//var selectedCountries = allCountries
 var defaultFilteredData = []
 var currentNormalization = 'none'
 var filterHandler = new FilterHandler(
@@ -155,6 +156,7 @@ promises.then(function ([
 
   initEmissionCheckBox(selectedEmissions)
   initCountryCheckBox(selectedCountries)
+  //filterHandler.updateCountries(allCountries)
 })
 
 d3.select('#emissions-dropdown')
